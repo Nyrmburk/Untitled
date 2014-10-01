@@ -156,7 +156,7 @@ public class Engine {
 			highlight[i] = (int) temp[i];
 		}
 		GL11.glColor3f(0.75f, 0.75f, 0.75f);
-		Render.drawGrid(world, highlight[0], highlight[1], 10);
+		Render.drawGrid(world, highlight[0], highlight[1], 6);
 //		System.out.println(Arrays.toString(highlight));
 		
 		
@@ -175,7 +175,9 @@ public class Engine {
 	
 	private void update(int delta) {
 		
-		float scaleRatio =  (float)Math.tan(Math.toRadians(Camera.fov / 2)) * Camera.eye[2] / (Settings.windowHeight / 2);
+		float[] temp = Select.getCurrentCoord(Mouse.getX(), Mouse.getY());
+		
+		float scaleRatio =  (float)Math.tan(Math.toRadians(Camera.fov / 2)) * (Camera.eye[2] - temp[2]) / (Settings.windowHeight / 2);
 		
 		if(Mouse.isButtonDown(2)) {
 			Camera.moveX(-Mouse.getDX() * scaleRatio);
