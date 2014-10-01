@@ -25,7 +25,7 @@ public class Camera {
 	public static void moveY(float amountY) {
 		
 		eye[1] += amountY;
-		center[1] = eye[1] + 200;
+		center[1] = eye[1]+100;
 	}
 	
 	public static void moveZ(float amountZ) {

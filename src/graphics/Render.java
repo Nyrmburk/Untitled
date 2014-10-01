@@ -7,6 +7,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.util.glu.GLU;
 
+import world.World;
+
 public class Render {
 	
 	public static void initGL() {
@@ -14,7 +16,7 @@ public class Render {
 		// init opengl
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-//		GL11.glOrtho(0, Settings.windowWidth, 0, Settings.windowHeight, -depth, depth);
+//		GL11.glOrtho(0, 341, 0, 256, Camera.near, Camera.far);
 		GLU.gluPerspective(Camera.fov, Camera.aspectRatio, Camera.near, Camera.far);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
@@ -57,5 +59,45 @@ public class Render {
 	public static void draw() {
 		
 	}
-
+	
+	public static void drawGrid(World world, int centerX, int centerY, int radius) {
+		
+		byte[][] worldHeight = world.getWorldHeight();
+		
+		GL11.glPushMatrix();
+		GL11.glDisable(GL11.GL_LIGHTING);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+//		GL11.glLineWidth(2);
+		
+		for (int x = -radius+1; x < radius; x++) {
+			GL11.glBegin(GL11.GL_LINE_STRIP);
+			int y = (int) Math.sqrt(radius * radius - x * x);
+			
+			for (int i = -y+1; i < y; i++) {
+				if (x + centerX < world.getX() && x + centerX > 0 &&
+					i + centerY < world.getY() && i + centerY > 0) {
+					
+					GL11.glVertex3f(x + centerX, i + centerY, worldHeight[i + centerY][x + centerX]);
+				}
+			}
+			GL11.glEnd();
+		}
+		
+		for (int y = -radius+1; y < radius; y++) {
+			GL11.glBegin(GL11.GL_LINE_STRIP);
+			int x = (int) Math.sqrt(radius * radius - y * y);
+			
+			for (int i = -x+1; i < x; i++) {
+				if (y + centerY < world.getY() && y + centerY > 0 &&
+					i + centerX < world.getX() && i + centerX > 0) {
+					
+					GL11.glVertex3f(i + centerX, y + centerY, worldHeight[y + centerY][i + centerX]);
+				}
+			}
+			GL11.glEnd();
+		}
+		GL11.glEnable(GL11.GL_LIGHTING);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glPopMatrix();
+	}
 }

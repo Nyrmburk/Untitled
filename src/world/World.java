@@ -37,23 +37,6 @@ public class World {
 			}
 		}
 	}
-	
-	public void LoadFromImage() {
-		
-		BufferedImage bImage = null;
-		try {
-			bImage = ImageIO.read(new File("res\\heightmap.jpg"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		for (int y = 0; y < worldY; y++) {
-			for (int x = 0; x < worldX; x++) {
-				
-				worldHeight[x][y] = (byte) ((bImage.getRGB(x, y) / 2) & 0x7F);
-			}
-		}
-	}
 
 	// int world x, int world y, int structure length, int items length, int mined length.
 	private static final byte HEADER_SIZE = 4 + 4 + 4 + 4 + 4;
@@ -80,7 +63,7 @@ public class World {
 		return buffer.array();
 	}
 
-	public void SaveWorld(String fileName) throws IOException {
+	public void saveWorld(String fileName) throws IOException {
 
 		FileOutputStream out = null;
 
@@ -164,6 +147,28 @@ public class World {
 		} finally {
 			if (in != null) {
 				in.close();
+			}
+		}
+	}
+	
+	public void loadFromImage() {
+		
+		BufferedImage bImage = null;
+		try {
+			bImage = ImageIO.read(new File("res\\heightmap.jpg"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		worldX = bImage.getWidth();
+		worldY = bImage.getHeight();
+		
+		worldHeight = new byte[worldX][worldY];
+		
+		for (int y = 0; y < worldY; y++) {
+			for (int x = 0; x < worldX; x++) {
+				
+				worldHeight[x][y] = (byte) ((bImage.getRGB(x, y) / 2) & 0x7F);
 			}
 		}
 	}

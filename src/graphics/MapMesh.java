@@ -13,8 +13,8 @@ public class MapMesh extends Model {
 
 			for (int x = 0; x < world.getX(); x++) {
 
-				super.verticesList.add(new float[] { x + 0.5f, y + 0.5f,
-						worldHeight[x][y] });
+				super.verticesList.add(new float[] { x, y,
+						worldHeight[x][y]});
 				
 //				super.colorDiffuseList.add(new float[]{1f, 0f, 0f});
 //				super.colorAmbientList.add(new float[]{1f, 0f, 0f});

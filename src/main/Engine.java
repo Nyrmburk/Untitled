@@ -2,11 +2,14 @@ package main;
 
 import graphics.Camera;
 import graphics.MapMesh;
+import graphics.Render;
 import gui.GUI;
+import gui.Select;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.util.Arrays;
 
 import javax.swing.UIManager;
 
@@ -32,6 +35,8 @@ public class Engine {
 	
 	public static boolean closing = false;
 	
+	World world;
+	
 	public void start() throws IOException {
 
 		try {
@@ -45,12 +50,12 @@ public class Engine {
 
 //		Manager.addEntity("test", Entity.SHAPE, new float[3], "monkey");
 		
-		world.World world = new World(256, 256);
-		world.LoadFromImage();
+		world = new World(256, 256);
+		world.loadFromImage();
 		Manager.addEntity("world", Entity.SHAPE, new MapMesh(world));
 		
 		try {
-			world.SaveWorld("test");
+			world.saveWorld("test");
 			world.loadWorld("test");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -143,6 +148,19 @@ public class Engine {
 		GL11.glColor3f(0.8f, 0.8f, 0.8f);
 		Manager.render();
 		
+		float[] temp = Select.getCurrentCoord(Mouse.getX(), Mouse.getY());
+		int[] highlight = new int[temp.length];
+		
+		
+		for (int i = 0; i < highlight.length; i++) {
+			highlight[i] = (int) temp[i];
+		}
+		GL11.glColor3f(0.75f, 0.75f, 0.75f);
+		Render.drawGrid(world, highlight[0], highlight[1], 10);
+//		System.out.println(Arrays.toString(highlight));
+		
+		
+		
 //		Draw the triangle of death
 //		GL11.glBegin(GL11.GL_TRIANGLES);
 //		GL11.glColor3f(1, 0, 0);
@@ -163,7 +181,10 @@ public class Engine {
 			Camera.moveX(-Mouse.getDX() * scaleRatio);
 			Camera.moveY(-Mouse.getDY() * scaleRatio);
 		}
-		Camera.moveZ(-Mouse.getDWheel() / 10);
+		
+		int mousewheel = Mouse.getDWheel();
+		Camera.moveZ(-mousewheel / 60);
+		
 		Camera.look();
 		
 		Manager.update(delta);
