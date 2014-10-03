@@ -78,11 +78,10 @@ public class Render {
 					* ((float) x - 0.5));
 
 			for (int i = -y + 1; i <= y; i++) {
-				if (x + centerX < world.getX() && x + centerX > 0
-						&& i + centerY < world.getY() && i + centerY > 0) {
+				if (x + centerX < world.getX() && x + centerX >= 0
+						&& i + centerY < world.getY() && i + centerY >= 0) {
 
-					GL11.glVertex3f(x + centerX, i + centerY, worldHeight[i
-							+ centerY][x + centerX]);
+					GL11.glVertex3f(x + centerX, i + centerY, worldHeight[x + centerX][i + centerY]);
 				}
 			}
 			GL11.glEnd();
@@ -96,44 +95,15 @@ public class Render {
 					* ((float) y - 0.5));
 
 			for (int i = -x + 1; i <= x; i++) {
-				if (y + centerX < world.getX() && y + centerX > 0
-						&& i + centerY < world.getY() && i + centerY > 0) {
+				if (y + centerY < world.getY() && y + centerY >= 0 &&
+						i + centerX < world.getX() && i + centerX >= 0) {
 
-					GL11.glVertex3f(i + centerX, y + centerY, worldHeight[y
-							+ centerY][i + centerX]);
+					GL11.glVertex3f(i + centerX, y + centerY, worldHeight[i + centerX][y + centerY]);
 				}
 			}
 			GL11.glEnd();
 		}
-		
-		
-//		for (int x = -radius; x < radius; x++) {
-//			GL11.glBegin(GL11.GL_LINE_STRIP);
-//			int y = (int) Math.sqrt(radius * radius - ((float)x-0.5)* ((float)x-0.5));
-//			
-//			for (int i = -y+1; i <= y; i++) {
-//				if (x + centerX < world.getX() && x + centerX > 0 &&
-//					i + centerY < world.getY() && i + centerY > 0) {
-//					
-//					GL11.glVertex3f(x + centerX, i + centerY, worldHeight[i + centerY][x + centerX]);
-//				}
-//			}
-//			GL11.glEnd();
-//		}
-//		
-//		for (int y = -radius; y < radius; y++) {
-//			GL11.glBegin(GL11.GL_LINE_STRIP);
-//			int x = (int) Math.sqrt(radius * radius - ((float)y-0.5)* ((float)y-0.5));
-//			
-//			for (int i = -x+1; i <= x; i++) {
-//				if (y + centerY < world.getY() && y + centerY > 0 &&
-//					i + centerX < world.getX() && i + centerX > 0) {
-//					
-//					GL11.glVertex3f(i + centerX, y + centerY, worldHeight[y + centerY][i + centerX]);
-//				}
-//			}
-//			GL11.glEnd();
-//		}
+
 		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glPopMatrix();

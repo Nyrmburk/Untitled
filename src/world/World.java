@@ -191,4 +191,23 @@ public class World {
 		
 		return worldHeight.clone();
 	}
+	
+	public boolean isBlocked(int x, int y) {
+		boolean blocked = false;
+		
+		if (0 <= x && x < getX()-1 && 0 <= y && y < getY()-1) {
+			
+			if (Math.abs(worldHeight[x][y] - worldHeight[x+1][y+1]) > 1
+					| Math.abs(worldHeight[x][y] - worldHeight[x+1][y]) > 1
+					| Math.abs(worldHeight[x][y] - worldHeight[x][y+1]) > 1) {
+				
+				blocked = true;
+			}
+		} else {
+			
+			blocked = true;
+		}
+		
+		return blocked;
+	}
 }

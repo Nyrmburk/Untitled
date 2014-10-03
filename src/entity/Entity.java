@@ -1,4 +1,4 @@
-package main;
+package entity;
 
 import graphics.Model;
 
@@ -31,11 +31,10 @@ public class Entity {
 
 	short type;
 
-	public final static short SHAPE = 0;
-	public final static short CONSTRAINT_STRING = 1;
-	public final static short CONSTRAINT_ELASTIC = 2;
-	public final static short CONSTRAINT_ROD = 3;
-	public final static short CONSTRAINT_SPRING = 4;
+	public final static short WORLD = 0;
+	public final static short MOB = 1;
+	public final static short STRUCTURE = 2;
+	public final static short ITEM = 3;
 
 	int VAOID;
 	int VBOID;
@@ -47,15 +46,15 @@ public class Entity {
 	boolean textures;
 	boolean colors;
 
-	Entity(String name, short type, float[] location, String fileName) {
+	public Entity(String name, short type, float[] location, String fileName) {
 		this.name = name;
 		this.type = type;
-		this.location = location;
+		this.location = location.clone();
 		mdl.load(fileName);
 		initModel();
 	}
 	
-	Entity(String name, short type, float[] location, Model model) {
+	public Entity(String name, short type, float[] location, Model model) {
 		this.name = name;
 		this.type = type;
 		this.location = location;
@@ -68,21 +67,28 @@ public class Entity {
 	 */
 	private void initModel() {
 
+		VAOID = GL30.glGenVertexArrays();
+		GL30.glBindVertexArray(VAOID);
+		
+		GL11.glEnable(GL11.GL_VERTEX_ARRAY);
+		
 		if (mdl.normalsList != null) {
 			normals = true;
+			GL11.glEnable(GL11.GL_NORMAL_ARRAY);
+		} else {
+			GL11.glDisable(GL11.GL_NORMAL_ARRAY);
 		}
 		if (mdl.colorAmbient != null) {
 			colors = true;
+			GL11.glEnable(GL11.GL_COLOR_ARRAY);
+		} else {
+			GL11.glDisable(GL11.GL_COLOR_ARRAY);
 		}
 		if (mdl.textureCoords != null) {
 			textures = true;
+		} else {
+//			GL11.glDisable(GL11.GL_TEXTURE_ARRAY); //something like that
 		}
-
-		VAOID = GL30.glGenVertexArrays();
-		GL30.glBindVertexArray(VAOID);
-		GL11.glEnable(GL11.GL_VERTEX_ARRAY);
-		GL11.glEnable(GL11.GL_NORMAL_ARRAY);
-		GL11.glEnable(GL11.GL_COLOR_ARRAY);
 
 		FloatBuffer verticesBuffer = toFloatBuffer(mdl.vertices);
 		VBOID = GL15.glGenBuffers();

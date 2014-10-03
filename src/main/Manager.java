@@ -1,5 +1,6 @@
 package main;
 
+import entity.Entity;
 import graphics.Model;
 
 import java.util.ArrayList;

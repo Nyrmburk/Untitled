@@ -1,26 +1,27 @@
 package main;
 
+import entity.AI;
+import entity.Entity;
+import entity.Mob;
 import graphics.Camera;
 import graphics.MapMesh;
+import graphics.Model;
 import graphics.Render;
 import gui.GUI;
 import gui.Select;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.FloatBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.UIManager;
 
-import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-import org.lwjgl.util.glu.GLU;
 
 import world.World;
 
@@ -37,6 +38,8 @@ public class Engine {
 	
 	World world;
 	
+	ArrayList<int[]> pathfindingTest;
+	
 	public void start() throws IOException {
 
 		try {
@@ -52,15 +55,19 @@ public class Engine {
 		
 		world = new World(256, 256);
 		world.loadFromImage();
-		Manager.addEntity("world", Entity.SHAPE, new MapMesh(world));
+		Manager.addEntity("world", Entity.WORLD, new MapMesh(world));
+//		Manager.addEntity("testing", Entity.MOB, new float[3], "monkey");
 		
-		try {
-			world.saveWorld("test");
-			world.loadWorld("test");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		pathfindingTest = ai.AStarPathFinding.findPath(world, new int[]{56, 43}, new int[]{151, 167});
+		//56, 43, 151, 167
+		
+//		try {
+//			world.saveWorld("test");
+//			world.loadWorld("test");
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			System.exit(1);
+//		}
 		
 		while (!Display.isCloseRequested()) {
 			
@@ -159,7 +166,18 @@ public class Engine {
 		Render.drawGrid(world, highlight[0], highlight[1], 6);
 //		System.out.println(Arrays.toString(highlight));
 		
-		
+		if (pathfindingTest != null) {
+			GL11.glDisable(GL11.GL_LIGHTING);
+			GL11.glDisable(GL11.GL_DEPTH_TEST);
+			GL11.glBegin(GL11.GL_LINE_STRIP);
+			for (int[] step : pathfindingTest) {
+				GL11.glVertex3f(step[0], step[1], world.getWorldHeight()[step[0]][step[1]]);
+			}
+			GL11.glEnd();
+			GL11.glEnable(GL11.GL_LIGHTING);
+			GL11.glEnable(GL11.GL_DEPTH_TEST);
+		}
+
 		
 //		Draw the triangle of death
 //		GL11.glBegin(GL11.GL_TRIANGLES);
@@ -173,15 +191,37 @@ public class Engine {
 		
 	}
 	
+	int[] start = new int[3];
+	int[] end = new int[3];
+	
 	private void update(int delta) {
 		
 		float[] temp = Select.getCurrentCoord(Mouse.getX(), Mouse.getY());
-		
 		float scaleRatio =  (float)Math.tan(Math.toRadians(Camera.fov / 2)) * (Camera.eye[2] - temp[2]) / (Settings.windowHeight / 2);
 		
 		if(Mouse.isButtonDown(2)) {
 			Camera.moveX(-Mouse.getDX() * scaleRatio);
 			Camera.moveY(-Mouse.getDY() * scaleRatio);
+		}
+		
+		if(Mouse.isButtonDown(0)) {
+//			Manager.addEntity("testing", Entity.MOB, temp, "monkey");
+			
+			for (int i = 0; i < start.length; i++) {
+				start[i] = (int) temp[i];
+			}
+		}
+		
+		if(Mouse.isButtonDown(1)) {
+//			Manager.addEntity("testing", Entity.MOB, temp, "monkey");
+			
+			for (int i = 0; i < end.length; i++) {
+				end[i] = (int) temp[i];
+			}
+		}
+		
+		if(Mouse.isButtonDown(0) || Mouse.isButtonDown(1)) {
+			pathfindingTest = ai.AStarPathFinding.findPath(world, new int[]{start[0], start[1]}, new int[]{end[0], end[1]});
 		}
 		
 		int mousewheel = Mouse.getDWheel();
