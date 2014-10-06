@@ -54,11 +54,17 @@ public class Model {
 	final byte VT = 2;
 	final byte VTN = 3;
 	
+	public Model() {
+	}
+	
+	public Model(String name) {
+		load(name);
+	}
+	
 	/**
 	 * Open and read the file with the supplied filename.
 	 * @param inputFileName
 	 */
-
 	public void load(String inputFileName) {
 		File f = new File("res\\models\\" + inputFileName + ".obj");
 		BufferedReader read = null;

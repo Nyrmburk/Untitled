@@ -365,34 +365,13 @@ public class Vector {
 
 		float[] newVector = new float[3];
 
-		newVector[0] = vector1[1] * vector2[2] - vector1[2] * vector2[1]; // c_x
-																			// =
-																			// a_y
-																			// *
-																			// b_z
-																			// -
-																			// a_z
-																			// *
-																			// b_y
-		newVector[1] = vector1[2] * vector2[0] - vector1[0] * vector2[2]; // c_y
-																			// =
-																			// a_z
-																			// *
-																			// b_x
-																			// -
-																			// a_x
-																			// *
-																			// b_z
-		newVector[2] = vector1[0] * vector2[1] - vector1[1] * vector2[0]; // c_z
-																			// =
-																			// a_x
-																			// *
-																			// b_y
-																			// -
-																			// a_y
-																			// *
-																			// b_x
-
+		// c_x = a_y * b_z - a_z * b_y
+		newVector[0] = vector1[1] * vector2[2] - vector1[2] * vector2[1]; 
+		// c_y = a_z * b_x - a_x * b_z
+		newVector[1] = vector1[2] * vector2[0] - vector1[0] * vector2[2]; 
+		// c_z = a_x * b_y - a_y * b_x
+		newVector[2] = vector1[0] * vector2[1] - vector1[1] * vector2[0]; 
+		
 		return newVector;
 	}
 

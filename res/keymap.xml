@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<!-- The keymappings can be found on the lwjgl keyboard documentation-->
+
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+<entry key="forward">KEY_W</entry>
+<entry key="backward">KEY_S</entry>
+<entry key="left">KEY_A</entry>
+<entry key="right">KEY_D</entry>
+<entry key="action">KEY_SPACE</entry>
+<entry key="accept">KEY_RETURN</entry>
+<entry key="decline">KEY_PRIOR</entry>
+<entry key="modify">KEY_LSHIFT</entry>
+<entry key="debug">KEY_E</entry>
+<entry key="grid">KEY_G</entry>
+<entry key="settings">KEY_T</entry>
+<entry key="delete">KEY_DELETE</entry>
+</properties>

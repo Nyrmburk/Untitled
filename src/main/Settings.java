@@ -4,14 +4,16 @@ public class Settings {
 	
 	//window settings
 	public static int windowWidth, windowHeight;
+	public static boolean threeD;
 
 	/**
 	 * Load the settings from a file.
 	 */
 	public static void loadSettings() {
 		
-		windowWidth = 800;
-		windowHeight = 600;
+		windowWidth = 1200;
+		windowHeight = 900;
+		threeD = false;
 		
 	}
 	

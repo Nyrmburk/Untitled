@@ -4,6 +4,7 @@ import graphics.Model;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.Arrays;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
@@ -12,11 +13,10 @@ import org.lwjgl.opengl.GL30;
 
 
 /**
- * An entity class to hold the relevant values of the various physics objects
- * that can exist in the physics engine
- * 
- * @author Bradley Pellegrini & Christopher Dombroski
- * 
+ * Holds data about every entity such as the model, location, rotation, 
+ * and others. It also contains a method to draw the model and update it.
+ * @author Christopher Dombroski
+ *
  */
 public class Entity {
 
@@ -24,17 +24,21 @@ public class Entity {
 
 	public boolean isActive = true;
 	
-	public float[] rotation = new float[3]; // position, rotation
+	// position, rotation
+	public float[] rotation = new float[3];
 	public float[] location = new float[3];
 
-	public Model mdl = new Model();
+	public Model mdl;
+	
+	public enum types {
+		
+		WORLD,
+		MOB,
+		STRUCTURE,
+		ITEM
+	}
 
-	short type;
-
-	public final static short WORLD = 0;
-	public final static short MOB = 1;
-	public final static short STRUCTURE = 2;
-	public final static short ITEM = 3;
+	types entityType;
 
 	int VAOID;
 	int VBOID;
@@ -46,17 +50,17 @@ public class Entity {
 	boolean textures;
 	boolean colors;
 
-	public Entity(String name, short type, float[] location, String fileName) {
+	public Entity(String name, types entityType, float[] location, String fileName) {
 		this.name = name;
-		this.type = type;
+		this.entityType = entityType;
 		this.location = location.clone();
 		mdl.load(fileName);
 		initModel();
 	}
 	
-	public Entity(String name, short type, float[] location, Model model) {
+	public Entity(String name, types entityType, float[] location, Model model) {
 		this.name = name;
-		this.type = type;
+		this.entityType = entityType;
 		this.location = location;
 		this.mdl = model;
 		initModel();
@@ -173,8 +177,8 @@ public class Entity {
 		return buffer;
 	}
 
-	public void updateOrientation(int delta) {
-		//TODO add orientation and stuff
+	public void update (int delta) {
+		
 	}
 
 	/**
@@ -184,5 +188,12 @@ public class Entity {
 	public void setLocation(float[] location) {
 
 		this.location = location;
+	}
+	
+	public String toString() {
+		
+		return "Name: \"" + name + 
+				"\", Type: " + entityType + 
+				", Location: " + Arrays.toString(location); 
 	}
 }

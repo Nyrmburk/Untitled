@@ -70,7 +70,7 @@ public class Input {
 		Properties loadKeys = new Properties();
 
 		try {
-			InputStream inStream = new FileInputStream("keymap.xml");
+			InputStream inStream = new FileInputStream("res\\keymap.xml");
 			loadKeys.loadFromXML(inStream);
 		} catch (IOException e) {
 			e.printStackTrace();

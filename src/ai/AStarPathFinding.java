@@ -80,43 +80,13 @@ public class AStarPathFinding {
 			}
 		}
 		
+		writeDebugImage(pathScore);
 		return null;
 	}
 	
 	private static ArrayList<int[]> reconstructPath(int[][] cameFrom, int currentIndex, int[][] movementCost) {
 		
 		ArrayList<int[]> steps = new ArrayList<int[]>();
-		
-//		BufferedImage totalImage = new BufferedImage(cameFrom.length, cameFrom[0].length, BufferedImage.TYPE_INT_RGB);
-//		
-//		int totalMax = 0;
-//		
-//		for (int y = 0; y < cameFrom[0].length; y++) {
-//			
-//			for (int x = 0; x < cameFrom.length; x++) {
-//				
-//				if (movementCost[x][y] > totalMax) totalMax = movementCost[x][y];
-//			}
-//		}
-//		
-//		for (int y = 0; y < cameFrom[0].length; y++) {
-//			
-//			for (int x = 0; x < cameFrom.length; x++) {
-//				
-//				int totalPixel = (int)(((float)movementCost[x][y] / totalMax) * 200) + 55;
-//				
-//				if (movementCost[x][y] > 0) {
-//					totalImage.setRGB(x, cameFrom[0].length - y-1,totalPixel);
-//				}
-//			}
-//		}
-//		
-//		try {
-//			ImageIO.write(totalImage, "png", new File("MovementCost.png"));
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 		
 		do {
 			
@@ -288,6 +258,40 @@ public class AStarPathFinding {
 				
 				array[x][y] = value;
 			}
+		}
+	}
+	
+	private static void writeDebugImage(int[][] map) {
+		
+		BufferedImage image = new BufferedImage(map.length, map[0].length, BufferedImage.TYPE_INT_RGB);
+		
+		int max = 0;
+		
+		for (int y = 0; y < map[0].length; y++) {
+			
+			for (int x = 0; x < map.length; x++) {
+				
+				if (map[x][y] > max) max = map[x][y];
+			}
+		}
+		
+		for (int y = 0; y < map[0].length; y++) {
+			
+			for (int x = 0; x < map.length; x++) {
+				
+				int pixel = (int)(((float)map[x][y] / max) * 200) + 55;
+				
+				if (map[x][y] > 0) {
+					image.setRGB(x, map[0].length - y-1, pixel);
+				}
+			}
+		}
+		
+		try {
+			ImageIO.write(image, "png", new File("debug.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }

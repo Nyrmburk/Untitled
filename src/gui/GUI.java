@@ -16,6 +16,9 @@ public class GUI {
 	public static void initialize() throws LWJGLException {
 
 		Display.setDisplayMode(new DisplayMode(Settings.windowWidth, Settings.windowHeight));
+//		Display.setFullscreen(true);
+//		Settings.windowWidth = Display.getWidth();
+//		Settings.windowHeight = Display.getHeight();
 		Display.setTitle("Colonies");
 		Display.create();
 

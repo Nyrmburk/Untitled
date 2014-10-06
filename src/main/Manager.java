@@ -1,7 +1,6 @@
 package main;
 
 import entity.Entity;
-import graphics.Model;
 
 import java.util.ArrayList;
 
@@ -15,34 +14,13 @@ import java.util.ArrayList;
 public class Manager {
 
 	static ArrayList<String> entityID = new ArrayList<String>();
-	static ArrayList<Entity> entity = new ArrayList<Entity>();
+	static ArrayList<Entity> entityList = new ArrayList<Entity>();
 
-	/**
-	 * Add an Entity into the buffer.
-	 * 
-	 * @param name
-	 *            The name of the Entity
-	 * @param type
-	 *            What type the Entity is. e.g. "shape" or "spring"
-	 * @param fileName
-	 *            The model filename
-	 * @return The hashcode of the Entity
-	 */
-	public static void addEntity(String name, short type, float[] location,
-			String fileName) {
 
-		Entity ntt = new Entity(name, type, location, fileName);
+	public static void addEntity(Entity entity) {
 
-		entity.add(ntt);
-		entityID.add(name);
-	}
-	
-	public static void addEntity(String name, short type, Model model) {
-
-		Entity ntt = new Entity(name, type, new float[3], model);
-
-		entity.add(ntt);
-		entityID.add(name);
+		entityList.add(entity);
+		entityID.add(entity.name);
 	}
 
 	/**
@@ -57,7 +35,7 @@ public class Manager {
 
 		index = entityID.indexOf(name);
 		entityID.remove(index);
-		entity.remove(index);
+		entityList.remove(index);
 
 	}
 
@@ -73,13 +51,13 @@ public class Manager {
 		int index;
 		index = entityID.indexOf(name);
 
-		return entity.get(index);
+		return entityList.get(index);
 
 	}
 
 	public static void render() {
 
-		for (Entity ntt : entity) {
+		for (Entity ntt : entityList) {
 			ntt.draw();
 		}
 	}
@@ -90,8 +68,8 @@ public class Manager {
 	 */
 	public static void update(int delta) {
 
-		for (int i = 0; i < entity.size(); i++) {
-			entity.get(i).updateOrientation(delta);
+		for (int i = 0; i < entityList.size(); i++) {
+			entityList.get(i).update(delta);
 		}
 	}
 }

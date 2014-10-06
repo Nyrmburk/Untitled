@@ -1,11 +1,11 @@
-package entity;
+package ai;
 
 public class Faction {
 
 	private String name;
 	private boolean friendly;
 	
-	Faction() {
+	public Faction() {
 		
 		this("default");
 	}

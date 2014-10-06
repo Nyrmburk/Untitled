@@ -3,10 +3,7 @@ package world;
 import java.util.ArrayList;
 import java.util.Random;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
@@ -114,16 +111,16 @@ public class World {
 			int minedLength = readInt(in);
 			
 			worldHeight = new byte[worldX][worldY];
-			for (int y = 0; y < worldY; y++) {
-				for(int x = 0; x < worldX; x++) {
+			for (int x = 0; x < worldY; x++) {
+				for(int y = 0; y < worldX; y++) {
 					
 					worldHeight[x][y] = (byte) in.read();
 				}
 			}
 			
 			worldType = new byte[worldX][worldY];
-			for (int y = 0; y < worldY; y++) {
-				for(int x = 0; x < worldX; x++) {
+			for (int x = 0; x < worldY; x++) {
+				for(int y = 0; y < worldX; y++) {
 					
 					worldType[x][y] = (byte) in.read();
 				}
@@ -168,7 +165,8 @@ public class World {
 		for (int y = 0; y < worldY; y++) {
 			for (int x = 0; x < worldX; x++) {
 				
-				worldHeight[x][y] = (byte) ((bImage.getRGB(x, y) / 2) & 0x7F);
+				worldHeight[x][y] = (byte) (bImage.getRGB(x, y) & 0xFF);
+				worldHeight[x][y] = (byte) (worldHeight[x][y] >> 2 & 0x3F);
 			}
 		}
 	}
