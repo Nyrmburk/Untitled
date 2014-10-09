@@ -26,7 +26,7 @@ public class ActionWander extends Action {
 		complete = Arrays.equals(currentCoord, destination);
 		
 		if (complete) {
-			chainedAction = new ActionWait(random.nextInt(1001) + 500);
+			chainedAction = new ActionWait(random.nextInt(2001) + 500);
 		}
 	}
 }

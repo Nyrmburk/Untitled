@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.activation.UnsupportedDataTypeException;
+
 import org.newdawn.slick.opengl.Texture;
 
 import main.Vector;
@@ -57,16 +59,15 @@ public class Model {
 	public Model() {
 	}
 	
-	public Model(String name) {
-		load(name);
+	public Model(File file) {
+		load(file);
 	}
 	
 	/**
 	 * Open and read the file with the supplied filename.
 	 * @param inputFileName
 	 */
-	public void load(String inputFileName) {
-		File f = new File("res\\models\\" + inputFileName + ".obj");
+	private void load(File f) {
 		BufferedReader read = null;
 
 		try {
@@ -103,7 +104,7 @@ public class Model {
 	 * 
 	 * @param fileText
 	 */
-	private void fileParser(String fileText) {
+	private void fileParser(String fileText) throws UnsupportedDataTypeException{
 
 		String[] line = fileText.split(" ");
 		line = removeEmpty(line);

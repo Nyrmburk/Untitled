@@ -8,7 +8,7 @@ import org.lwjgl.util.glu.GLU;
 public class Camera {
 	
 	public static float aspectRatio = (float)Settings.windowWidth/Settings.windowHeight;
-	public static float near = 1;
+	public static float near = 1f;
 	public static float far = 2000;
 	public static float fov = 75;
 	

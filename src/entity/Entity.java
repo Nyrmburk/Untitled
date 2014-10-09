@@ -6,6 +6,8 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Arrays;
 
+import main.AssetManager;
+
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
@@ -54,7 +56,7 @@ public class Entity {
 		this.name = name;
 		this.entityType = entityType;
 		this.location = location.clone();
-		mdl.load(fileName);
+		mdl = AssetManager.getModel(fileName);
 		initModel();
 	}
 	

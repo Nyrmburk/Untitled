@@ -15,8 +15,16 @@ public class AStarPathFinding {
 	
 	public static ArrayList<int[]> findPath(World world, int[] start, int[] end) {
 		
+		return findPath(world, start, end, Integer.MAX_VALUE);
+	}
+	
+	public static ArrayList<int[]> findPath(World world, int[] start, int[] end, int maxCost) {
+		
 		if (start.length > 2) start = new int[]{start[0], start[1]};
 		if (end.length > 2) end = new int[]{end[0], end[1]};
+		
+		if (!isSafeSpot(world, start)) return null;
+		if (!isSafeSpot(world, end)) return null;
 		
 		//intitialize variables
 		int[][] cameFrom = new int[world.getX()][world.getY()];
@@ -32,6 +40,8 @@ public class AStarPathFinding {
 		setFromCoords(movementCost, start, 0);
 		setFromCoords(pathScore, start, getFromCoords(movementCost, start) + getHeuristic(start, end));
 		
+		boolean[] allowDiagonal = new boolean[4];
+		
 		while (!openSet.isEmpty()) {
 			
 			int parentIndex = openSet.first();
@@ -44,8 +54,11 @@ public class AStarPathFinding {
 			arrayRemove(openSet, parentIndex);
 			setFromCoords(closedSet, parent, true);
 			
+			Arrays.fill(allowDiagonal, true);
 			
 			for (byte i = 0; i < ADJACENT_NODES; i++) {
+				
+				if (i > 3 && !allowDiagonal[i - ADJACENT_NODES / 2]) continue; 
 				
 				int[] adjacent = new int[2];
 				getAdjacentNode(parent, i, adjacent);
@@ -53,10 +66,14 @@ public class AStarPathFinding {
 				
 				//Skip and continue if not a valid coordinate
 				if (0 > adjacent[0] || adjacent[0] >= world.getX()
-						|| 0 > adjacent[1] || adjacent[1] >= world.getY()) 
+						|| 0 > adjacent[1] || adjacent[1] >= world.getY()) {
+					
+					blockDiagonal(i, allowDiagonal);
 					continue;
+				}
 				
 				if (world.isBlocked(adjacent[0], adjacent[1])) {
+					blockDiagonal(i, allowDiagonal);
 					continue;
 				}
 				
@@ -65,6 +82,7 @@ public class AStarPathFinding {
 				//TODO make getRelativeCost more dynamic.
 				int tentativeMoveCost = getFromCoords(movementCost, parent) + getRelativeCost(i);
 				
+				if (tentativeMoveCost >= maxCost) continue;
 				
 				int adjacentIndex = getIndex(adjacent, world.getX());
 				
@@ -103,22 +121,77 @@ public class AStarPathFinding {
 	
 	private static void getAdjacentNode(int[] parent, byte index, int[] result) {
 		
-		if (index < 3) {
-			index--;
-			result[0] = parent[0] + index;
+		switch (index) {
+		case 0:
+			//up
+			result[0] = parent[0];
 			result[1] = parent[1] + 1;
-		} else if (index < 5) {
-			if (index == 3) {
-				result[0] = parent[0] - 1;
-			} else {
-				result[0] = parent[0] + 1;
-			}
+			break;
+		case 1:
+			//right
+			result[0] = parent[0] + 1;
 			result[1] = parent[1];
-		} else if (index < 8) {
-			index -= 6;
-			result[0] = parent[0] + index;
+			break;
+		case 2:
+			//down
+			result[0] = parent[0];
 			result[1] = parent[1] - 1;
+			break;
+		case 3:
+			//left
+			result[0] = parent[0] - 1;
+			result[1] = parent[1];
+			break;
+		case 4:
+			//upper right
+			result[0] = parent[0] + 1;
+			result[1] = parent[1] + 1;
+			break;
+		case 5:
+			//lower right
+			result[0] = parent[0] + 1;
+			result[1] = parent[1] - 1;
+			break;
+		case 6:
+			//lower left
+			result[0] = parent[0] - 1;
+			result[1] = parent[1] - 1;
+			break;
+		case 7:
+			//upper left
+			result[0] = parent[0] - 1;
+			result[1] = parent[1] + 1;
+			break;
 		}
+		
+//		if (index < 3) {
+//			index--;
+//			result[0] = parent[0] + index;
+//			result[1] = parent[1] + 1;
+//		} else if (index < 5) {
+//			if (index == 3) {
+//				result[0] = parent[0] - 1;
+//			} else {
+//				result[0] = parent[0] + 1;
+//			}
+//			result[1] = parent[1];
+//		} else if (index < 8) {
+//			index -= 6;
+//			result[0] = parent[0] + index;
+//			result[1] = parent[1] - 1;
+//		}
+	}
+	
+	private static void blockDiagonal(int index, boolean[] allowDiagonal) {
+		
+		if (index > 3) return;
+		
+		allowDiagonal[index] = false;
+		
+		index--;
+		
+		if (index < 0) index += 4;
+		allowDiagonal[index] = false;
 	}
 	
 	private static byte getRelativeCost(int index) {
@@ -128,14 +201,7 @@ public class AStarPathFinding {
 		
 		byte gridValue = STRAIGHT;
 		
-		switch (index) {
-		case 0:
-			gridValue = DIAGONAL;
-		case 2:
-			gridValue = DIAGONAL;
-		case 5:
-			gridValue = DIAGONAL;
-		case 7:
+		if (index > 3) {
 			gridValue = DIAGONAL;
 		}
 		
@@ -249,6 +315,25 @@ public class AStarPathFinding {
 	private static void setFromCoords(boolean[][] toSet, int[] coords, boolean value) {
 		
 		toSet[coords[0]][coords[1]] = value;
+	}
+	
+	public static boolean isSafeSpot(World world, int[] coord) {
+		
+		boolean safe = true;
+		int[] checkCoord = coord.clone();
+		
+		safe = !world.isBlocked(checkCoord[0], checkCoord[1]);
+//		if (safe) {
+//			for (byte i = 4; i < ADJACENT_NODES; i++) {
+//				
+//				getAdjacentNode(checkCoord, i, checkCoord);
+//				if (world.isBlocked(checkCoord[0], checkCoord[1])) {
+//					safe = false;
+//				}
+//			}
+//		}
+		
+		return safe;
 	}
 	
 	private static void twoDimFill(int[][] array, int value) {

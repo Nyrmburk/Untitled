@@ -120,6 +120,7 @@ public class Engine {
 		initWorld();
 		graphics.Render.initGL();
 		Input.load();
+		AssetManager.loadAll();
 
 	}
 
@@ -171,7 +172,7 @@ public class Engine {
 	/**
 	 * Load the world
 	 */
-	public static void initWorld() {
+	private static void initWorld() {
 		
 		world = new World(256, 256);
 		world.loadFromImage();
@@ -234,8 +235,21 @@ public class Engine {
 		//set the color to 75% white
 		GL11.glColor3f(0.75f, 0.75f, 0.75f);
 		//render the selection grid
-		Render.drawGrid(world, highlight[0], highlight[1], 6);
+		Render.drawLocalGrid(world, highlight[0], highlight[1], 6);
 //		System.out.println(Arrays.toString(highlight));
+		
+//		System.out.println(Arrays.toString(start) + ", " + Arrays.toString(end));
+		
+		Render.drawSelectionGrid(world, start, end);
+		
+//		GL11.glBegin(GL11.GL_TRIANGLES);
+//		GL11.glVertex3i(start[0], start[1], world.getWorldHeight()[start[0]][start[1]]);
+//		GL11.glVertex3i(start[0], end[1], world.getWorldHeight()[start[0]][end[1]]);
+//		GL11.glVertex3i(end[0], start[1], world.getWorldHeight()[end[0]][start[1]]);
+//		GL11.glVertex3i(end[0], end[1], world.getWorldHeight()[end[0]][end[1]]);
+//		GL11.glVertex3i(end[0], start[1], world.getWorldHeight()[end[0]][start[1]]);
+//		GL11.glVertex3i(start[0], end[1], world.getWorldHeight()[start[0]][end[1]]);
+//		GL11.glEnd();
 		
 	}
 	
@@ -259,6 +273,9 @@ public class Engine {
 		
 	}
 
+	int[] start = new int[2];
+	int[] end = new int[2];
+	
 	/**
 	 * Calculate all the goings-on in the world
 	 * @param delta The amout of time since the last frame
@@ -295,9 +312,18 @@ public class Engine {
 			Camera.moveX(-(float)delta/5 * keyScaleRatio);
 		}
 		
-		//add entity on release of left-click
-		if (Input.mouseChanged[0] == Input.RELEASED) {
-			Manager.addEntity(new Mob("testing", temp, new Model("icosahedron")));
+		if (Input.mouseChanged[0] == Input.PRESSED) {
+			
+			start[0] = (int) Math.rint(temp[0]);
+			start[1] = (int) Math.rint(temp[1]); 
+		} else if (Input.mouseDown[0]){
+			
+			end[0] = (int) Math.rint(temp[0]);
+			end[1] = (int) Math.rint(temp[1]); 
+		}
+		
+		if (Input.mouseChanged[1] == Input.RELEASED) {
+			Manager.addEntity(new Mob("testing", temp, AssetManager.getModel("monkey.obj")));
 		}
 		
 		//translate camera up and down (zoom)

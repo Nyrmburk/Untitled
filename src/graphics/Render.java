@@ -2,6 +2,8 @@ package graphics;
 
 import java.nio.FloatBuffer;
 
+import main.Engine;
+
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -60,7 +62,68 @@ public class Render {
 		
 	}
 	
-	public static void drawGrid(World world, int centerX, int centerY, int radius) {
+	public static void drawSelectionGrid(World world, int[] startCoord, int[] endCoord) {
+		
+		
+		int[] lowest = {Math.min(startCoord[0], endCoord[0]), Math.min(startCoord[1], endCoord[1])};
+		int[] highest = {Math.max(startCoord[0], endCoord[0]), Math.max(startCoord[1], endCoord[1])};
+		
+		//change from fill polygons to draw wireframe
+		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK,GL11.GL_LINE);
+		//flat shading
+		GL11.glShadeModel(GL11.GL_FLAT);
+		//offset the line depth so it does not collide with the other polygons
+		GL11.glEnable(GL11.GL_POLYGON_OFFSET_LINE);
+		//set the offset distance
+		GL11.glPolygonOffset( -2f, -2f );
+		GL11.glDisable(GL11.GL_LIGHTING);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		
+		//left vertical
+		GL11.glBegin(GL11.GL_LINE_STRIP);
+		for (int y = lowest[1]; y < highest[1]+1; y++) {
+
+			GL11.glVertex3f(lowest[0], y, ((MapMesh) Engine.worldEntity.mdl)
+					.getHeight(new float[] { lowest[0], y }));
+		}
+		GL11.glEnd();
+		
+		//right vertical
+		GL11.glBegin(GL11.GL_LINE_STRIP);
+		for (int y = lowest[1]; y < highest[1]+1; y++) {
+
+			GL11.glVertex3f(highest[0], y, ((MapMesh) Engine.worldEntity.mdl)
+					.getHeight(new float[] { highest[0], y }));
+		}
+		GL11.glEnd();
+		
+		//bottom horizontal
+		GL11.glBegin(GL11.GL_LINE_STRIP);
+		for (int y = lowest[0]; y < highest[0]+1; y++) {
+
+			GL11.glVertex3f(y, lowest[1], ((MapMesh) Engine.worldEntity.mdl)
+					.getHeight(new float[] { y, lowest[1] }));
+		}
+		GL11.glEnd();
+		
+		//top horizontal
+		GL11.glBegin(GL11.GL_LINE_STRIP);
+		for (int y = lowest[0]; y < highest[0]+1; y++) {
+
+			GL11.glVertex3f(y, highest[1], ((MapMesh) Engine.worldEntity.mdl)
+					.getHeight(new float[] { y, highest[1] }));
+		}
+		GL11.glEnd();
+		
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glEnable(GL11.GL_LIGHTING);
+		//disable line offset
+		GL11.glDisable(GL11.GL_POLYGON_OFFSET_LINE);
+		//return polygon mode to fill
+		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK,GL11.GL_FILL);
+	}
+	
+	public static void drawLocalGrid(World world, int centerX, int centerY, int radius) {
 		
 		final float MID = 0.5f;
 		
