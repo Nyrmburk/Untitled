@@ -15,7 +15,9 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
+import ai.ActionMove;
 import world.World;
+import world.Zone;
 
 /**
  * The main brunt of the program. I dont know what else to put here.
@@ -28,11 +30,11 @@ public class Engine {
 	public static int delta;
 	
 	/**	Frames per second**/
-	public static int fps; // Actual frames per second
+	public static int fps;
 	/**	FPS cap**/
-	public static int setFPS;
+	public static int setFPS = 0;
 	/**	Last frame's FPS**/
-	private static long lastFPS = 0; // last frame's fps
+	private static long lastFPS = 0;
 	/**	Last frame's creation time**/
 	private static long lastFrame = 0;
 	
@@ -80,6 +82,11 @@ public class Engine {
 				render();
 			}
 			
+//			renderUI();
+			
+			//check for graphics errors
+//			GLErrorHelper.checkError();
+			
 //			if (Display.wasResized()) {
 //				Settings.windowWidth= GUI.cnvsDisplay.getWidth();
 //				Settings.windowHeight = GUI.cnvsDisplay.getHeight();
@@ -100,6 +107,8 @@ public class Engine {
 	 * Safely close down the engine 
 	 */
 	public static void close() {
+		
+		ShaderProgram.deleteAll();
 		
 		// dispose of the graphics
 		Display.destroy();
@@ -177,13 +186,13 @@ public class Engine {
 		world = new World(256, 256);
 		world.loadFromImage();
 		
-		try {
-			world.saveWorld("test");
-			world.loadWorld("test");
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
+//		try {
+//			world.saveWorld("test");
+//			world.loadWorld("test");
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			System.exit(1);
+//		}
 		
 		worldEntity = new Entity("world", Entity.types.WORLD, new float[3], new MapMesh(world));
 	}
@@ -240,17 +249,60 @@ public class Engine {
 		
 //		System.out.println(Arrays.toString(start) + ", " + Arrays.toString(end));
 		
-		Render.drawSelectionGrid(world, start, end);
+		if (Input.mouseDown[0]) {
+			
+			Render.drawSelectionGrid(world, start, end);
+		}
 		
+		if (Input.keyDown.get("spawn4")) {
+			
+			Render.drawSelectionGrid(world, start, end);
+		}
+		
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		GL11.glBegin(GL11.GL_POINTS);
+		for (int y = 0; y < world.getY(); y++) {
+			for (int x = 0; x < world.getX(); x++) {
+				int[] colorCoord = {x, y}; 
+				GL11.glColor3f(world.getMovementSpeed(colorCoord), (float) world.getDesirePath(colorCoord) / 63f, 0);
+				GL11.glVertex3i(x, y, world.getWorldHeight()[x][y]);
+			}
+		}
+		GL11.glEnd();
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+	}
+	
+	public void renderUI() {
+		
+		Camera.UI();
+		
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		GL11.glDisable(GL11.GL_LIGHTING);
+		GL11.glShadeModel(GL11.GL_SMOOTH);
+		
+//		Draw the triangle of death
 //		GL11.glBegin(GL11.GL_TRIANGLES);
-//		GL11.glVertex3i(start[0], start[1], world.getWorldHeight()[start[0]][start[1]]);
-//		GL11.glVertex3i(start[0], end[1], world.getWorldHeight()[start[0]][end[1]]);
-//		GL11.glVertex3i(end[0], start[1], world.getWorldHeight()[end[0]][start[1]]);
-//		GL11.glVertex3i(end[0], end[1], world.getWorldHeight()[end[0]][end[1]]);
-//		GL11.glVertex3i(end[0], start[1], world.getWorldHeight()[end[0]][start[1]]);
-//		GL11.glVertex3i(start[0], end[1], world.getWorldHeight()[start[0]][end[1]]);
+//		GL11.glColor3f(1, 0, 0);
+//		GL11.glVertex3f(450, 660, 1);
+//		GL11.glColor3f(0, 1, 0);
+//		GL11.glVertex3f(450, 140, 1);
+//		GL11.glColor3f(0, 0, 1);
+//		GL11.glVertex3f(900, 400, 1);
 //		GL11.glEnd();
 		
+		Render.drawActionCircle(new int[]{Input.mouseX, Input.mouseY}, new int[2], 5);
+		
+		GL11.glColor3f(1, 1, 1);
+		GL11.glBegin(GL11.GL_LINE_LOOP);
+		GL11.glVertex2i(1, 1);
+		GL11.glVertex2i(1199, 1);
+		GL11.glVertex2i(1199, 899);
+		GL11.glVertex2i(1, 899);
+		GL11.glEnd();
+		
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glEnable(GL11.GL_LIGHTING);
+		Camera.perspective();
 	}
 	
 	/**
@@ -316,14 +368,89 @@ public class Engine {
 			
 			start[0] = (int) Math.rint(temp[0]);
 			start[1] = (int) Math.rint(temp[1]); 
-		} else if (Input.mouseDown[0]){
+		}
+		if (Input.mouseDown[0]){
 			
 			end[0] = (int) Math.rint(temp[0]);
-			end[1] = (int) Math.rint(temp[1]); 
+			end[1] = (int) Math.rint(temp[1]);
+			
+			Select.updateSelection(start, end);
+		}
+		
+		int[] highlight = new int[3];
+		for (int i = 0; i < temp.length; i++) {
+			highlight[i] = (int) Math.rint(temp[i]);
 		}
 		
 		if (Input.mouseChanged[1] == Input.RELEASED) {
+
+			for (Entity entity : Manager.entityList) {
+				if (entity instanceof Mob && entity instanceof Selectable) {
+					if (((Selectable) entity).isSelected()) {
+						
+						((Mob) entity).addAction(new ActionMove(new int[]{highlight[0], highlight[1]}));
+					}
+				}
+			}
+		}
+		
+		if (Input.keyChanged.get("spawn0") == Input.RELEASED) {
+			
+			System.out.println("movementSpeed = " + world.getMovementSpeed(highlight));
+		}
+		
+		if (Input.keyChanged.get("spawn1") == Input.RELEASED) {
+			
 			Manager.addEntity(new Mob("testing", temp, AssetManager.getModel("monkey.obj")));
+			System.out.println(Manager.entityList.size() + " entities");
+		}
+		
+		if (Input.keyChanged.get("spawn2") == Input.RELEASED) {
+			
+			Manager.addEntity(new Item("testing", Item.itemTypes.ROCK, 
+					0.25f, highlight, AssetManager.getModel("rocks.obj")));
+			System.out.println(Manager.entityList.size() + " entities");
+		}
+		
+		if (Input.keyChanged.get("spawn3") == Input.RELEASED) {
+			
+			Manager.addEntity(new Item("testing", Item.itemTypes.ROCK, 
+					highlight, AssetManager.getModel("crate.obj")));
+			System.out.println(Manager.entityList.size() + " entities");
+		}
+		
+		if (Input.keyChanged.get("spawn5") == Input.RELEASED) {
+			
+			Manager.addEntity(new Item("testing", Item.itemTypes.ROCK, 
+					highlight, AssetManager.getModel("untitled.obj")));
+			System.out.println(Manager.entityList.size() + " entities");
+		}
+		
+		if (Input.keyChanged.get("spawn4") == Input.PRESSED) {
+			
+			start = highlight;
+		}
+		
+		if (Input.keyDown.get("spawn4")) {
+			
+			end = highlight;
+		}
+		
+		if (Input.keyChanged.get("spawn4") == Input.RELEASED) {
+			
+			Manager.addZone(new Zone(start, end));
+		}
+		
+		if (Input.keyChanged.get("refresh") == Input.RELEASED) {
+			
+			System.out.println("refreshing shaders");
+//			for (Shader shader : AssetManager.shaderMap.values()) {
+//				shader.refresh();
+//			}
+			for (ShaderProgram shaderProgram : ShaderProgram.programList) {
+				
+				shaderProgram.rebuild();
+			}
 		}
 		
 		//translate camera up and down (zoom)

@@ -6,6 +6,12 @@ import java.util.Random;
 import main.GeometryHelper;
 import world.World;
 
+/**
+ * Turn a heightmap into a mesh.
+ * TODO Add chunk system.
+ * @author Christopher Dombroski
+ *
+ */
 public class MapMesh extends Model {
 
 //	public MapMesh(World world) {
@@ -162,6 +168,7 @@ public class MapMesh extends Model {
 	}
 	
 	private static void listFill(ArrayList<float[]> list,float[] element, int size) {
+		list.ensureCapacity(size);
 		
 		for (int i = 0; i < size; i++) {
 			list.add(element);

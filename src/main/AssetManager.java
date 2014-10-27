@@ -7,27 +7,33 @@ import graphics.Texture;
 import java.io.File;
 import java.util.HashMap;
 
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL32;
+import org.lwjgl.opengl.GL40;
+import org.lwjgl.opengl.GL43;
+
+/**
+ * Load all the assets before the game starts.
+ * TODO multithread this for concurrent loading of assets
+ * @author Christopher Dombroski
+ *
+ */
 public class AssetManager {
-	
+
 	private static final String ROOT = "res" + File.separator;
 	private static final String MODEL_ROOT = ROOT + "models" + File.separator;
-	private static final String TEXTURE_ROOT = "textures" + File.separator;
-	private static final String SHADER_ROOT = "shaders" + File.separator;
-	
-	enum assetType{
-		MODEL,
-		TEXTURE,
-		SHADER
-	}
-	
-	private static HashMap<String, Model> modelMap = new HashMap<String, Model>();
-	private static HashMap<String, Texture> textureMap = new HashMap<String, Texture>();
-	private static HashMap<String, Shader> shaderMap = new HashMap<String, Shader>();
-	
+	private static final String TEXTURE_ROOT = ROOT + "textures"
+			+ File.separator;
+	private static final String SHADER_ROOT = ROOT + "shaders" + File.separator;
+
+	static HashMap<String, Model> modelMap = new HashMap<String, Model>();
+	static HashMap<String, Texture> textureMap = new HashMap<String, Texture>();
+	static HashMap<String, Shader> shaderMap = new HashMap<String, Shader>();
+
 	public static Model getModel(String name) {
-		
+
 		Model model = modelMap.get(name);
-		
+
 		if (model == null) {
 			return new Model();
 		} else {
@@ -35,75 +41,137 @@ public class AssetManager {
 		}
 	}
 	
-	public static void loadAll() {
-		
-		File modelPath = new File(MODEL_ROOT);
-		File texturePath = new File(TEXTURE_ROOT);
-		File shaderPath = new File(SHADER_ROOT);
-		
-		if (modelPath.exists() && modelPath.isDirectory()) {
-			String[] models = modelPath.list();
-			
-			for(String model : models) {
-				
-				loadAsset(assetType.MODEL, model);
-			}
+	public static Texture getTexture(String name) {
+
+		Texture texture = textureMap.get(name);
+
+		if (texture == null) {
+			return new Texture();
 		} else {
-			modelPath.mkdir();
-		}
-		
-		if (texturePath.exists() && texturePath.isDirectory()) {
-			String[] textures = texturePath.list();
-			
-			for(String texture : textures) {
-				
-				loadAsset(assetType.MODEL, texture);
-			}
-		} else {
-			modelPath.mkdir();
-		}
-		
-		if (shaderPath.exists() && shaderPath.isDirectory()) {
-			String[] shaders = shaderPath.list();
-			
-			for(String shader : shaders) {
-				
-				loadAsset(assetType.MODEL, shader);
-			}
-		} else {
-			modelPath.mkdir();
+			return texture;
 		}
 	}
 	
-	public static void loadAsset(assetType type, String fileName) {
-		
-		File file;
-		
-		switch (type) {
-		case MODEL:
-			file = new File(MODEL_ROOT + fileName);
-			
-			if (file.exists()) {
-				
-				modelMap.put(fileName,new Model(file));
+	public static Shader getShader(String name) {
+
+		Shader shader = shaderMap.get(name);
+
+		if (shader == null) {
+			return new Shader();
+		} else {
+			return shader;
+		}
+	}
+
+	public static void loadAll() {
+
+		File modelPath = new File(MODEL_ROOT);
+		File texturePath = new File(TEXTURE_ROOT);
+		File shaderSubPath = new File(SHADER_ROOT);
+		;
+
+		if (modelPath.exists() && modelPath.isDirectory()) {
+			String[] models = modelPath.list();
+
+			for (String model : models) {
+
+				loadModel(model);
 			}
+		} else {
+			modelPath.mkdir();
+		}
+
+		if (texturePath.exists() && texturePath.isDirectory()) {
+			String[] textures = texturePath.list();
+
+			for (String texture : textures) {
+
+				loadTexture(texture);
+			}
+		} else {
+			texturePath.mkdir();
+		}
+
+		if (shaderSubPath.exists() && shaderSubPath.isDirectory()) {
+			String[] shaderPaths = shaderSubPath.list();
+
+			for (String shaderPath : shaderPaths) {
+
+				for (String shader : new File(shaderSubPath + File.separator
+						+ shaderPath).list()) {
+
+					loadShader(shaderPath, shader);
+				}
+			}
+		} else {
+			texturePath.mkdir();
+		}
+	}
+
+	public static void loadModel(String fileName) {
+
+		File file = new File(MODEL_ROOT + fileName);
+
+		if (file.exists() && file.isFile()) {
+
+			modelMap.put(fileName, new Model(file));
+		}
+	}
+
+	public static void loadTexture(String fileName) {
+
+		File file = new File(TEXTURE_ROOT + fileName);
+
+		if (file.exists() && file.isFile()) {
+
+			textureMap.put(fileName, new Texture(file));
+		}
+	}
+
+	public static void loadShader(String parentDirectory, String fileName) {
+
+		File file = new File(SHADER_ROOT + parentDirectory + File.separator
+				+ fileName);
+
+		if (file.exists() && file.isFile()) {
+
+			shaderMap.put(fileName, new Shader(file,
+					getShaderType(parentDirectory)));
+		}
+	}
+
+	private static int getShaderType(String directory) {
+
+		final String VERTEX = "vertex";
+		final String TESSELATION_CONTROL = "tesselation control";
+		final String TESSELATION_EVALUATION = "tesselation evaluation";
+		final String GEOMETRY = "geometry";
+		final String FRAGMENT = "fragment";
+		final String COMPUTE = "compute";
+
+		int type = 0;
+
+		switch (directory) {
+		case VERTEX:
+			type = GL20.GL_VERTEX_SHADER;
 			break;
-		case TEXTURE:
-			file = new File(TEXTURE_ROOT + fileName);
-
-			if (file.exists()) {
-
-				textureMap.put(fileName, new Texture(file));
-			}
+		case TESSELATION_CONTROL:
+			type = GL40.GL_TESS_CONTROL_SHADER;
 			break;
-		case SHADER:
-			file = new File(SHADER_ROOT + fileName);
-
-			if (file.exists()) {
-
-				shaderMap.put(fileName, new Shader(file));
-			}
+		case TESSELATION_EVALUATION:
+			type = GL40.GL_TESS_EVALUATION_SHADER;
+			break;
+		case GEOMETRY:
+			type = GL32.GL_GEOMETRY_SHADER;
+			break;
+		case FRAGMENT:
+			type = GL20.GL_FRAGMENT_SHADER;
+			break;
+		case COMPUTE:
+			type = GL43.GL_COMPUTE_SHADER;
 			break;
 		}
+
+		return type;
 	}
 }

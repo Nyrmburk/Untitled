@@ -1,5 +1,6 @@
 package entity;
 
+import graphics.Drawable;
 import graphics.Model;
 
 import java.nio.FloatBuffer;
@@ -20,7 +21,7 @@ import org.lwjgl.opengl.GL30;
  * @author Christopher Dombroski
  *
  */
-public class Entity {
+public class Entity implements Drawable{
 
 	public String name;
 
@@ -145,7 +146,9 @@ public class Entity {
 		GL11.glPushMatrix();
 
 		GL11.glTranslatef(location[0], location[1], location[2]);
-//		GL11.glScalef(10, 10, 10);
+		GL11.glRotatef(rotation[0], 1, 0, 0);
+		GL11.glRotatef(rotation[1], 0, 1, 0);
+		GL11.glRotatef(rotation[2], 0, 0, 1);
 
 		GL30.glBindVertexArray(VAOID);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, VBOIID);

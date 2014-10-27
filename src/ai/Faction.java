@@ -1,5 +1,11 @@
 package ai;
 
+/**
+ * Define a faction used by entities, primarily mobs. Holds information about 
+ * Friendly or not and faction name.
+ * @author Christopher Dombroski
+ *
+ */
 public class Faction {
 
 	private String name;

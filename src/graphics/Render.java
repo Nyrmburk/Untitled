@@ -11,23 +11,28 @@ import org.lwjgl.util.glu.GLU;
 
 import world.World;
 
+/**
+ * Provide specialty rendering such as various ui elements.
+ * Might deprecate soon.
+ * @author Christopher Dombroski
+ *
+ */
 public class Render {
+	
+	String version = GL11.glGetString(GL11.GL_VERSION);
 	
 	public static void initGL() {
 
 		// init opengl
-		GL11.glMatrixMode(GL11.GL_PROJECTION);
-		GL11.glLoadIdentity();
-//		GL11.glOrtho(0, 341, 0, 256, Camera.near, Camera.far);
-		GLU.gluPerspective(Camera.fov, Camera.aspectRatio, Camera.near, Camera.far);
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+
+		Camera.perspective();
+		
 		GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
 		GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-
-//		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
 		
 		FloatBuffer ambient = asFloatBuffer(new float[]{0.2f, 0.2f, 0.2f, 1f});
 		FloatBuffer light = asFloatBuffer(new float[]{0.5f, 0.5f, 0.5f, 1f});
+		
 		GL11.glShadeModel(GL11.GL_FLAT);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
@@ -46,7 +51,7 @@ public class Render {
 		
 		GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
 		
-		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK,GL11.GL_FILL);//line point fill\
+		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK,GL11.GL_LINE);//line point fill\
 		GL11.glPointSize(3);
 
 	}
@@ -172,5 +177,28 @@ public class Render {
 		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glPopMatrix();
+	}
+	
+	public static void drawActionCircle(int[] cursorStart, int cursorEnd[], int options) {
+		
+		final int degreesInCircle = 360;
+		final int circlePoints = 32;
+		final int innerRadius = 50;
+		final int outerRadius = 100;
+		
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		GL11.glBegin(GL11.GL_QUAD_STRIP);
+		for (int i = 0; i <= circlePoints; i++) {
+			float angle = (float) Math.toRadians(((float) degreesInCircle / circlePoints) * i);
+			
+			float inX = cursorStart[0] + innerRadius * (float)Math.cos(angle);
+			float inY = cursorStart[1] + innerRadius * (float)Math.sin(angle);
+			float outX = cursorStart[0] + outerRadius * (float)Math.cos(angle);
+			float outY = cursorStart[1] + outerRadius * (float)Math.sin(angle);
+			
+			GL11.glVertex3f(inX, inY, 0);
+			GL11.glVertex3f(outX, outY, 0);
+		}
+		GL11.glEnd();
 	}
 }

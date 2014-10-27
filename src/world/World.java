@@ -1,6 +1,7 @@
 package world;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -15,6 +16,22 @@ import javax.imageio.ImageIO;
  * 
  */
 public class World {
+
+	// int world x, int world y, int structure length, int items length, int mined length.
+	private static final byte HEADER_SIZE = 4 + 4 + 4 + 4 + 4;
+
+	//world size
+	private int worldX, worldY;
+
+	private byte[][] worldHeight;
+	private byte[][] worldType;
+	private byte[][] desirePath;
+	private float[][] movementSpeed;
+
+//	private ArrayList<> zones;
+	private ArrayList<Byte> structureType;
+	private ArrayList<Byte> items;
+	private ArrayList<Byte> minedBlocks;
 	
 	public World(int worldX, int worldY) {
 		this.worldX = worldX;
@@ -22,6 +39,13 @@ public class World {
 		
 		worldHeight = new byte[worldX][worldY];
 		worldType = new byte[worldX][worldY];
+		desirePath = new byte[worldX][worldY];
+		movementSpeed = new float[worldX][worldY];
+		
+		for (int i = 0; i < movementSpeed.length; i++) {
+			Arrays.fill(movementSpeed[i], 1f);
+		}
+		
 		structureType = new ArrayList<Byte>();
 		items = new ArrayList<Byte>();
 		minedBlocks = new ArrayList<Byte>();
@@ -34,19 +58,6 @@ public class World {
 			}
 		}
 	}
-
-	// int world x, int world y, int structure length, int items length, int mined length.
-	private static final byte HEADER_SIZE = 4 + 4 + 4 + 4 + 4;
-
-	//world size
-	private int worldX, worldY;
-
-	private byte[][] worldHeight;
-	private byte[][] worldType;
-
-	private ArrayList<Byte> structureType;
-	private ArrayList<Byte> items;
-	private ArrayList<Byte> minedBlocks;
 
 	private byte[] getHeader() {
 
@@ -165,7 +176,7 @@ public class World {
 		for (int y = 0; y < worldY; y++) {
 			for (int x = 0; x < worldX; x++) {
 				
-				worldHeight[x][y] = (byte) (bImage.getRGB(x, y) & 0xFF);
+				worldHeight[x][y] = (byte) (bImage.getRGB(x, worldY - y - 1) & 0xFF);
 				worldHeight[x][y] = (byte) (worldHeight[x][y] >> 2 & 0x3F);
 			}
 		}
@@ -207,5 +218,37 @@ public class World {
 		}
 		
 		return blocked;
+	}
+	
+	public float getMovementSpeed(int[] coord) {
+		
+		return movementSpeed[coord[0]][coord[1]];
+	}
+	
+	public float[][] getMovementSpeed() {
+		
+		return movementSpeed;
+	}
+	
+	public void setMovementSpeed(int[] coord, float percent) {
+		
+		movementSpeed[coord[0]][coord[1]] = percent;
+	}
+	
+	public void clearMovementSpeed(int[] coord) {
+		
+		movementSpeed[coord[0]][coord[1]] = 1f;
+	}
+	
+	public byte getDesirePath(int[] coord) {
+		
+		return desirePath[coord[0]][coord[1]];
+	}
+	
+	public void incrementDesirePath(int[] coord) {
+		
+		if (desirePath[coord[0]][coord[1]] != Byte.MAX_VALUE) {
+			desirePath[coord[0]][coord[1]]++;
+		}
 	}
 }

@@ -1,5 +1,11 @@
 package ai;
 
+/**
+ * Make the AI wait for a designated amount of time. It is primarily called by 
+ * ActionWander.
+ * @author Christopher Dombroski
+ *
+ */
 public class ActionWait extends Action {
 	
 	private long endTime; 
@@ -9,6 +15,7 @@ public class ActionWait extends Action {
 		endTime = System.currentTimeMillis() + milliseconds;
 		
 		priority = 0;
+		temporary = true;
 	}
 
 	@Override

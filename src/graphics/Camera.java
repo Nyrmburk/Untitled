@@ -5,6 +5,11 @@ import main.Settings;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
+/**
+ * Add smarter camera control. Currently under development.
+ * @author Christopher Dombroski
+ *
+ */
 public class Camera {
 	
 	public static float aspectRatio = (float)Settings.windowWidth/Settings.windowHeight;
@@ -43,6 +48,14 @@ public class Camera {
 		GLU.gluLookAt(eye[0], eye[1], eye[2], 
 				center[0], center[1], center[2], 
 				UP[0], UP[1], UP[2]);
+	}
+	
+	public static void perspective() {
+		
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glLoadIdentity();
+		GLU.gluPerspective(Camera.fov, Camera.aspectRatio, Camera.near, Camera.far);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 	}
 	
 	public static void rightEye() {
@@ -99,4 +112,12 @@ public class Camera {
 		
 	}
 
+	public static void UI() {
+		
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glLoadIdentity();
+		GL11.glOrtho(0, Settings.windowWidth, 0, Settings.windowHeight, -10, 10);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		GL11.glLoadIdentity();
+	}
 }
