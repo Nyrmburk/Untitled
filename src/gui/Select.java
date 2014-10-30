@@ -8,8 +8,8 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
+import world.Coord;
 import entity.Entity;
-import entity.Selectable;
 
 /**
  * Manage the selection of entities.
@@ -41,14 +41,11 @@ public class Select {
 		return coord;
 	}
 	
-	public static void updateSelection(int[] start, int[] end) {
+	public static void updateSelection(Coord start, Coord end) {
 		
 		for (Entity entity : Manager.entityList) {
 			
-			if (entity instanceof Selectable) {
-				
-				((Selectable) entity).checkSelected(start, end);
-			}
+			entity.proccessSelectable(start, end);
 		}
 	}
 

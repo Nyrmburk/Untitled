@@ -20,7 +20,7 @@ public class Mob extends Entity implements Selectable, Movable {
 
 	int[] coord;
 	int[] nextCoord;
-//	int[] lastCoord;
+	// int[] lastCoord;
 	int[] destCoord;
 
 	float speed = 3f;
@@ -43,6 +43,7 @@ public class Mob extends Entity implements Selectable, Movable {
 
 	public Mob(String name, Faction faction, float[] location, Model model) {
 		super(name, types.MOB, location, model);
+		super.addSelectable(this);
 		this.coord = locationToCoord(this.location);
 		this.faction = faction;
 	}
@@ -59,7 +60,7 @@ public class Mob extends Entity implements Selectable, Movable {
 		GL11.glShadeModel(GL11.GL_SMOOTH);
 		super.draw();
 		GL11.glShadeModel(GL11.GL_FLAT);
-		
+
 		GL11.glColor3f(0.8f, 0.8f, 0.8f);
 
 		if (pathSteps != null) {
@@ -67,7 +68,7 @@ public class Mob extends Entity implements Selectable, Movable {
 			GL11.glDisable(GL11.GL_LIGHTING);
 			GL11.glDisable(GL11.GL_DEPTH_TEST);
 			GL11.glBegin(GL11.GL_LINE_STRIP);
-			
+
 			GL11.glVertex3f(location[0], location[1],
 					((MapMesh) Engine.worldEntity.mdl).getHeight(location));
 			for (int[] step : pathSteps) {
@@ -114,13 +115,13 @@ public class Mob extends Entity implements Selectable, Movable {
 		if (pathSteps != null && !pathSteps.isEmpty()) {
 
 			nextCoord = pathSteps.get(0).clone();
-			
-//			if (lastCoord != null) {
-//				Engine.world.clearMovementSpeed(lastCoord);
-//			}
-//			Engine.world.setMovementSpeed(coord, 0.2f);
-//			
-//			lastCoord = coord;
+
+			// if (lastCoord != null) {
+			// Engine.world.clearMovementSpeed(lastCoord);
+			// }
+			// Engine.world.setMovementSpeed(coord, 0.2f);
+			//
+			// lastCoord = coord;
 		} else {
 
 			nextCoord = coord.clone();
@@ -128,9 +129,10 @@ public class Mob extends Entity implements Selectable, Movable {
 
 		moveTo(coord, nextCoord, delta);
 
-		if (location[0] == nextCoord[0] && location[1] == nextCoord[1] && pathSteps != null
+		if (Math.round(location[0]) == nextCoord[0]
+				&& Math.round(location[1]) == nextCoord[1] && pathSteps != null
 				&& !pathSteps.isEmpty()) {
-			
+
 			Engine.world.incrementDesirePath(coord);
 			pathSteps.remove(0);
 		}
@@ -145,7 +147,7 @@ public class Mob extends Entity implements Selectable, Movable {
 				+ dy * dy));
 		if (Float.isInfinite(distance))
 			distance = 0;
-		
+
 		distance *= Engine.world.getMovementSpeed(coord);
 
 		if (Math.abs(dx) <= Math.abs(distance * dx)) {
@@ -161,32 +163,36 @@ public class Mob extends Entity implements Selectable, Movable {
 		}
 
 		location[2] = ((MapMesh) Engine.worldEntity.mdl).getHeight(location) + 0.8f;
-		
+
 		lookAt(nextCoord);
 	}
-	
+
 	private void lookAt(int[] coord) {
-		
-		float[] location = {coord[0], coord[1], 0};
+
+		float[] location = { coord[0], coord[1], 0 };
 		location[2] = ((MapMesh) Engine.worldEntity.mdl).getHeight(location) + 0.8f;
 		lookAt(location);
 	}
-	
+
 	private void lookAt(float[] location) {
-		
-		if (Arrays.equals(location,  this.location)) return;
+
+		if (Arrays.equals(location, this.location))
+			return;
 		location[0] -= this.location[0];
 		location[1] -= this.location[1];
 		location[2] -= this.location[2];
-		
-		rotation[2] = -(float) Math.toDegrees(Math.atan2(location[0], location[1]));
-		
-		//todo later
-//		float longSide = (float) Math.sqrt(location[0] * location[0] + 
-//						location[1] * location[1]);
-//		float pitch = (float) Math.toDegrees(Math.atan2(location[2], longSide));
-//		rotation[1] = pitch * (float) Math.tan(Math.toRadians(rotation[2]));
-//		rotation[0] = pitch * (float) Math.tan(Math.toRadians(90 - rotation[2]));
+
+		rotation[2] = -(float) Math.toDegrees(Math.atan2(location[0],
+				location[1]));
+
+		// todo later
+		// float longSide = (float) Math.sqrt(location[0] * location[0] +
+		// location[1] * location[1]);
+		// float pitch = (float) Math.toDegrees(Math.atan2(location[2],
+		// longSide));
+		// rotation[1] = pitch * (float) Math.tan(Math.toRadians(rotation[2]));
+		// rotation[0] = pitch * (float) Math.tan(Math.toRadians(90 -
+		// rotation[2]));
 	}
 
 	private void navigateTo(int[] destCoord) {
@@ -219,45 +225,6 @@ public class Mob extends Entity implements Selectable, Movable {
 	}
 
 	@Override
-	public int[] getCoord() {
-
-		return coord;
-	}
-
-	@Override
-	public int getSelectionPriority() {
-
-		return selectionPriority;
-	}
-
-	@Override
-	public boolean isSelected() {
-
-		return selected;
-	}
-
-	@Override
-	public void checkSelected(int[] startCoord, int[] endCoord) {
-
-		int[] coord = getCoord();
-		int[] lowestCoord = { Math.min(startCoord[0], endCoord[0]),
-				Math.min(startCoord[1], endCoord[1]) };
-		;
-		int[] highestCoord = { Math.max(startCoord[0], endCoord[0]),
-				Math.max(startCoord[1], endCoord[1]) };
-		;
-
-		if (lowestCoord[0] <= coord[0] && coord[0] <= highestCoord[0]
-				&& lowestCoord[1] < coord[1] && coord[1] < highestCoord[1]) {
-
-			selected = true;
-		} else {
-
-			selected = false;
-		}
-	}
-
-	@Override
 	public boolean isAllowed() {
 		// TODO Auto-generated method stub
 		return false;
@@ -272,12 +239,24 @@ public class Mob extends Entity implements Selectable, Movable {
 	@Override
 	public void pickUp() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void drop() {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	public boolean isSelected() {
+
+		return selected;
+	}
+
+	@Override
+	public void selected(boolean selected) {
+
+		this.selected = selected;
 	}
 }

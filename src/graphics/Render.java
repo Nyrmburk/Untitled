@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.util.glu.GLU;
 
+import world.Coord;
 import world.World;
 
 /**
@@ -67,11 +68,11 @@ public class Render {
 		
 	}
 	
-	public static void drawSelectionGrid(World world, int[] startCoord, int[] endCoord) {
+	public static void drawSelectionGrid(World world, Coord startCoord, Coord endCoord) {
 		
 		
-		int[] lowest = {Math.min(startCoord[0], endCoord[0]), Math.min(startCoord[1], endCoord[1])};
-		int[] highest = {Math.max(startCoord[0], endCoord[0]), Math.max(startCoord[1], endCoord[1])};
+		Coord lowest = Coord.lowestCoord(startCoord, endCoord);
+		Coord highest = Coord.highestCoord(startCoord, endCoord);
 		
 		//change from fill polygons to draw wireframe
 		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK,GL11.GL_LINE);
@@ -86,37 +87,37 @@ public class Render {
 		
 		//left vertical
 		GL11.glBegin(GL11.GL_LINE_STRIP);
-		for (int y = lowest[1]; y < highest[1]+1; y++) {
+		for (int y = lowest.y; y < highest.y+1; y++) {
 
-			GL11.glVertex3f(lowest[0], y, ((MapMesh) Engine.worldEntity.mdl)
-					.getHeight(new float[] { lowest[0], y }));
+			GL11.glVertex3f(lowest.x, y, ((MapMesh) Engine.worldEntity.mdl)
+					.getHeight(new float[] { lowest.x, y }));
 		}
 		GL11.glEnd();
 		
 		//right vertical
 		GL11.glBegin(GL11.GL_LINE_STRIP);
-		for (int y = lowest[1]; y < highest[1]+1; y++) {
+		for (int y = lowest.y; y < highest.y+1; y++) {
 
-			GL11.glVertex3f(highest[0], y, ((MapMesh) Engine.worldEntity.mdl)
-					.getHeight(new float[] { highest[0], y }));
+			GL11.glVertex3f(highest.x, y, ((MapMesh) Engine.worldEntity.mdl)
+					.getHeight(new float[] { highest.x, y }));
 		}
 		GL11.glEnd();
 		
 		//bottom horizontal
 		GL11.glBegin(GL11.GL_LINE_STRIP);
-		for (int y = lowest[0]; y < highest[0]+1; y++) {
+		for (int y = lowest.x; y < highest.x+1; y++) {
 
-			GL11.glVertex3f(y, lowest[1], ((MapMesh) Engine.worldEntity.mdl)
-					.getHeight(new float[] { y, lowest[1] }));
+			GL11.glVertex3f(y, lowest.y, ((MapMesh) Engine.worldEntity.mdl)
+					.getHeight(new float[] { y, lowest.y }));
 		}
 		GL11.glEnd();
 		
 		//top horizontal
 		GL11.glBegin(GL11.GL_LINE_STRIP);
-		for (int y = lowest[0]; y < highest[0]+1; y++) {
+		for (int y = lowest.x; y < highest.x+1; y++) {
 
-			GL11.glVertex3f(y, highest[1], ((MapMesh) Engine.worldEntity.mdl)
-					.getHeight(new float[] { y, highest[1] }));
+			GL11.glVertex3f(y, highest.y, ((MapMesh) Engine.worldEntity.mdl)
+					.getHeight(new float[] { y, highest.y }));
 		}
 		GL11.glEnd();
 		

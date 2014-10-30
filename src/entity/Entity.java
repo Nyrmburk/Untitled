@@ -14,31 +14,31 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
 
+import world.Coord;
 
 /**
- * Holds data about every entity such as the model, location, rotation, 
- * and others. It also contains a method to draw the model and update it.
+ * Holds data about every entity such as the model, location, rotation, and
+ * others. It also contains a method to draw the model and update it.
+ * 
  * @author Christopher Dombroski
  *
  */
-public class Entity implements Drawable{
+public class Entity implements Drawable {
 
 	public String name;
 
 	public boolean isActive = true;
-	
+	private Selectable selectable;
+
 	// position, rotation
 	public float[] rotation = new float[3];
 	public float[] location = new float[3];
 
 	public Model mdl;
-	
+
 	public enum types {
-		
-		WORLD,
-		MOB,
-		STRUCTURE,
-		ITEM
+
+		WORLD, MOB, STRUCTURE, ITEM
 	}
 
 	types entityType;
@@ -53,14 +53,15 @@ public class Entity implements Drawable{
 	boolean textures;
 	boolean colors;
 
-	public Entity(String name, types entityType, float[] location, String fileName) {
+	public Entity(String name, types entityType, float[] location,
+			String fileName) {
 		this.name = name;
 		this.entityType = entityType;
 		this.location = location.clone();
 		mdl = AssetManager.getModel(fileName);
 		initModel();
 	}
-	
+
 	public Entity(String name, types entityType, float[] location, Model model) {
 		this.name = name;
 		this.entityType = entityType;
@@ -76,9 +77,9 @@ public class Entity implements Drawable{
 
 		VAOID = GL30.glGenVertexArrays();
 		GL30.glBindVertexArray(VAOID);
-		
+
 		GL11.glEnable(GL11.GL_VERTEX_ARRAY);
-		
+
 		if (mdl.normalsList != null) {
 			normals = true;
 			GL11.glEnable(GL11.GL_NORMAL_ARRAY);
@@ -94,7 +95,7 @@ public class Entity implements Drawable{
 		if (mdl.textureCoords != null) {
 			textures = true;
 		} else {
-//			GL11.glDisable(GL11.GL_TEXTURE_ARRAY); //something like that
+			// GL11.glDisable(GL11.GL_TEXTURE_ARRAY); //something like that
 		}
 
 		FloatBuffer verticesBuffer = toFloatBuffer(mdl.vertices);
@@ -160,7 +161,7 @@ public class Entity implements Drawable{
 		// Put everything back to default (deselect)
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 		GL30.glBindVertexArray(0);
-		
+
 		GL11.glPopMatrix();
 	}
 
@@ -182,23 +183,57 @@ public class Entity implements Drawable{
 		return buffer;
 	}
 
-	public void update (int delta) {
-		
+	public void update(int delta) {
+
 	}
 
 	/**
 	 * Sets the location of the object
+	 * 
 	 * @param location
 	 */
 	public void setLocation(float[] location) {
 
 		this.location = location;
 	}
-	
-	public String toString() {
+
+	public void proccessSelectable(Coord startCoord, Coord endCoord) {
+		if (selectable == null) {
+			return;
+		}
+		boolean selected = false;
 		
-		return "Name: \"" + name + 
-				"\", Type: " + entityType + 
-				", Location: " + Arrays.toString(location); 
+		if (checkSelected(startCoord, endCoord, Coord.locationToCoord(location)))
+			selected = true;
+		
+		selectable.selected(selected);
+	}
+
+	public void addSelectable(Selectable selectable) {
+
+		this.selectable = selectable;
+	}
+
+	private static boolean checkSelected(Coord startCoord, Coord endCoord,
+			Coord currentCoord) {
+
+		boolean selected = false;
+		Coord lowestCoord = Coord.lowestCoord(startCoord, endCoord);
+		Coord highestCoord = Coord.highestCoord(startCoord, endCoord);
+
+		if (lowestCoord.x <= currentCoord.x && currentCoord.x <= highestCoord.x
+				&& lowestCoord.y < currentCoord.y
+				&& currentCoord.y < highestCoord.y) {
+
+			selected = true;
+		}
+
+		return selected;
+	}
+
+	public String toString() {
+
+		return "Name: \"" + name + "\", Type: " + entityType + ", Location: "
+				+ Arrays.toString(location);
 	}
 }

@@ -23,18 +23,16 @@ public class Zone implements Drawable {
 		this.height = height;
 		occupied = new byte[width][height];
 	}
-	
-	public Zone(int[] startCoord, int[] endCoord) {
-		
-		int[] lowest = { Math.min(startCoord[0], endCoord[0]),
-				Math.min(startCoord[1], endCoord[1]) };
-		int[] highest = { Math.max(startCoord[0], endCoord[0]),
-				Math.max(startCoord[1], endCoord[1]) };
 
-		this.x = lowest[0];
-		this.y = lowest[1];
-		this.width = highest[0] - x;
-		this.height = highest[1] - y;
+	public Zone(Coord startCoord, Coord endCoord) {
+
+		Coord lowest = Coord.lowestCoord(startCoord, endCoord);
+		Coord highest = Coord.highestCoord(startCoord, endCoord);
+
+		this.x = lowest.x;
+		this.y = lowest.y;
+		this.width = highest.x - x;
+		this.height = highest.y - y;
 		occupied = new byte[width][height];
 	}
 
@@ -46,13 +44,13 @@ public class Zone implements Drawable {
 	@Override
 	public void draw() {
 
-		Render.drawSelectionGrid(Engine.world, new int[] { x, y }, new int[] {
-				x + width, y + height });
+		Render.drawSelectionGrid(Engine.world, new Coord(x, y), new Coord(x
+				+ width, y + height));
 	}
-	
+
 	@Override
 	public String toString() {
-		
+
 		return "Zone [" + x + ", " + y + ", " + width + ", " + height + "]";
 	}
 }

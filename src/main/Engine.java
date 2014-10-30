@@ -16,6 +16,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 import ai.ActionMove;
+import world.Coord;
 import world.World;
 import world.Zone;
 
@@ -186,13 +187,13 @@ public class Engine {
 		world = new World(256, 256);
 		world.loadFromImage();
 		
-//		try {
-//			world.saveWorld("test");
-//			world.loadWorld("test");
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			System.exit(1);
-//		}
+		try {
+			world.saveWorld("test");
+			world.loadWorld("test");
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
 		
 		worldEntity = new Entity("world", Entity.types.WORLD, new float[3], new MapMesh(world));
 	}
@@ -259,17 +260,17 @@ public class Engine {
 			Render.drawSelectionGrid(world, start, end);
 		}
 		
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
-		GL11.glBegin(GL11.GL_POINTS);
-		for (int y = 0; y < world.getY(); y++) {
-			for (int x = 0; x < world.getX(); x++) {
-				int[] colorCoord = {x, y}; 
-				GL11.glColor3f(world.getMovementSpeed(colorCoord), (float) world.getDesirePath(colorCoord) / 63f, 0);
-				GL11.glVertex3i(x, y, world.getWorldHeight()[x][y]);
-			}
-		}
-		GL11.glEnd();
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
+//		GL11.glDisable(GL11.GL_DEPTH_TEST);
+//		GL11.glBegin(GL11.GL_POINTS);
+//		for (int y = 0; y < world.getY(); y++) {
+//			for (int x = 0; x < world.getX(); x++) {
+//				int[] colorCoord = {x, y}; 
+//				GL11.glColor3f(world.getMovementSpeed(colorCoord), (float) world.getDesirePath(colorCoord) / 63f, 0);
+//				GL11.glVertex3i(x, y, world.getWorldHeight()[x][y]);
+//			}
+//		}
+//		GL11.glEnd();
+//		GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
 	
 	public void renderUI() {
@@ -325,8 +326,8 @@ public class Engine {
 		
 	}
 
-	int[] start = new int[2];
-	int[] end = new int[2];
+	Coord start = new Coord();
+	Coord end = new Coord();
 	
 	/**
 	 * Calculate all the goings-on in the world
@@ -366,21 +367,18 @@ public class Engine {
 		
 		if (Input.mouseChanged[0] == Input.PRESSED) {
 			
-			start[0] = (int) Math.rint(temp[0]);
-			start[1] = (int) Math.rint(temp[1]); 
+			start.x = (int) Math.rint(temp[0]);
+			start.y = (int) Math.rint(temp[1]); 
 		}
 		if (Input.mouseDown[0]){
 			
-			end[0] = (int) Math.rint(temp[0]);
-			end[1] = (int) Math.rint(temp[1]);
+			end.x = (int) Math.rint(temp[0]);
+			end.y = (int) Math.rint(temp[1]);
 			
 			Select.updateSelection(start, end);
 		}
 		
-		int[] highlight = new int[3];
-		for (int i = 0; i < temp.length; i++) {
-			highlight[i] = (int) Math.rint(temp[i]);
-		}
+		Coord highlight = Coord.locationToCoord(temp);
 		
 		if (Input.mouseChanged[1] == Input.RELEASED) {
 
@@ -388,7 +386,7 @@ public class Engine {
 				if (entity instanceof Mob && entity instanceof Selectable) {
 					if (((Selectable) entity).isSelected()) {
 						
-						((Mob) entity).addAction(new ActionMove(new int[]{highlight[0], highlight[1]}));
+						((Mob) entity).addAction(new ActionMove(new int[]{highlight.x, highlight.y}));
 					}
 				}
 			}
@@ -396,7 +394,7 @@ public class Engine {
 		
 		if (Input.keyChanged.get("spawn0") == Input.RELEASED) {
 			
-			System.out.println("movementSpeed = " + world.getMovementSpeed(highlight));
+			System.out.println("movementSpeed = " + world.getMovementSpeed(highlight.toArray()));
 		}
 		
 		if (Input.keyChanged.get("spawn1") == Input.RELEASED) {
@@ -408,21 +406,21 @@ public class Engine {
 		if (Input.keyChanged.get("spawn2") == Input.RELEASED) {
 			
 			Manager.addEntity(new Item("testing", Item.itemTypes.ROCK, 
-					0.25f, highlight, AssetManager.getModel("rocks.obj")));
+					0.25f, highlight.toArray(), AssetManager.getModel("rocks.obj")));
 			System.out.println(Manager.entityList.size() + " entities");
 		}
 		
 		if (Input.keyChanged.get("spawn3") == Input.RELEASED) {
 			
 			Manager.addEntity(new Item("testing", Item.itemTypes.ROCK, 
-					highlight, AssetManager.getModel("crate.obj")));
+					highlight.toArray(), AssetManager.getModel("crate.obj")));
 			System.out.println(Manager.entityList.size() + " entities");
 		}
 		
 		if (Input.keyChanged.get("spawn5") == Input.RELEASED) {
 			
 			Manager.addEntity(new Item("testing", Item.itemTypes.ROCK, 
-					highlight, AssetManager.getModel("untitled.obj")));
+					highlight.toArray(), AssetManager.getModel("untitled.obj")));
 			System.out.println(Manager.entityList.size() + " entities");
 		}
 		
@@ -444,9 +442,7 @@ public class Engine {
 		if (Input.keyChanged.get("refresh") == Input.RELEASED) {
 			
 			System.out.println("refreshing shaders");
-//			for (Shader shader : AssetManager.shaderMap.values()) {
-//				shader.refresh();
-//			}
+			
 			for (ShaderProgram shaderProgram : ShaderProgram.programList) {
 				
 				shaderProgram.rebuild();
