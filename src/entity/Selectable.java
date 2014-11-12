@@ -14,12 +14,12 @@ package entity;
  * @author Christopher Dombroski
  */
 public interface Selectable {
-
+	
 	/**
 	 * @return Whether or not the entity is selected.
 	 */
 	public boolean isSelected();
-
+	
 	/**
 	 * Called when the entity is within selection bounds.
 	 */

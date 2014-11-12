@@ -36,7 +36,7 @@ public class ShaderProgram {
 		log = GL20.glGetProgramInfoLog(programReference, GL20.GL_INFO_LOG_LENGTH);
 		if (!log.isEmpty()) {
 			
-			System.out.print(log);
+			System.out.println(log.trim());
 		}
 	}
 	

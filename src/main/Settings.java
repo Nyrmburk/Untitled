@@ -4,7 +4,7 @@ public class Settings {
 	
 	//window settings
 	public static int windowWidth, windowHeight;
-	public static boolean threeD;
+	public static boolean _3D;
 
 	/**
 	 * Load the settings from a file.
@@ -13,7 +13,7 @@ public class Settings {
 		
 		windowWidth = 1200;
 		windowHeight = 900;
-		threeD = false;
+		_3D = false;
 		
 	}
 	

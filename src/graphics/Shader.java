@@ -95,7 +95,7 @@ public class Shader {
 		log = GL20.glGetShaderInfoLog(shaderReference, GL20.GL_INFO_LOG_LENGTH);
 		if (!log.isEmpty()) {
 			
-			System.out.print(log);
+			System.out.println(log.trim());
 		}
 	}
 	

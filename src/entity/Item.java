@@ -30,7 +30,6 @@ public class Item extends Entity implements Selectable, Movable {
 	}
 
 	public Item(String name, itemTypes itemType, float moveSpeedPercent, int[] coord, Model model) {
-		
 		super(name, types.ITEM, new float[]{coord[0], coord[1], 
 				((MapMesh) Engine.worldEntity.mdl)
 				.getHeight(new float[]{coord[0], coord[1]})}, model);
