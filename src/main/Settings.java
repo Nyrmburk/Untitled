@@ -2,17 +2,17 @@ package main;
 
 public class Settings {
 	
-	//window settings
+	// window settings
 	public static int windowWidth, windowHeight;
 	public static boolean _3D;
-
+	
 	/**
 	 * Load the settings from a file.
 	 */
 	public static void loadSettings() {
 		
 		windowWidth = 1200;
-		windowHeight = 900;
+		windowHeight = 750;
 		_3D = false;
 		
 	}

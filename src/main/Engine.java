@@ -32,6 +32,7 @@ public class Engine {
 	
 	/** Frames per second **/
 	public static int fps;
+	public static int currentFPS;
 	/** FPS cap **/
 	public static int setFPS = 0;
 	/** Last frame's FPS **/
@@ -47,6 +48,8 @@ public class Engine {
 	/** The drawable, mesh-bearing entity that is the map **/
 	public static Entity worldEntity;
 	
+	MenuBar mb;
+	
 	/**
 	 * Starts the engine.
 	 * 
@@ -54,6 +57,8 @@ public class Engine {
 	 */
 	public void start() throws IOException {
 		
+            System.out.println(new File("").getAbsoluteFile());
+            
 		try {
 			// Set everything up
 			initialise();
@@ -85,10 +90,10 @@ public class Engine {
 				render();
 			}
 			
-			// renderUI();
+			renderUI();
 			
 			// check for graphics errors
-			// GLErrorHelper.checkError();
+			 GLErrorHelper.checkError();
 			
 			// if (Display.wasResized()) {
 			// Settings.windowWidth= GUI.cnvsDisplay.getWidth();
@@ -137,6 +142,7 @@ public class Engine {
 		Input.load();
 		AssetManager.loadAll();
 		
+		mb = new MenuBar();
 		AssetManager.getScript("hello.js").eval();
 	}
 	
@@ -288,9 +294,11 @@ public class Engine {
 		
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_LIGHTING);
-		GL11.glShadeModel(GL11.GL_SMOOTH);
 		
-		// Draw the triangle of death
+		
+		// GL11.glShadeModel(GL11.GL_SMOOTH);
+		
+//		 Draw the triangle of death
 		// GL11.glBegin(GL11.GL_TRIANGLES);
 		// GL11.glColor3f(1, 0, 0);
 		// GL11.glVertex3f(450, 660, 1);
@@ -300,20 +308,25 @@ public class Engine {
 		// GL11.glVertex3f(900, 400, 1);
 		// GL11.glEnd();
 		
-		Render.drawActionCircle(new int[] {Input.mouseX, Input.mouseY},
-				new int[2], 5);
+		// Render.drawActionCircle(new int[] {Input.mouseX, Input.mouseY},
+		// new int[2], 5);
+		//
+		// GL11.glColor3f(1, 1, 1);
+		// GL11.glBegin(GL11.GL_LINE_LOOP);
+		// GL11.glVertex2i(1, 1);
+		// GL11.glVertex2i(1199, 1);
+		// GL11.glVertex2i(1199, 899);
+		// GL11.glVertex2i(1, 899);
+		// GL11.glEnd();
 		
-		GL11.glColor3f(1, 1, 1);
-		GL11.glBegin(GL11.GL_LINE_LOOP);
-		GL11.glVertex2i(1, 1);
-		GL11.glVertex2i(1199, 1);
-		GL11.glVertex2i(1199, 899);
-		GL11.glVertex2i(1, 899);
-		GL11.glEnd();
+		mb.draw();
 		
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_LIGHTING);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		
 		Camera.perspective();
+		// TEMORARY!
+		Camera.look();
 	}
 	
 	/**
@@ -516,10 +529,10 @@ public class Engine {
 		// Calculate the FPS
 		if (getTime() - lastFPS > 1000) {
 			System.out.println("FPS: " + fps);
+			currentFPS = fps;
 			fps = 0; // reset the FPS counter
 			lastFPS += 1000; // add 1 second
 		}
 		fps++;
 	}
-	
 }

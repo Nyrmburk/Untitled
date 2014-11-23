@@ -116,7 +116,7 @@ public class Camera {
 		
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-		GL11.glOrtho(0, Settings.windowWidth, 0, Settings.windowHeight, -10, 10);
+		GL11.glOrtho(0, Settings.windowWidth, Settings.windowHeight, 0, -10, 10);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glLoadIdentity();
 	}

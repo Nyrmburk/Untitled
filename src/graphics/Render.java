@@ -7,7 +7,6 @@ import main.Engine;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-import org.lwjgl.util.glu.GLU;
 
 import world.Coord;
 import world.World;
@@ -47,8 +46,15 @@ public class Render {
 		GL11.glColorMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE);
 		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION, 
 				asFloatBuffer(new float[]{127, 127, 500, 1}));
+		
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GL11.glClearDepth(1);
+		//sky blue
+//		GL11.glClearColor(0.5294117647058824f, 0.807843137254902f, 
+//		0.9215686274509804f, 1f);
+		GL11.glClearColor(0.25f, 0.25f, 0.25f, 1f);
 		GL11.glLoadIdentity();
-		GLU.gluLookAt(200, 200, 100, 50, 50, 0, 0, 1, 0);
 		
 		GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
 		

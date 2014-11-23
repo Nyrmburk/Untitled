@@ -13,13 +13,13 @@ import entity.Entity;
 
 /**
  * Manage the selection of entities.
+ * 
  * @author Christopher Dombroski
- *
  */
 public class Select {
-
+	
 	public static float[] getCurrentCoord(int windowX, int windowY) {
-
+		
 		IntBuffer viewport = BufferUtils.createIntBuffer(16);
 		GL11.glGetInteger(GL11.GL_VIEWPORT, viewport);
 		FloatBuffer modelMatrix = BufferUtils.createFloatBuffer(16);
@@ -27,17 +27,17 @@ public class Select {
 		FloatBuffer projMatrix = BufferUtils.createFloatBuffer(16);
 		GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, projMatrix);
 		FloatBuffer objectPosition = BufferUtils.createFloatBuffer(16);
-
+		
 		FloatBuffer z = BufferUtils.createFloatBuffer(1);
 		GL11.glReadPixels(windowX, windowY, 1, 1, GL11.GL_DEPTH_COMPONENT,
 				GL11.GL_FLOAT, z);
-
+		
 		GLU.gluUnProject(windowX, windowY, z.get(0), modelMatrix, projMatrix,
 				viewport, objectPosition);
-
-		float[] coord = { objectPosition.get(0), objectPosition.get(1),
-				objectPosition.get(2) };
-
+		
+		float[] coord = {objectPosition.get(0), objectPosition.get(1),
+				objectPosition.get(2)};
+		
 		return coord;
 	}
 	
@@ -48,5 +48,5 @@ public class Select {
 			entity.proccessSelectable(start, end);
 		}
 	}
-
+	
 }
