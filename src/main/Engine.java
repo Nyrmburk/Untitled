@@ -34,7 +34,7 @@ public class Engine {
 	public static int fps;
 	public static int currentFPS;
 	/** FPS cap **/
-	public static int setFPS = 0;
+	public static int setFPS = 120;
 	/** Last frame's FPS **/
 	private static long lastFPS = 0;
 	/** Last frame's creation time **/
@@ -294,7 +294,7 @@ public class Engine {
 		
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_LIGHTING);
-		
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 1);
 		
 		// GL11.glShadeModel(GL11.GL_SMOOTH);
 		
@@ -323,6 +323,7 @@ public class Engine {
 		
 		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 		
 		Camera.perspective();
 		// TEMORARY!
@@ -528,7 +529,7 @@ public class Engine {
 	public void updateFPS() {
 		// Calculate the FPS
 		if (getTime() - lastFPS > 1000) {
-			System.out.println("FPS: " + fps);
+//			System.out.println("FPS: " + fps);
 			currentFPS = fps;
 			fps = 0; // reset the FPS counter
 			lastFPS += 1000; // add 1 second

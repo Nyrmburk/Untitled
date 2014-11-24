@@ -129,16 +129,18 @@ public class TextBox extends GUIElement {
 		
 		BufferedImage image = new BufferedImage(width, height,
 				BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g = (Graphics2D) image.createGraphics();
+		Graphics2D g = (Graphics2D) image.getGraphics();
 		g.setColor(new java.awt.Color(255,255,255,0));
 		g.fillRect(0,0, width, height);
 		
 		if (font.antiAlias) {
-			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-					RenderingHints.VALUE_ANTIALIAS_ON);
+//			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+//					RenderingHints.VALUE_ANTIALIAS_ON);
+			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
+					RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 		}
 		
-		g.setColor(java.awt.Color.BLACK);
+		g.setColor(java.awt.Color.WHITE);
 		g.setFont(font.getFont());
 		
 		int lineHeight = font.getLineHeight();
@@ -170,10 +172,13 @@ public class TextBox extends GUIElement {
 		}
 		
 		try {
+			if (fontTexture != null) fontTexture.release();
 			fontTexture = BufferedImageUtil.getTexture(font.toString(), image);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		g.dispose();
+		image = null;;
 	}
 	
 	public void setText(String text) {

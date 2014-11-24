@@ -11,8 +11,8 @@ public class Settings {
 	 */
 	public static void loadSettings() {
 		
-		windowWidth = 1200;
-		windowHeight = 750;
+		windowWidth = 864;
+		windowHeight = 540;
 		_3D = false;
 		
 	}

@@ -25,13 +25,13 @@ public class MenuBar extends GUIElement {
 
 	public MenuBar() {
 		
-		super(new Rectangle(0, Settings.windowHeight - 36 + 2 * GUI.padding, Settings.windowWidth, 36 + 2 * GUI.padding));
+		super(new Rectangle(0, Settings.windowHeight - 16 - 2 * GUI.padding, Settings.windowWidth, 16 + 2 * GUI.padding));
 		inputStream = ResourceLoader.getResourceAsStream("\\res\\fonts\\roboto\\Roboto-Regular.ttf");
 		
 		try {
 			
 			awtFont = Font.createFont(Font.TRUETYPE_FONT, inputStream);
-			awtFont = awtFont.deriveFont(20f);
+			awtFont = awtFont.deriveFont(16f);
 			inputStream.close();
 		} catch(IOException e) {
 			e.printStackTrace();
@@ -39,9 +39,13 @@ public class MenuBar extends GUIElement {
 			e.printStackTrace();
 		}
 		
+		awtFont = new Font("Arial", Font.PLAIN, 14);
+		
 		font = new FormattedFont(awtFont, true);
 		font.currentAlignment = FormattedFont.alignment.RIGHT;
-		time = new TextBox(font, (Rectangle)this, GUI.padding, GUI.padding, GUI.padding, GUI.padding);
+		time = new TextBox(font, (Rectangle)this, 5, 5, 5, 5);//, GUI.padding, GUI.padding, GUI.padding, GUI.padding);
+//		time.setText("hello, world!");
+//		time.setRenderAsTexture(true);
 	}
 	
 	@Override
@@ -56,9 +60,11 @@ public class MenuBar extends GUIElement {
 		GL11.glEnd();
 		
 		GL11.glEnable(GL11.GL_BLEND);
-		font.drawString(0, 0, String.valueOf(Engine.currentFPS));
+		
 		time.setText(new Date().toString());
+//		time.setRenderAsTexture(true);
 		time.render(0, Color.white);
+		font.drawString(0, 0, String.valueOf(Engine.currentFPS));
 		GL11.glDisable(GL11.GL_BLEND);
 	}
 }

@@ -21,7 +21,7 @@ public class GUI {
 	 * ps stands for Pixel Scale.
 	 */
 	public static int ps = NORMAL_SCALE;
-	public static int padding;
+	public static int padding = 4;
 	
 	public static Color systemColor = Color.BLACK;
 	public static Color iconColor = Color.WHITE;
