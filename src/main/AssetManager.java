@@ -2,10 +2,17 @@ package main;
 
 import graphics.Model;
 import graphics.Shader;
-import graphics.Texture;
 
+import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.util.BufferedImageUtil;
+
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL32;
@@ -34,6 +41,9 @@ public class AssetManager {
 	static HashMap<String, Shader> shaderMap = new HashMap<String, Shader>();
 	static HashMap<String, Script> scriptMap = new HashMap<String, Script>();
 	
+	static ExecutorService executor = Executors.newFixedThreadPool(Runtime
+			.getRuntime().availableProcessors() * 2);
+	
 	public static Model getModel(String name) {
 		
 		Model model = modelMap.get(name);
@@ -50,10 +60,16 @@ public class AssetManager {
 		Texture texture = textureMap.get(name);
 		
 		if (texture == null) {
-			return new Texture();
-		} else {
-			return texture;
+			
+			try {
+				texture = BufferedImageUtil.getTexture("missing_texture",
+						generateMissingImage());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+		
+		return texture;
 	}
 	
 	public static Shader getShader(String name) {
@@ -80,6 +96,8 @@ public class AssetManager {
 	
 	public static void loadAll() {
 		
+		long time = System.currentTimeMillis();
+		
 		File modelPath = new File(MODEL_ROOT);
 		File texturePath = new File(TEXTURE_ROOT);
 		File shaderSubPath = new File(SHADER_ROOT);
@@ -90,10 +108,39 @@ public class AssetManager {
 			
 			for (String model : models) {
 				
-				loadModel(model);
+				executor.execute(new Runnable() {
+					
+					@Override
+					public void run() {
+						
+						loadModel(model);
+					}
+				});
+				
+				// loadModel(model);
 			}
 		} else {
 			modelPath.mkdir();
+		}
+		
+		if (scriptPath.exists() && scriptPath.isDirectory()) {
+			String[] scripts = scriptPath.list();
+			
+			for (String script : scripts) {
+				
+				executor.execute(new Runnable() {
+					
+					@Override
+					public void run() {
+						
+						loadScript(script);
+					}
+				});
+				
+				// loadScript(script);
+			}
+		} else {
+			scriptPath.mkdir();
 		}
 		
 		if (texturePath.exists() && texturePath.isDirectory()) {
@@ -122,16 +169,17 @@ public class AssetManager {
 			shaderSubPath.mkdir();
 		}
 		
-		if (scriptPath.exists() && scriptPath.isDirectory()) {
-			String[] scripts = scriptPath.list();
-			
-			for (String script : scripts) {
-				
-				loadScript(script);
-			}
-		} else {
-			scriptPath.mkdir();
+		executor.shutdown();
+		
+		try {
+			executor.awaitTermination(1000, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		
+		System.out.println("total load time: "
+				+ (System.currentTimeMillis() - time) + "ms");
 	}
 	
 	public static void loadModel(String fileName) {
@@ -140,7 +188,10 @@ public class AssetManager {
 		
 		if (file.exists() && file.isFile()) {
 			
+			long time = System.currentTimeMillis();
 			modelMap.put(fileName, new Model(file));
+			System.out.println("loaded " + file + ", "
+					+ (System.currentTimeMillis() - time) + "ms");
 		}
 	}
 	
@@ -150,7 +201,21 @@ public class AssetManager {
 		
 		if (file.exists() && file.isFile()) {
 			
-			textureMap.put(fileName, new Texture(file));
+			long time = System.currentTimeMillis();
+			
+			Texture texture = null;
+			
+			try {
+				
+				BufferedImage image = javax.imageio.ImageIO.read(file);
+				texture = BufferedImageUtil.getTexture(fileName, image);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			textureMap.put(fileName, texture);
+			System.out.println("loaded " + file + ", "
+					+ (System.currentTimeMillis() - time) + "ms");
 		}
 	}
 	
@@ -161,8 +226,11 @@ public class AssetManager {
 		
 		if (file.exists() && file.isFile()) {
 			
+			long time = System.currentTimeMillis();
 			shaderMap.put(fileName, new Shader(file,
 					getShaderType(parentDirectory)));
+			System.out.println("loaded " + file + ", "
+					+ (System.currentTimeMillis() - time) + "ms");
 		}
 	}
 	
@@ -172,7 +240,10 @@ public class AssetManager {
 		
 		if (file.exists() && file.isFile()) {
 			
+			long time = System.currentTimeMillis();
 			scriptMap.put(fileName, new Script(file));
+			System.out.println("loaded " + file + ", "
+					+ (System.currentTimeMillis() - time) + "ms");
 		}
 	}
 	
@@ -209,5 +280,18 @@ public class AssetManager {
 		}
 		
 		return type;
+	}
+	
+	private static BufferedImage generateMissingImage() {
+		
+		BufferedImage image = new BufferedImage(32, 32,
+				BufferedImage.TYPE_INT_RGB);
+		java.awt.Graphics2D g = image.createGraphics();
+		g.setColor(java.awt.Color.MAGENTA);
+		g.fillRect(0, 0, 16, 16);
+		g.fillRect(16, 16, 32, 32);
+		g.dispose();
+		
+		return image;
 	}
 }

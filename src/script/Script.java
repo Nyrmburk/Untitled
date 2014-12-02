@@ -21,7 +21,7 @@ public class Script {
 			+ "load('nashorn:mozilla_compat.js');";
 	
 	private static ScriptEngineManager factory;
-	private static Compilable engine;
+	private static Compilable compEngine;
 	
 	File file;
 	CompiledScript compiledScript;
@@ -32,14 +32,18 @@ public class Script {
 	
 	public Script(File file) {
 		if (factory == null) factory = new ScriptEngineManager();
-		if (engine == null)
-			engine = (Compilable) factory.getEngineByName(LANGUAGE);
+		if (compEngine == null) {
+			javax.script.ScriptEngine engine = factory
+					.getEngineByName(LANGUAGE);
+			// engine.getContext().setWriter(writer);
+			compEngine = (Compilable) engine;
+		}
 		
 		this.file = file;
 		String code = HEADER + load(file);
 		try {
 			
-			this.compiledScript = engine.compile(code);
+			this.compiledScript = compEngine.compile(code);
 		} catch (ScriptException e) {
 			String message = "Error in script \"" + file.getName() + "\":\r\n	"
 					+ e.getCause();
@@ -84,15 +88,23 @@ public class Script {
 			return;
 		}
 		
-		try {
+		new Thread(new Runnable() {
 			
-			compiledScript.eval();
-		} catch (ScriptException e) {
+			@Override
+			public void run() {
+				
+				try {
+					
+					compiledScript.eval();
+				} catch (ScriptException e) {
+					
+					String message = "Error in script \"" + file.getName()
+							+ "\":\r\n	" + e.getCause();
+					System.err.println(message);
+					errorlog.append(message);
+				}
+			}
 			
-			String message = "Error in script \"" + file.getName() + "\":\r\n	"
-					+ e.getCause();
-			System.err.println(message);
-			errorlog.append(message);
-		}
+		}).start();
 	}
 }

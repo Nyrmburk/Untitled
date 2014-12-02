@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- TODO: develop an xml schema for the gui. -->
+
+<var type=INT name=HEIGHT value=2*PADDING+CONTENT />
+<container>
+	<name>mbr_menubar</name>
+	<dim x=LEFT y=BOTTOM-HEIGHT width=RIGHT height=HEIGHT />
+	
+	<child>
+		<reference>btn_menu</reference>
+		<position>LEFT</position>
+	</child>
+	<child>
+		<reference>btn_entityinfo</reference>
+		<position>LEFT</position>
+	</child>
+	<child>
+		<reference>btn_overview</reference>
+		<position>LEFT</position>
+	</child>
+	
+	<child>
+		<reference>lbl_time</reference>
+		<position>RIGHT</position>
+	</child>
+	<child>
+		<reference>btn_ffforward</reference>
+		<position>RIGHT</position>
+	</child>
+	<child>
+		<reference>btn_fforward</reference>
+		<position>RIGHT</position>
+	</child>
+	<child>
+		<reference>btn_play</reference>
+		<position>RIGHT</position>
+	</child>
+	<child>
+		<reference>btn_pause</reference>
+		<position>RIGHT</position>
+	</child>
+</container>

@@ -75,17 +75,18 @@ public class Model {
 			FileReader reader = new FileReader(f);
 			read = new BufferedReader(reader);
 
-			long time = System.currentTimeMillis();
+//			long time = System.currentTimeMillis();
+			
 			while ((currentLine = read.readLine()) != null) {
 				fileParser(currentLine);
 			}
 
 			initAll();
 			
-			System.out.println(System.currentTimeMillis() - time + 
-					" milliseconds to load " + verticesList.size() + 
-					" vertices and " + indicesList.size() + 
-					" faces");
+//			System.out.println(System.currentTimeMillis() - time + 
+//					" milliseconds to load " + verticesList.size() + 
+//					" vertices and " + indicesList.size() + 
+//					" faces");
 
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -30,6 +30,10 @@ public class Engine {
 	/** Time since last frame (milliseconds) **/
 	public static int delta;
 	
+	private static int highestFrame = Integer.MIN_VALUE;
+	private static int lowestFrame = Integer.MAX_VALUE;
+	public static int frameQuality;
+	
 	/** Frames per second **/
 	public static int fps;
 	public static int currentFPS;
@@ -57,8 +61,6 @@ public class Engine {
 	 */
 	public void start() throws IOException {
 		
-            System.out.println(new File("").getAbsoluteFile());
-            
 		try {
 			// Set everything up
 			initialise();
@@ -66,6 +68,8 @@ public class Engine {
 			e.printStackTrace();
 			System.exit(0);
 		}
+		
+		Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 		
 		// set lastFPS to current Time
 		lastFPS = getTime();
@@ -76,6 +80,14 @@ public class Engine {
 			
 			// get the change in time since the last frame
 			delta = getDelta();
+			
+			if (!Display.isActive()) {
+				
+				// switch to state based game
+				Display.update();
+				Display.sync(setFPS);
+				continue;
+			}
 			
 			// update the entities and whatnot in the engine
 			update(delta);
@@ -93,7 +105,7 @@ public class Engine {
 			renderUI();
 			
 			// check for graphics errors
-			 GLErrorHelper.checkError();
+			GLErrorHelper.checkError();
 			
 			// if (Display.wasResized()) {
 			// Settings.windowWidth= GUI.cnvsDisplay.getWidth();
@@ -103,11 +115,11 @@ public class Engine {
 			// initGL();
 			// }
 			
-			// enact the fps cap
-			Display.sync(setFPS);
-			
 			// update the window with the now rendered image
 			Display.update();
+			
+			// enact the fps cap
+			Display.sync(setFPS);
 		}
 		
 		close();
@@ -137,13 +149,19 @@ public class Engine {
 		Settings.loadSettings();
 		initSystem();
 		initDisplay();
-		initWorld();
 		graphics.Render.initGL();
+		initWorld();
 		Input.load();
 		AssetManager.loadAll();
 		
-		mb = new MenuBar();
-		AssetManager.getScript("hello.js").eval();
+		GUI.addElement("mnubr_menubar", new MenuBar());
+		GUI.addElement("mnu_menu", new Menu("MAIN MENU"));
+		GUI.getElement("mnu_menu").setBounds(
+				0,
+				Settings.windowHeight
+						- GUI.getElement("mnubr_menubar").getHeight() - 250,
+				200, 250);
+		GUI.getElement("mnu_menu").setVisible(false);
 	}
 	
 	/**
@@ -298,7 +316,7 @@ public class Engine {
 		
 		// GL11.glShadeModel(GL11.GL_SMOOTH);
 		
-//		 Draw the triangle of death
+		// Draw the triangle of death
 		// GL11.glBegin(GL11.GL_TRIANGLES);
 		// GL11.glColor3f(1, 0, 0);
 		// GL11.glVertex3f(450, 660, 1);
@@ -319,7 +337,7 @@ public class Engine {
 		// GL11.glVertex2i(1, 899);
 		// GL11.glEnd();
 		
-		mb.draw();
+		GUI.render();
 		
 		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -474,6 +492,11 @@ public class Engine {
 			}
 		}
 		
+		if (Input.keyChanged.get("screenshot") == Input.RELEASED) {
+			
+			graphics.Render.screenshot();
+		}
+		
 		// translate camera up and down (zoom)
 		int mousewheel = Mouse.getDWheel();
 		Camera.moveZ(-mousewheel / 60);
@@ -503,7 +526,7 @@ public class Engine {
 	 * 
 	 * @return change in time in milleconds
 	 */
-	public static int getDelta() {
+	private static int getDelta() {
 		// Get the amount of milliseconds that has passed since the last frame.
 		long time = getTime();
 		int delta = (int) (time - lastFrame);
@@ -518,18 +541,23 @@ public class Engine {
 			delta = 1;
 		}
 		
+		if (delta > highestFrame) highestFrame = delta;
+		if (delta < lowestFrame) lowestFrame = delta;
+		
 		// System.out.println("delta: " + delta);
 		return delta;
-		
 	}
 	
 	/**
 	 * Calculate the FPS
 	 */
-	public void updateFPS() {
+	private void updateFPS() {
 		// Calculate the FPS
 		if (getTime() - lastFPS > 1000) {
-//			System.out.println("FPS: " + fps);
+			// System.out.println("FPS: " + fps);
+			frameQuality = highestFrame - lowestFrame;
+			highestFrame = Integer.MIN_VALUE;
+			lowestFrame = Integer.MAX_VALUE;
 			currentFPS = fps;
 			fps = 0; // reset the FPS counter
 			lastFPS += 1000; // add 1 second

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<button>
+	<name>btn_entityinfo</name>
+	<size width=CONTENT height=CONTENT />
+	<img>entityinfo.png</img>
+	<onclick>entityinfo_click.js</onclick>
+</button>

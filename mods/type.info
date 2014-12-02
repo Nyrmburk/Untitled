@@ -1,0 +1,3 @@
+type = updateable
+frequency = every
+file = bench.js

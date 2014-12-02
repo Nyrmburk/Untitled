@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<button>
+	<name>btn_menu</name>
+	<size width=CONTENT height=CONTENT />
+	<img>menu.png</img>
+	<onclick>menu_click.js</onclick>
+</button>

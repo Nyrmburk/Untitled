@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<!-- TODO: develop an xml schema for the gui. -->
-<!-- TODO: inspect the gui system in other games, esp civ V -->
-
-<container>
-<string name="MenuBar" />
-<dim x=0 y=0 width=WINDOWWIDTH height=WINDOWHEIGHT />
-</container>
