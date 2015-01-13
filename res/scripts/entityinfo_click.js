@@ -3,6 +3,6 @@
 importClass(Packages.gui.GUI);
 importClass(Packages.gui.Panel);
 
-var info = GUI.getElement("pnl_entityinfo");
+var info = GUI.getElement("mnu_entityinfo");
 
 info.setVisible(!info.isVisible());

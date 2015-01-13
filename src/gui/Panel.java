@@ -20,7 +20,7 @@ public class Panel extends Container {
 	@Override
 	protected void onSizeChange(int oldWidth, int oldHeight) {
 		
-		layoutManager.layout(this);
+		invalidate();
 		
 //		int deltaWidth = width - oldWidth;
 //		int deltaHeight = height - oldHeight;

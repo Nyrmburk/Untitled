@@ -192,6 +192,36 @@ public class Button extends GUIElement {
 		if (currentColorIdentifier == identifier) currentColor = color;
 	}
 	
+	public void setText(String text) {
+		
+		this.texture.release();
+		this.texture = null;
+		
+		if (textBox == null)
+			textBox = new TextBox();
+		
+		this.textBox.setText(text);
+			
+	}
+	
+	public void setImage(Texture texture) {
+		
+		if (this.texture != null)
+			this.texture.release();
+		this.texture = texture;
+		this.textBox = null;
+	}
+	
+	public void setImage(BufferedImage image) {
+		
+		try {
+			setImage(org.newdawn.slick.util.BufferedImageUtil.getTexture(this
+					.toString(), image));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private void onPress() {
 		
 		currentColor = selectedColor;

@@ -6,12 +6,11 @@
 	<var name="text" value="setting text from a variable"/>
 	
 	<gui:button
-		gui:name="btn_entityinfo"
+		gui:name="btn_test"
 		gui:layout_width="@CONTENT"
 		gui:layout_height="@CONTENT"
-		gui:image="heart.gif"
-		gui:button_onClick="entityinfo_click.js"
+		gui:button_onClick="menu_click.js"
 		gui:layout_parent="mbr_menubar"
-		gui:layout_constraint="LEFT:btn_menu"
+		gui:layout_constraint="LEFT:btn_entityinfo"
 		gui:visible="true"/>
 </gui>

@@ -46,6 +46,28 @@ public class GUI {
 		return elements.get(name);
 	}
 	
+	public static void update() {
+		
+		for (GUIElement element : elements.values()) {
+			
+			if (element.isVisible()) {
+				
+				if (element instanceof Container)
+					((Container) element).updateChildren();
+				else
+					element.update();
+			}
+		}
+	}
+	
+	public static void revalidate() {
+		
+		for (GUIElement element : elements.values()) {
+			
+			element.revalidate();
+		}
+	}
+	
 	public static void render() {
 		
 		for (GUIElement element : elements.values()) {
@@ -77,6 +99,11 @@ public class GUI {
 		Display.create();
 		
 		mainFont = new FormattedFont(Settings.awtFont, Settings.AAFonts);
+	}
+	
+	public static void loadGUI() {
+		
+		elements = GUIParser.loadGUI();
 	}
 	
 	public static void awtToGL(Color color) {

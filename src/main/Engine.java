@@ -15,6 +15,8 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
+import main.AssetManager;
+
 import ai.ActionMove;
 import world.Coord;
 import world.World;
@@ -153,15 +155,7 @@ public class Engine {
 		initWorld();
 		Input.load();
 		AssetManager.loadAll();
-		
-		GUI.addElement("mnubr_menubar", new MenuBar());
-		GUI.addElement("mnu_menu", new Menu("MAIN MENU"));
-		GUI.getElement("mnu_menu").setBounds(
-				0,
-				Settings.windowHeight
-						- GUI.getElement("mnubr_menubar").getHeight() - 250,
-				200, 250);
-		GUI.getElement("mnu_menu").setVisible(false);
+
 	}
 	
 	/**
@@ -337,6 +331,8 @@ public class Engine {
 		// GL11.glVertex2i(1, 899);
 		// GL11.glEnd();
 		
+		GUI.update();
+		GUI.revalidate();
 		GUI.render();
 		
 		GL11.glEnable(GL11.GL_LIGHTING);

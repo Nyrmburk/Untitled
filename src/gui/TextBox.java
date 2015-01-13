@@ -26,17 +26,16 @@ public class TextBox extends GUIElement {
 	
 	TextBox() {
 		
-		super();
-		this.font = new FormattedFont(
-				new Font(Font.SANS_SERIF, Font.PLAIN, 12), true);
-		this.insets = new Insets(0, 0, 0, 0);
-		formatLines();
+		this(new FormattedFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12), true));
 	}
 	
 	TextBox(FormattedFont font) {
 		
-		this();
+		super();
 		this.font = font;
+		this.insets = new Insets(0, 0, 0, 0);
+		formatLines();
+		this.height = font.getLineHeight();
 	}
 	
 	public void draw() {
@@ -193,8 +192,14 @@ public class TextBox extends GUIElement {
 		
 		if (this.text == null || !this.text.equals(text)) {
 			
+			if (this.autoWidth) {
+				
+				this.width = font.getWidth(text) + insets.left + insets.right;
+				invalidate();
+			}
+			
 			this.text = text;
-			formatLines();
+//			formatLines();
 			
 			if (renderAsTexture) renderToTexture();
 		}
@@ -281,6 +286,13 @@ public class TextBox extends GUIElement {
 		
 		textLines = new String[lines.size()];
 		lines.toArray(textLines);
+	}
+	
+	@Override
+	public void revalidate() {
+		
+		formatLines();
+		super.revalidate();
 	}
 
 	@Override

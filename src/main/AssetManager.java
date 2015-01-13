@@ -2,6 +2,7 @@ package main;
 
 import graphics.Model;
 import graphics.Shader;
+import gui.GUI;
 
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.util.BufferedImageUtil;
@@ -42,7 +43,7 @@ public class AssetManager {
 	static HashMap<String, Script> scriptMap = new HashMap<String, Script>();
 	
 	static ExecutorService executor = Executors.newFixedThreadPool(Runtime
-			.getRuntime().availableProcessors() * 2);
+			.getRuntime().availableProcessors());
 	
 	public static Model getModel(String name) {
 		
@@ -136,8 +137,6 @@ public class AssetManager {
 						loadScript(script);
 					}
 				});
-				
-				// loadScript(script);
 			}
 		} else {
 			scriptPath.mkdir();
@@ -177,6 +176,8 @@ public class AssetManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		GUI.loadGUI();
 		
 		System.out.println("total load time: "
 				+ (System.currentTimeMillis() - time) + "ms");

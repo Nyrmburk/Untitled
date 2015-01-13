@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<gui
+	xmlns:gui="schemas.anything.doesthismatterreallyfakeurl.com">
+	
+	<gui:menu
+		gui:name="mnu_entityinfo"
+		gui:title="Entity Info"
+		gui:layout_width="200"
+		gui:layout_parent="mbr_menubar"
+		gui:layout_constraint="RIGHT:START"
+		gui:visible="false"/>
+</gui>

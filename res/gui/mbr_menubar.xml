@@ -2,42 +2,17 @@
 
 <!-- TODO: develop an xml schema for the gui. -->
 
-<var type=INT name=HEIGHT value=2*PADDING+CONTENT />
-<container>
-	<name>mbr_menubar</name>
-	<dim x=LEFT y=BOTTOM-HEIGHT width=RIGHT height=HEIGHT />
+<gui
+	xmlns:gui="schemas.anything.doesthismatterreallyfakeurl.com">
 	
-	<child>
-		<reference>btn_menu</reference>
-		<position>LEFT</position>
-	</child>
-	<child>
-		<reference>btn_entityinfo</reference>
-		<position>LEFT</position>
-	</child>
-	<child>
-		<reference>btn_overview</reference>
-		<position>LEFT</position>
-	</child>
+	<var name="HEIGHT" value="24" />
+	<var name="boolean" value="true"/>
+	<var name="string" value="hello, this is a test string for testing variables."/>
 	
-	<child>
-		<reference>lbl_time</reference>
-		<position>RIGHT</position>
-	</child>
-	<child>
-		<reference>btn_ffforward</reference>
-		<position>RIGHT</position>
-	</child>
-	<child>
-		<reference>btn_fforward</reference>
-		<position>RIGHT</position>
-	</child>
-	<child>
-		<reference>btn_play</reference>
-		<position>RIGHT</position>
-	</child>
-	<child>
-		<reference>btn_pause</reference>
-		<position>RIGHT</position>
-	</child>
-</container>
+	<gui:menubar
+		gui:name="mbr_menubar"
+		gui:layout_x="@LEFT"
+		gui:layout_y="576"
+		gui:layout_width="@RIGHT"
+		gui:layout_height="@HEIGHT"/>
+</gui>

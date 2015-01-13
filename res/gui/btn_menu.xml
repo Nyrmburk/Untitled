@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<button>
-	<name>btn_menu</name>
-	<size width=CONTENT height=CONTENT />
-	<img>menu.png</img>
-	<onclick>menu_click.js</onclick>
-</button>
+<gui
+	xmlns:gui="schemas.anything.doesthismatterreallyfakeurl.com">
+	
+	<var name="text" value="setting text from a variable"/>
+	
+	<gui:button
+		gui:name="btn_menu"
+		gui:layout_width="@CONTENT"
+		gui:layout_height="@CONTENT"
+		gui:image="menu.gif"
+		gui:button_onClick="menu_click.js"
+		gui:layout_parent="mbr_menubar"
+		gui:layout_constraint="LEFT:START"
+		gui:visible="true"/>
+</gui>

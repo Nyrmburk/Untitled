@@ -18,7 +18,7 @@ public class Settings {
 	public static void loadSettings() {
 		
 		windowWidth = 1024;
-		windowHeight = 768;
+		windowHeight = 600;
 		_3D = false;
 		AAFonts = true;
 		fontSize = 14;
