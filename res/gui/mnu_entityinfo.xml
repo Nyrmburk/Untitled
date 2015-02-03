@@ -8,6 +8,6 @@
 		gui:title="Entity Info"
 		gui:layout_width="200"
 		gui:layout_parent="mbr_menubar"
-		gui:layout_constraint="RIGHT:START"
+		gui:layout_constraint="LEFT:START"
 		gui:visible="false"/>
 </gui>

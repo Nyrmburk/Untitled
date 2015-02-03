@@ -142,7 +142,7 @@ class UpdateThread implements Runnable {
 
 		synchronized (Manager.lock[index]) {
 
-			while (!Engine.closing) {
+			while (!Engine.isClosing) {
 
 				try {
 					Manager.lock[index].wait();

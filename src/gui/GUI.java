@@ -1,13 +1,18 @@
 package gui;
 
+import java.awt.Canvas;
 import java.awt.Color;
-import java.util.HashMap;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 
+import javax.swing.JFrame;
+
+import main.Engine;
 import main.Settings;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 
 public class GUI {
@@ -33,22 +38,37 @@ public class GUI {
 	
 	public static FormattedFont mainFont;
 	
-	private static HashMap<String, GUIElement> elements = new HashMap<String, GUIElement>();
+	public static JFrame frmMain;
+	public static Canvas display;
+	
+	private static ArrayList<GUIElement> elements = new ArrayList<GUIElement>();
 	private static Menu currentMenu;
 	
-	public static void addElement(String name, GUIElement element) {
+	public static void addElement(GUIElement element) {
 		
-		elements.put(name, element);
+		elements.add(element);
 	}
 	
 	public static GUIElement getElement(String name) {
 		
-		return elements.get(name);
+		for (GUIElement element : elements) {
+			
+			if (element.getName().equals(name)) {
+				
+				return element;
+				
+			} else if (element instanceof Container){
+				
+				return ((Container) element).getChild(name);
+			}
+		}
+		
+		return null;
 	}
 	
 	public static void update() {
 		
-		for (GUIElement element : elements.values()) {
+		for (GUIElement element : elements) {
 			
 			if (element.isVisible()) {
 				
@@ -62,7 +82,7 @@ public class GUI {
 	
 	public static void revalidate() {
 		
-		for (GUIElement element : elements.values()) {
+		for (GUIElement element : elements) {
 			
 			element.revalidate();
 		}
@@ -70,7 +90,7 @@ public class GUI {
 	
 	public static void render() {
 		
-		for (GUIElement element : elements.values()) {
+		for (GUIElement element : elements) {
 			
 			if (element.isVisible()) element.draw();
 		}
@@ -90,12 +110,27 @@ public class GUI {
 	 */
 	public static void initialize() throws LWJGLException {
 		
+		frmMain = new JFrame();
+		display = new Canvas();
+		display.setBackground(Color.BLACK);
+		display.setSize(Settings.windowWidth, Settings.windowHeight);
+		frmMain.add(display);
+		frmMain.pack();
+		frmMain.setTitle("Colonies");
+		
+		frmMain.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				Engine.isClosing = true;
+			}
+		});
+		
 		if (Settings.fullscreen)
 			Display.setFullscreen(true);
-		else
-			Display.setDisplayMode(new DisplayMode(Settings.windowWidth,
-					Settings.windowHeight));
-		Display.setTitle("Colonies");
+		else {
+			Display.setParent(display);
+			frmMain.setVisible(true);
+		}
 		Display.create();
 		
 		mainFont = new FormattedFont(Settings.awtFont, Settings.AAFonts);
@@ -103,7 +138,7 @@ public class GUI {
 	
 	public static void loadGUI() {
 		
-		elements = GUIParser.loadGUI();
+		elements = new ArrayList<GUIElement>(GUIParser.loadGUI().values());
 	}
 	
 	public static void awtToGL(Color color) {

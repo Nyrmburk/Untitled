@@ -12,7 +12,7 @@ import org.lwjgl.util.glu.GLU;
  */
 public class Camera {
 	
-	public static float aspectRatio = (float)Settings.windowWidth/Settings.windowHeight;
+	public static float aspectRatio;
 	public static float near = 1f;
 	public static float far = 2000;
 	public static float fov = 75;
@@ -23,6 +23,11 @@ public class Camera {
 	public static float[] eye = {50, 50, 100};
 	public static float[] center = {50, 50, 0};
 	public static final float[] UP = {0, 1, 0};
+	
+	public static void initialize() {
+		
+		aspectRatio = (float)Settings.windowWidth/Settings.windowHeight;
+	}
 	
 	public static void moveX(float f) {
 		

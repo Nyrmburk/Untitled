@@ -41,15 +41,7 @@ public class Script {
 		
 		this.file = file;
 		String code = HEADER + load(file);
-		try {
-			
-			this.compiledScript = compEngine.compile(code);
-		} catch (ScriptException e) {
-			String message = "Error in script \"" + file.getName() + "\":\r\n	"
-					+ e.getCause();
-			System.err.println(message);
-			errorlog.append(message);
-		}
+		compile(code);
 	}
 	
 	private String load(File file) {
@@ -77,6 +69,25 @@ public class Script {
 		}
 		
 		return scriptCode.toString();
+	}
+	
+	private void compile(String code) {
+		
+		try {
+			
+			this.compiledScript = compEngine.compile(code);
+		} catch (ScriptException e) {
+			String message = "Error in script \"" + file.getName() + "\":\r\n	"
+					+ e.getCause();
+			System.err.println(message);
+			errorlog.append(message);
+		}
+	}
+	
+	public void reload() {
+		
+		String code = HEADER + load(file);
+		compile(code);
 	}
 	
 	public void eval() {

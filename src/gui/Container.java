@@ -25,9 +25,43 @@ public abstract class Container extends GUIElement {
 		invalidate();
 	}
 	
+	public boolean containsChild(String childName) {
+		
+		for (GUIElement child : children) {
+			
+			if (child.getName().equals(childName)) {
+				
+				return true;
+				
+			} else if (child instanceof Container) {
+				
+				((Container) child).containsChild(childName);
+			}
+		}
+		
+		return false;
+	}
+	
 	public GUIElement getChild(int index) {
 		
 		return children.get(index);
+	}
+	
+	public GUIElement getChild(String childName) {
+		
+		for (GUIElement child : children) {
+			
+			if (child.getName().equals(childName)) {
+				
+				return child;
+				
+			} else if (child instanceof Container) {
+				
+				((Container) child).containsChild(childName);
+			}
+		}
+		
+		return null;
 	}
 	
 	public void updateChildren() {

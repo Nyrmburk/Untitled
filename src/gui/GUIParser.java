@@ -81,8 +81,8 @@ class GUIContentHandler extends DefaultHandler {
 	HashMap<String, GUIElement> elements;
 	HashMap<GUIElement, String> linkParent = 
 			new HashMap<GUIElement, String>();
-	HashMap<GUIElement, String> linkConstraint = 
-			new HashMap<GUIElement, String>();
+	HashMap<GUIElement, Object> linkConstraint = 
+			new HashMap<GUIElement, Object>();
 	GUIElement currentElement;
 	
 	private static HashMap<String, Object> variables = 
@@ -122,6 +122,7 @@ class GUIContentHandler extends DefaultHandler {
 				case "text":
 					((Button) currentElement).setText(
 							(String) resolve(attributes.getValue(i)));
+					break;
 				case "button_onEnter":
 				case "button_onExit":
 				case "button_onPress":
@@ -231,7 +232,7 @@ class GUIContentHandler extends DefaultHandler {
 				linkParent.put(currentElement, attributes.getValue(i));
 				break;
 			case "layout_constraint":
-				linkConstraint.put(currentElement, attributes.getValue(i));
+				linkConstraint.put(currentElement, resolve(attributes.getValue(i)));
 				break;
 			case "visible":
 				currentElement.setVisible((boolean) resolve(attributes
@@ -305,11 +306,14 @@ class GUIContentHandler extends DefaultHandler {
 	
 	public void link() {
 		
+		HashMap<String, GUIElement> tempElements = 
+				new HashMap<String, GUIElement>(elements);
+		
 		//TODO use magic to iterate and remove elements from linkparent
 		//source of magic --> http://stackoverflow.com/questions/1884889/iterating-over-and-removing-from-a-map
 		for (GUIElement child : linkParent.keySet()) {
 			
-			Container parent = (Container) elements.get(linkParent.get(child));
+			Container parent = (Container) tempElements.get(linkParent.get(child));
 			if (parent == null) continue;
 			
 			Object constraint = linkConstraint.get(child);
@@ -318,8 +322,9 @@ class GUIContentHandler extends DefaultHandler {
 				parent.addChild(child, constraint);
 			else parent.addChild(child);
 			
-			elements.remove(child);
+			elements.remove(child.getName());
 			linkConstraint.remove(child);
+//			linkParent.remove(child);
 		}
 	}
 }

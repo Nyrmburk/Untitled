@@ -15,8 +15,8 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
+import script.Script;
 import main.AssetManager;
-
 import ai.ActionMove;
 import world.Coord;
 import world.World;
@@ -34,7 +34,7 @@ public class Engine {
 	
 	private static int highestFrame = Integer.MIN_VALUE;
 	private static int lowestFrame = Integer.MAX_VALUE;
-	public static int frameQuality;
+	public static int frameQuality = 0;
 	
 	/** Frames per second **/
 	public static int fps;
@@ -47,7 +47,7 @@ public class Engine {
 	private static long lastFrame = 0;
 	
 	/** Whether or not the application is closing **/
-	public static boolean closing = false;
+	public static boolean isClosing = false;
 	
 	/** The world data **/
 	public static World world;
@@ -77,8 +77,9 @@ public class Engine {
 		lastFPS = getTime();
 		
 		// Display.setVSyncEnabled(true);
+		
 		// the main engine loop
-		while (!Display.isCloseRequested()) {
+		while (!Display.isCloseRequested() && !isClosing) {
 			
 			// get the change in time since the last frame
 			delta = getDelta();
@@ -109,13 +110,14 @@ public class Engine {
 			// check for graphics errors
 			GLErrorHelper.checkError();
 			
-			// if (Display.wasResized()) {
-			// Settings.windowWidth= GUI.cnvsDisplay.getWidth();
-			// Settings.windowHeight = GUI.cnvsDisplay.getHeight();
-			// GL11.glViewport(0, 0, Settings.windowWidth,
-			// Settings.windowHeight);
-			// initGL();
-			// }
+			// handle resizing the window
+			if (Display.wasResized()) {
+				Settings.windowWidth = GUI.display.getWidth();
+				Settings.windowHeight = GUI.display.getHeight();
+				GL11.glViewport(0, 0, Settings.windowWidth,
+						Settings.windowHeight);
+				graphics.Render.initGL();
+			}
 			
 			// update the window with the now rendered image
 			Display.update();
@@ -132,11 +134,24 @@ public class Engine {
 	 */
 	public static void close() {
 		
+		System.out.println("shutting down");
+		
+		System.out.print("deleting shaders... ");
 		ShaderProgram.deleteAll();
+		System.out.println("done");
 		
 		// dispose of the graphics
+		System.out.print("destroying display... ");
 		Display.destroy();
+		System.out.println("done");
+		
+		// dispose of the window
+		System.out.print("disposing window... ");
+		GUI.frmMain.dispose();
+		System.out.println("done");
+		
 		// shut down the jvm
+		System.out.print("exiting... ");
 		System.exit(0);
 	}
 	
@@ -442,7 +457,14 @@ public class Engine {
 					+ world.getMovementSpeed(highlight.toArray()));
 		}
 		
-		if (Input.keyChanged.get("spawn1") == Input.RELEASED) {
+//		if (Input.keyChanged.get("spawn1") == Input.RELEASED) {
+//			
+//			Manager.addEntity(new Mob("testing", temp, AssetManager
+//					.getModel("monkey.obj")));
+//			System.out.println(Manager.entityList.size() + " entities");
+//		}
+		
+		if (Input.keyDown.get("spawn1")) {
 			
 			Manager.addEntity(new Mob("testing", temp, AssetManager
 					.getModel("monkey.obj")));
@@ -476,16 +498,29 @@ public class Engine {
 		if (Input.keyChanged.get("spawn4") == Input.RELEASED) {
 			
 			Manager.addZone(new Zone(start, end));
+			GUI.frmMain.setVisible(false);
+			GUI.frmMain.dispose();
 		}
 		
 		if (Input.keyChanged.get("refresh") == Input.RELEASED) {
 			
-			System.out.println("refreshing shaders");
+			System.out.println("refreshing all... ");
 			
+			System.out.print("refreshing shaders... ");
 			for (ShaderProgram shaderProgram : ShaderProgram.programList) {
 				
 				shaderProgram.rebuild();
 			}
+			System.out.println("done");
+			
+			System.out.print("refreshing scripts... ");
+			for (Script script : AssetManager.scriptMap.values()) {
+				
+				script.reload();
+			}
+			System.out.println("done");
+			
+			System.out.println("all done");
 		}
 		
 		if (Input.keyChanged.get("screenshot") == Input.RELEASED) {

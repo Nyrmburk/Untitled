@@ -78,13 +78,13 @@ public class Menu extends Panel {
 		GL11.glDisable(GL11.GL_BLEND);
 	}
 	
-//	public void setVisible(boolean visible) {
-//		
-//		super.setVisible(visible);
-//		
-//		if (visible)
-//			GUI.setCurrentMenu(this);
-//	}
+	public void setVisible(boolean visible) {
+		
+		super.setVisible(visible);
+		
+		if (visible)
+			GUI.setCurrentMenu(this);
+	}
 	
 	public String getTitle() {
 		

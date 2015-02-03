@@ -5,9 +5,16 @@
 	
 	<gui:menu
 		gui:name="mnu_menu"
-		gui:title="Main Menu"
+		gui:title="MAIN MENU"
 		gui:layout_width="200"
 		gui:layout_parent="mbr_menubar"
 		gui:layout_constraint="LEFT:START"
 		gui:visible="false"/>
+	
+	<gui:button
+		gui:name="btn_save"
+		gui:text="save"
+		gui:button_onClick="save_world.js"
+		gui:layout_parent="mnu_menu"
+		gui:layout_constraint="1"/>
 </gui>

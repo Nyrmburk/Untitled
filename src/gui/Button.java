@@ -58,13 +58,13 @@ public class Button extends GUIElement {
 		this();
 		
 		textBox = new TextBox(GUI.mainFont.clone());
-		setBounds(0, 0, textBox.getFont().getWidth(label), textBox.getFont()
-				.getHeight());
-		textBox.setBounds(this);
+//		setBounds(0, 0, textBox.getFont().getWidth(label), textBox.getFont()
+//				.getHeight());
+//		textBox.setBounds(this);
 		textBox.getFont().horizontalAlignment = FormattedFont.HorizontalAlignment.CENTER;
 		textBox.getFont().verticalAlignment = FormattedFont.VerticalAlignment.CENTER;
 		textBox.setText(label);
-		textBox.setRenderAsTexture(true);
+//		textBox.setRenderAsTexture(true);
 	}
 	
 	Button(BufferedImage image) {
@@ -140,8 +140,12 @@ public class Button extends GUIElement {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 1);
 		
 		GL11.glEnable(GL11.GL_BLEND);
-		if (textBox != null)
+		if (textBox != null) {
+			
+			textBox.x = this.x;
+			textBox.y = this.y;
 			textBox.draw(0f, org.newdawn.slick.Color.black);
+		}
 		else if (texture != null) {
 			
 			if (!entered)
@@ -194,14 +198,21 @@ public class Button extends GUIElement {
 	
 	public void setText(String text) {
 		
-		this.texture.release();
+		if (this.texture != null)
+			this.texture.release();
 		this.texture = null;
 		
 		if (textBox == null)
 			textBox = new TextBox();
 		
 		this.textBox.setText(text);
-			
+		
+		if (this.autoWidth)
+			this.width = textBox.width + 
+			textBox.getInsets().left + textBox.getInsets().right;
+		if (this.autoHeight)
+			this.height = textBox.height + 
+			textBox.getInsets().top + textBox.getInsets().bottom;
 	}
 	
 	public void setImage(Texture texture) {
@@ -278,12 +289,23 @@ public class Button extends GUIElement {
 	@Override
 	protected void onPositionChange(int oldX, int oldY) {
 		
-		if (textBox != null) textBox.translate(x - oldX, y - oldY);
+		if (textBox != null) {
+			textBox.x = this.x;//(x - oldX, y - oldY);
+			textBox.y = this.y;
+		}
 	}
 	
 	@Override
 	protected void onSizeChange(int oldWidth, int oldHeight) {
 		
 		if (textBox != null) textBox.setSize(width, height);
+	}
+	
+	@Override
+	public void revalidate() {
+		
+		if (textBox != null)
+			textBox.revalidate();
+		super.revalidate();
 	}
 }

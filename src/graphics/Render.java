@@ -32,7 +32,7 @@ public class Render {
 	public static void initGL() {
 		
 		// init opengl
-		
+		Camera.initialize();
 		Camera.perspective();
 		
 		GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);

@@ -32,26 +32,9 @@ public class MenuBar extends Panel {
 		font.verticalAlignment = FormattedFont.VerticalAlignment.CENTER;
 		time = new TextBox(font);
 		time.getFont().horizontalAlignment = FormattedFont.HorizontalAlignment.RIGHT;
-//		time.setBounds(this);
 		time.setInsets(0, 0, 0, 5);
 		time.setName("txt_time");
 		this.addChild(time, "RIGHT:START");
-//		Button btn = new Button(AssetManager.getTexture("menu.gif"));
-//		btn.setColor(Button.UNFOCUS_COLOR, new java.awt.Color(0, 0, 0, 0));
-//		btn.addActionListener(new java.awt.event.ActionListener() {
-//			
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				
-//				printEvent(e);
-//			}
-//		});
-//		btn.setBounds(GUI.padding, Settings.windowHeight - GUI.padding
-//				- GUI.content, GUI.content, GUI.content);
-//		this.addChild("MyButton", btn);
-		
-		// time.setText("hello, world!");
-		// time.setRenderAsTexture(true);
 	}
 	
 	@Override

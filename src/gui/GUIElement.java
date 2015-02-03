@@ -96,6 +96,7 @@ public abstract class GUIElement implements Drawable {
 	public void revalidate() {
 		
 		valid = true;
+//		System.out.println(getName() + " Revalidated");
 	}
 	
 	/**

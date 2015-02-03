@@ -195,13 +195,13 @@ public class TextBox extends GUIElement {
 			if (this.autoWidth) {
 				
 				this.width = font.getWidth(text) + insets.left + insets.right;
-				invalidate();
 			}
 			
 			this.text = text;
 //			formatLines();
 			
-			if (renderAsTexture) renderToTexture();
+//			if (renderAsTexture) renderToTexture();
+			invalidate();
 		}
 	}
 	
@@ -291,6 +291,7 @@ public class TextBox extends GUIElement {
 	@Override
 	public void revalidate() {
 		
+//		System.out.println("TextBox revalidated");
 		formatLines();
 		super.revalidate();
 	}
