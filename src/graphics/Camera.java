@@ -1,6 +1,6 @@
 package graphics;
 
-import main.Settings;
+import main.Engine;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
@@ -20,13 +20,13 @@ public class Camera {
 	public static float eyeSeparation = 10;
 	public static float convergence = 200;
 	
-	public static float[] eye = {50, 50, 100};
-	public static float[] center = {50, 50, 0};
+	public static float[] eye = {0, 0, 10};
+	public static float[] center = {0, 0, 0};
 	public static final float[] UP = {0, 1, 0};
 	
 	public static void initialize() {
 		
-		aspectRatio = (float)Settings.windowWidth/Settings.windowHeight;
+		aspectRatio = (float)Engine.renderEngine.getWidth()/Engine.renderEngine.getHeight();
 	}
 	
 	public static void moveX(float f) {
@@ -38,7 +38,8 @@ public class Camera {
 	public static void moveY(float amountY) {
 		
 		eye[1] += amountY;
-		center[1] = eye[1];
+		center[1] = eye[1] + 100;
+//		center[1] = eye[1];
 	}
 	
 	public static void moveZ(float amountZ) {
@@ -121,7 +122,7 @@ public class Camera {
 		
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-		GL11.glOrtho(0, Settings.windowWidth, Settings.windowHeight, 0, -10, 10);
+		GL11.glOrtho(0, Engine.renderEngine.getWidth(), Engine.renderEngine.getHeight(), 0, -10, 10);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glLoadIdentity();
 	}

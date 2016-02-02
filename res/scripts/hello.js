@@ -20,12 +20,13 @@ coord[0] = 12; coord[1] = 32;
 print(coord + " = [" + coord[0] + ", " + coord[1] + "]");
 
 //create a new model from the asset manager
-var model = AssetManager.getModel("rocks.obj")
+//var model = AssetManager.getModel("rocks.obj")
 
 //create a new Item
-var item = new Item("JSObject", Item.itemTypes.ROCK, coord, model);
-print(item);
+//var item = new Item("JSObject", Item.itemTypes.ROCK, coord, model);
+//print(item);
+print(uuid);
 
 //add it to the update list
-Manager.addEntity(item);
-print(Manager.entityList.size() + " entities");
+//Manager.addEntity(item);
+//print(Manager.entityList.size() + " entities");

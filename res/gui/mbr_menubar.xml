@@ -11,6 +11,7 @@
 	
 	<gui:menubar
 		gui:name="mbr_menubar"
+		gui:update="mbr_menubar_update.js"
 		gui:layout_x="@LEFT"
 		gui:layout_y="576"
 		gui:layout_width="@RIGHT"

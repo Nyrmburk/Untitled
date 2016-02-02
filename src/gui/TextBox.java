@@ -13,10 +13,12 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.util.BufferedImageUtil;
 
+import graphics.UIRenderEngine;
+
 public class TextBox extends GUIElement {
 	
 	private Insets insets;
-	private FormattedFont font;
+	private static FormattedFont font;
 	private boolean renderAsTexture = false;
 	
 	private String text = "";
@@ -24,18 +26,25 @@ public class TextBox extends GUIElement {
 	
 	private Texture fontTexture;
 	
-	TextBox() {
+	public TextBox() {
 		
-		this(new FormattedFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12), true));
+//		this(new FormattedFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12), true));
+		this(font != null ? font : new FormattedFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12), true));
 	}
 	
-	TextBox(FormattedFont font) {
+	public TextBox(FormattedFont font) {
 		
 		super();
 		this.font = font;
 		this.insets = new Insets(0, 0, 0, 0);
 		formatLines();
 		this.height = font.getLineHeight();
+	}
+	
+	@Override
+	public BufferedImage render(UIRenderEngine renderEngine) {
+		
+		return renderEngine.renderTextBox(this);
 	}
 	
 	public void draw() {

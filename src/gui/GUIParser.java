@@ -152,8 +152,9 @@ class GUIContentHandler extends DefaultHandler {
 								@Override
 								public void actionPerformed(ActionEvent e) {
 									
-									if (e.getActionCommand() == action)
-										script.eval();
+									if (e.getActionCommand() == action) {
+										script.eval(true, null);
+									}
 								}
 								
 								private java.awt.event.ActionListener init(
@@ -208,6 +209,31 @@ class GUIContentHandler extends DefaultHandler {
 			case "name":
 				currentElement.setName(attributes.getValue(i));
 				break;
+			case "update" :
+				currentElement.addActionListener(
+						new java.awt.event.ActionListener() {
+							
+							script.Script script;
+							String action;
+							
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								
+								if (e.getActionCommand() == action) {
+									script.eval(false, null);
+								}
+							}
+							
+							private java.awt.event.ActionListener init(
+									script.Script script, String action) {
+								
+								this.script = script;
+								this.action = action;
+								return this;
+							}
+					
+				}.init(AssetManager.getScript(attributes.getValue(i)), GUIElement.UPDATE));
+				break;
 			case "layout_width":
 				currentElement.setSize((int) resolve(attributes.getValue(i)),
 						currentElement.height);
@@ -222,16 +248,16 @@ class GUIContentHandler extends DefaultHandler {
 			case "layout_y":
 				currentElement.setPosition(currentElement.x, (int) resolve(attributes.getValue(i)));
 				break;
-			case "layout_autowidth":
+			case "layout_autowidth"://merge into layout_width
 				currentElement.autoWidth = (boolean) resolve(attributes.getValue(i));
 				break;
-			case "layout_autoheight":
+			case "layout_autoheight"://merge into layout_height
 				currentElement.autoHeight = (boolean) resolve(attributes.getValue(i));
 				break;
-			case "layout_parent":
+			case "layout_parent"://remove entirely
 				linkParent.put(currentElement, attributes.getValue(i));
 				break;
-			case "layout_constraint":
+			case "layout_constraint"://how do I set a layout manager in the first place?
 				linkConstraint.put(currentElement, resolve(attributes.getValue(i)));
 				break;
 			case "visible":

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<gui
+	xmlns:gui="schemas.anything.doesthismatterreallyfakeurl.com"
+	gui:layout_width="math_parent"
+	gui:layout_height="match_parent"
+	gui:layout_manager="boxlayout">
+	
+	<gui:panel
+		gui:name="image"
+		gui:layout_width="wrap_content"
+		gui:layout_height="wrap_content"
+		gui:layout_constraint="0.5"
+		gui:image="untitled.png"/>
+	
+	<gui:button
+		gui:name="play"
+		gui:layout_width="wrap_content"
+		gui:layout_height="wrap_content"
+		gui:layout_constraint="0.1"
+		gui:text="Play"/>
+	
+	<gui:button
+		gui:name="create"
+		gui:layout_width="wrap_content"
+		gui:layout_height="wrap_content"
+		gui:layout_constraint="0.1"
+		gui:text="Create"/>
+	
+	<gui:button
+		gui:name="options"
+		gui:layout_width="wrap_content"
+		gui:layout_height="wrap_content"
+		gui:layout_constraint="0.1"
+		gui:text="Options"/>
+	
+	<gui:button
+		gui:name="quit"
+		gui:layout_width="wrap_content"
+		gui:layout_height="wrap_content"
+		gui:layout_constraint="0.1"
+		gui:text="Quit"/>
+</gui>

@@ -2,11 +2,9 @@ package gui;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 
 import main.Engine;
-import main.Settings;
 
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.Color;
@@ -21,11 +19,7 @@ public class MenuBar extends Panel {
 		
 		super();
 		
-		this.setlayout(new GUIMenuBarLayout(this));
-		
-		this.setBounds(0,
-				Settings.windowHeight - GUI.content - 2 * GUI.padding,
-				Settings.windowWidth, GUI.content + 2 * GUI.padding);
+		this.setlayout(new GUIMenuBarLayout());
 		
 		font = GUI.mainFont;
 		font.horizontalAlignment = FormattedFont.HorizontalAlignment.RIGHT;
@@ -35,6 +29,11 @@ public class MenuBar extends Panel {
 		time.setInsets(0, 0, 0, 5);
 		time.setName("txt_time");
 		this.addChild(time, "RIGHT:START");
+	}
+	
+	public void setText(String text) {
+		
+		time.setText(text);
 	}
 	
 	@Override
@@ -47,21 +46,13 @@ public class MenuBar extends Panel {
 		
 		GL11.glEnable(GL11.GL_BLEND);
 		
-		time.setText(new Date().toString());
+//		time.setText(new Date().toString());
 		// time.setRenderAsTexture(true);
 		time.draw(0, Color.white);
 		font.drawString(0, 0, String.valueOf(Engine.currentFPS + ", "
 				+ Engine.frameQuality));
 		GL11.glDisable(GL11.GL_BLEND);
 	}
-	
-//	private void printEvent(java.awt.event.ActionEvent evt) {
-//		
-////		System.out.println("menu button " + evt.getActionCommand());
-//		if (evt.getActionCommand() == Button.CLICKED) {
-//			AssetManager.getScript("menu_click.js").eval();
-//		}
-//	}
 }
 
 class GUIMenuBarLayout extends GUILayoutManager {
@@ -82,11 +73,6 @@ class GUIMenuBarLayout extends GUILayoutManager {
 	
 	HashMap<GUIElement, MenuBarConstraint> constraints = 
 			new HashMap<GUIElement, MenuBarConstraint>();
-	
-	public GUIMenuBarLayout(Container parent) {
-		super(parent);
-		// TODO Auto-generated constructor stub
-	}
 	
 	@Override
 	public void layout() {

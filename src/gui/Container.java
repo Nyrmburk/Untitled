@@ -5,11 +5,17 @@ import java.util.ArrayList;
 public abstract class Container extends GUIElement {
 	
 	ArrayList<GUIElement> children = new ArrayList<GUIElement>();
-	GUILayoutManager layoutManager = new GUIFlowLayout(this);
+	private GUILayoutManager layoutManager;
 	
 	public Container() {
 		
+		this(new GUIFlowLayout());
+	}
+	
+	public Container(GUILayoutManager layout) {
+		
 		super();
+		this.setlayout(layout);
 	}
 	
 	public void addChild(GUIElement component) {
@@ -64,7 +70,12 @@ public abstract class Container extends GUIElement {
 		return null;
 	}
 	
-	public void updateChildren() {
+	public ArrayList<GUIElement> getChildren() {
+		
+		return children;
+	}
+	
+	public final void updateChildren() {
 		
 		for (GUIElement child : children) {
 			
@@ -83,6 +94,7 @@ public abstract class Container extends GUIElement {
 	public void setlayout(GUILayoutManager manager) {
 		
 		this.layoutManager = manager;
+		manager.setParent(this);
 		if (layoutManager != null) invalidate();
 	}
 	
@@ -96,14 +108,24 @@ public abstract class Container extends GUIElement {
 		//TODO make it so
 	}
 	
+//	public void update() {
+//		
+//		for (GUIElement child : children) {
+//			
+//			child.update();
+//		}
+//	}
+	
 	public void revalidate() {
+		
+		super.revalidate();
+		
+		this.layoutManager.layout();
 		
 		for (GUIElement child : children) {
 			
 			child.revalidate();
 		}
-		
-		this.layoutManager.layout();
 		
 		valid = true;
 	}

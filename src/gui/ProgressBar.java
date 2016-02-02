@@ -1,5 +1,9 @@
 package gui;
 
+import java.awt.image.BufferedImage;
+
+import graphics.UIRenderEngine;
+
 public class ProgressBar extends GUIElement {
 	
 	private int currentValue = 0;
@@ -13,6 +17,12 @@ public class ProgressBar extends GUIElement {
 	public void setResolution(int resolution) {
 		
 		this.resolution = resolution;
+	}
+	
+	@Override
+	public BufferedImage render(UIRenderEngine renderEngine) {
+		
+		return renderEngine.renderProgressBar(this);
 	}
 	
 	@Override

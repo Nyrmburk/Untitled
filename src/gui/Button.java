@@ -1,181 +1,133 @@
 package gui;
 
 import java.awt.Color;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
-import main.Input;
-import main.Settings;
+import main.Engine;
+import graphics.TextureInterface;
+import graphics.UIRenderEngine;
+import input.InputContext;
 
-import org.lwjgl.opengl.GL11;
-import org.newdawn.slick.opengl.Texture;
+public class Button extends GUIElement implements PointerListener {
 
-public class Button extends GUIElement {
-	
 	public static final String PRESSED = "pressed";
 	public static final String RELEASED = "released";
 	public static final String CLICKED = "clicked";
 	public static final String ENTERED = "entered";
 	public static final String EXITED = "exited";
-	
+
 	public static final int FOCUS_COLOR = 0;
-	public static final int UNFOCUS_COLOR = FOCUS_COLOR + 1;
-	public static final int SELECTED_COLOR = UNFOCUS_COLOR + 1;
-	
-	public static final int IMAGE_FOCUS_COLOR = SELECTED_COLOR + 1;
-	public static final int IMAGE_UNFOCUS_COLOR = IMAGE_FOCUS_COLOR + 1;
-	
-	private boolean entered = false;
-	private boolean pressed = false;
-	
+	public static final int UNFOCUS_COLOR = 1;
+	public static final int SELECTED_COLOR = 2;
+
+	public static final int IMAGE_FOCUS_COLOR = 3;
+	public static final int IMAGE_UNFOCUS_COLOR = 4;
+
 	private boolean lastPressed = false;
-	
+
 	private Color focusColor = GUI.focusColor;
 	private Color unfocusColor = GUI.unfocusColor;
 	private Color selectedColor = GUI.iconColor;
-	
-	private Color imageFocusColor = GUI.systemColor;
-	private Color imageUnfocusColor = GUI.iconColor;
-	
+
 	private Color currentColor = unfocusColor;
 	private int currentColorIdentifier = UNFOCUS_COLOR;
-	
-	transient ActionListener actionListener;
-	
+
+	// transient ActionListener actionListener;
+
 	TextBox textBox;
-	Texture texture;
+	TextureInterface texture;
 	
-	Button() {
-		
+	public Button() {
+
 		super();
+//		new java.awt.Button();
 	}
-	
+
 	Button(String label) {
-		
+
 		this();
-		
+
 		textBox = new TextBox(GUI.mainFont.clone());
-//		setBounds(0, 0, textBox.getFont().getWidth(label), textBox.getFont()
-//				.getHeight());
-//		textBox.setBounds(this);
+		// setBounds(0, 0, textBox.getFont().getWidth(label), textBox.getFont()
+		// .getHeight());
+		// textBox.setBounds(this);
 		textBox.getFont().horizontalAlignment = FormattedFont.HorizontalAlignment.CENTER;
 		textBox.getFont().verticalAlignment = FormattedFont.VerticalAlignment.CENTER;
 		textBox.setText(label);
-//		textBox.setRenderAsTexture(true);
+		// textBox.setRenderAsTexture(true);
 	}
-	
+
 	Button(BufferedImage image) {
-		
+
 		super();
-		
-		try {
-			texture = org.newdawn.slick.util.BufferedImageUtil.getTexture(this
-					.toString(), image);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+
+		texture = Engine.renderEngine.getTextureFromImage(image);
 	}
-	
-	Button(Texture texture) {
-		
+
+	Button(TextureInterface texture) {
+
 		super();
-		
+
 		this.texture = texture;
 	}
-	
+
 	public void update(boolean mouseOver) {
-		
-		if (mouseOver) {
-			
-			if (!entered) {
-				
-				entered = true;
-				onEnter();
-				
-				if (Input.mouseDown[0] && !lastPressed) lastPressed = true;
-			}
-			
-			if (Input.mouseDown[0] && !lastPressed) {
-				
-				if (!pressed) {
-					
-					pressed = true;
-					onPress();
-				}
-			} else if (!Input.mouseDown[0]) {
-				
-				if (pressed || lastPressed) {
-					
-					if (!pressed) lastPressed = false;
-					pressed = false;
-					onRelease();
-				}
-			}
-		} else {
-			
-			if (!Input.mouseDown[0]) {
-				
-				pressed = false;
-				
-				if (entered) {
-					
-					entered = false;
-					onExit();
-				}
-			}
-		}
+
+//		if (mouseOver) {
+//
+//			if (!entered) {
+//
+//				entered = true;
+//				onEnter();
+//
+//				if (context.pointerDown() && !lastPressed)
+//					lastPressed = true;
+//			}
+//
+//			if (context.pointerDown() && !lastPressed) {
+//
+//				if (!pressed) {
+//
+//					pressed = true;
+//					onPress();
+//				}
+//			} else if (!context.pointerDown()) {
+//
+//				if (pressed || lastPressed) {
+//
+//					if (!pressed)
+//						lastPressed = false;
+//					pressed = false;
+//					onRelease();
+//				}
+//			}
+//		} else {
+//
+//			if (!context.pointerDown()) {
+//
+//				pressed = false;
+//
+//				if (entered) {
+//
+//					entered = false;
+//					onExit();
+//				}
+//			}
+//		}
 	}
 	
-	public void draw() {
+	@Override
+	public BufferedImage render(UIRenderEngine renderEngine) {
 		
-		update(this.containsPoint(new Point(Input.mouseX, Settings.windowHeight
-				- Input.mouseY)));
-		
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-		GUI.awtToGL(currentColor);
-		GUI.drawQuad(this);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 1);
-		
-		GL11.glEnable(GL11.GL_BLEND);
-		if (textBox != null) {
-			
-			textBox.x = this.x;
-			textBox.y = this.y;
-			textBox.draw(0f, org.newdawn.slick.Color.black);
-		}
-		else if (texture != null) {
-			
-			if (!entered)
-				GUI.awtToGL(imageUnfocusColor);
-			else
-				GUI.awtToGL(imageFocusColor);
-			texture.bind();
-			
-			int hOffset = (width - texture.getImageWidth()) / 2;
-			int vOffset = (height - texture.getImageHeight()) / 2;
-			
-			GL11.glBegin(GL11.GL_QUADS);
-			GL11.glTexCoord2f(0, 0);
-			GL11.glVertex2i(x + hOffset, y + vOffset);
-			GL11.glTexCoord2f(0, texture.getHeight());
-			GL11.glVertex2i(x + hOffset, y + vOffset + texture.getImageHeight());
-			GL11.glTexCoord2f(texture.getWidth(), texture.getHeight());
-			GL11.glVertex2i(x + hOffset + texture.getImageWidth(), y + vOffset
-					+ texture.getImageHeight());
-			GL11.glTexCoord2f(texture.getWidth(), 0);
-			GL11.glVertex2i(x + hOffset + texture.getImageWidth(), y + vOffset);
-			GL11.glEnd();
-		}
-		GL11.glDisable(GL11.GL_BLEND);
+		return renderEngine.renderButton(this);
 	}
-	
+
 	public void setColor(int identifier, Color color) {
-		
+
 		switch (identifier) {
-		
+
 		case FOCUS_COLOR:
 			focusColor = color;
 			break;
@@ -185,127 +137,201 @@ public class Button extends GUIElement {
 		case SELECTED_COLOR:
 			selectedColor = color;
 			break;
-		case IMAGE_FOCUS_COLOR:
-			imageFocusColor = color;
-			break;
-		case IMAGE_UNFOCUS_COLOR:
-			imageUnfocusColor = color;
-			break;
 		}
-		
-		if (currentColorIdentifier == identifier) currentColor = color;
+
+		if (currentColorIdentifier == identifier)
+			currentColor = color;
 	}
 	
-	public void setText(String text) {
+	public Color getColor() {
 		
+		return currentColor;
+	}
+
+	public void setText(String text) {
+
 		if (this.texture != null)
 			this.texture.release();
 		this.texture = null;
-		
+
 		if (textBox == null)
 			textBox = new TextBox();
-		
+
 		this.textBox.setText(text);
-		
+
 		if (this.autoWidth)
-			this.width = textBox.width + 
-			textBox.getInsets().left + textBox.getInsets().right;
+			this.width = textBox.width + textBox.getInsets().left
+					+ textBox.getInsets().right;
 		if (this.autoHeight)
-			this.height = textBox.height + 
-			textBox.getInsets().top + textBox.getInsets().bottom;
+			this.height = textBox.height + textBox.getInsets().top
+					+ textBox.getInsets().bottom;
 	}
 	
-	public void setImage(Texture texture) {
+	public String getText() {
 		
+		return textBox.getText();
+	}
+	
+	public boolean hasText() {
+		
+		//lazy. fix later
+		return textBox != null && textBox.getText() != null && !textBox.getText().isEmpty();
+	}
+
+	public void setImage(TextureInterface object) {
+
 		if (this.texture != null)
 			this.texture.release();
-		this.texture = texture;
+		this.texture = object;
 		this.textBox = null;
 	}
-	
+
 	public void setImage(BufferedImage image) {
-		
-		try {
-			setImage(org.newdawn.slick.util.BufferedImageUtil.getTexture(this
-					.toString(), image));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+
+		setImage(Engine.renderEngine.getTextureFromImage(image));
 	}
 	
-	private void onPress() {
+	public boolean hasImage() {
 		
+		return texture != null;
+	}
+	
+	public BufferedImage getImage() {
+		
+		return null;
+	}
+
+	public void onPress() {
+
 		currentColor = selectedColor;
 		currentColorIdentifier = SELECTED_COLOR;
-		if (actionListener != null)
-			actionListener.actionPerformed(new ActionEvent(this,
-					ActionEvent.ACTION_PERFORMED, PRESSED));
+
+		for (ActionListener listener : listeners)
+			if (listener != null)
+				listener.actionPerformed(new ActionEvent(this,
+						ActionEvent.ACTION_PERFORMED, PRESSED));
 		lastPressed = true;
 	}
-	
-	private void onRelease() {
-		
+
+	public void onRelease() {
+
 		currentColor = focusColor;
 		currentColorIdentifier = FOCUS_COLOR;
-		if (actionListener != null)
-			actionListener.actionPerformed(new ActionEvent(this,
-					ActionEvent.ACTION_PERFORMED, RELEASED));
-		
-		if (lastPressed) onClick();
+
+		for (ActionListener listener : listeners)
+			if (listener != null)
+				listener.actionPerformed(new ActionEvent(this,
+						ActionEvent.ACTION_PERFORMED, RELEASED));
+
+		if (lastPressed)
+			onClick();
 		lastPressed = false;
 	}
-	
-	private void onClick() {
-		
-		if (actionListener != null)
-			actionListener.actionPerformed(new ActionEvent(this,
-					ActionEvent.ACTION_PERFORMED, CLICKED));
+
+	public void onClick() {
+
+		for (ActionListener listener : listeners)
+			if (listener != null)
+				listener.actionPerformed(new ActionEvent(this,
+						ActionEvent.ACTION_PERFORMED, CLICKED));
 	}
-	
-	private void onEnter() {
-		
+
+	public void onEnter() {
+
 		currentColor = focusColor;
 		currentColorIdentifier = FOCUS_COLOR;
-		if (actionListener != null)
-			actionListener.actionPerformed(new ActionEvent(this,
-					ActionEvent.ACTION_PERFORMED, ENTERED));
+
+		for (ActionListener listener : listeners)
+			if (listener != null)
+				listener.actionPerformed(new ActionEvent(this,
+						ActionEvent.ACTION_PERFORMED, ENTERED));
 	}
-	
-	private void onExit() {
-		
+
+	public void onExit() {
+
 		currentColor = unfocusColor;
 		currentColorIdentifier = UNFOCUS_COLOR;
-		if (actionListener != null)
-			actionListener.actionPerformed(new ActionEvent(this,
-					ActionEvent.ACTION_PERFORMED, EXITED));
+
+		for (ActionListener listener : listeners)
+			if (listener != null)
+				listener.actionPerformed(new ActionEvent(this,
+						ActionEvent.ACTION_PERFORMED, EXITED));
 		lastPressed = false;
 	}
-	
-	public void addActionListener(ActionListener actionListener) {
-		
-		this.actionListener = actionListener;
-	}
-	
+
 	@Override
 	protected void onPositionChange(int oldX, int oldY) {
-		
+
 		if (textBox != null) {
-			textBox.x = this.x;//(x - oldX, y - oldY);
+			textBox.x = this.x;// (x - oldX, y - oldY);
 			textBox.y = this.y;
 		}
 	}
-	
+
 	@Override
 	protected void onSizeChange(int oldWidth, int oldHeight) {
-		
-		if (textBox != null) textBox.setSize(width, height);
+
+		if (textBox != null)
+			textBox.setSize(width, height);
 	}
-	
+
 	@Override
 	public void revalidate() {
-		
+
 		if (textBox != null)
 			textBox.revalidate();
 		super.revalidate();
+	}
+
+	@Override
+	public void draw() {
+		// TODO Auto-generated method stub
+		
+	}
+}
+
+class PointerButtonInputContext extends InputContext {
+
+	private boolean pointerClicked = false;
+	
+	public PointerButtonInputContext() {
+		
+		this.addInput(new input.Button(0, "pointer") {
+
+			@Override
+			public void onPress() {
+				
+				pointerClicked = true;
+			}
+
+			@Override
+			public void onRelease() {
+				
+				pointerClicked = false;
+			}
+
+			@Override
+			public void onHold() {
+			}
+
+			@Override
+			public void onUpdate(int delta) {
+			}
+		});
+	}
+	
+	@Override
+	public boolean isValid() {
+		return true;
+	}
+
+	@Override
+	public void update(int delta) {
+		
+	}
+	
+	public boolean pointerDown() {
+		
+		return pointerClicked;
 	}
 }

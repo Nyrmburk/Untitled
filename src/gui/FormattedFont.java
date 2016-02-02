@@ -5,19 +5,19 @@ import org.newdawn.slick.TrueTypeFont;
 
 public class FormattedFont extends TrueTypeFont {
 	
-	enum HorizontalAlignment {
+	public enum HorizontalAlignment {
 		LEFT, CENTER, RIGHT
 	}
 	
-	enum VerticalAlignment {
+	public enum VerticalAlignment {
 		TOP, CENTER, BOTTOM
 	}
 	
 	private Font font;
-	boolean antiAlias;
+	public boolean antiAlias;
 	
-	HorizontalAlignment horizontalAlignment = HorizontalAlignment.LEFT;
-	VerticalAlignment verticalAlignment = VerticalAlignment.TOP;
+	public HorizontalAlignment horizontalAlignment = HorizontalAlignment.LEFT;
+	public VerticalAlignment verticalAlignment = VerticalAlignment.TOP;
 	// boolean justified = false;
 	byte indent = 3;
 	boolean underline = false;

@@ -9,15 +9,11 @@ import java.util.Calendar;
 
 import javax.imageio.ImageIO;
 
-import main.Engine;
 import main.Settings;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-
-import world.Coord;
-import world.World;
 
 /**
  * Provide specialty rendering such as various ui elements. Might deprecate
@@ -82,119 +78,119 @@ public class Render {
 		
 	}
 	
-	public static void drawSelectionGrid(World world, Coord startCoord,
-			Coord endCoord) {
-		
-		Coord lowest = Coord.lowestCoord(startCoord, endCoord);
-		Coord highest = Coord.highestCoord(startCoord, endCoord);
-		
-		// change from fill polygons to draw wireframe
-		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
-		// flat shading
-		GL11.glShadeModel(GL11.GL_FLAT);
-		// offset the line depth so it does not collide with the other polygons
-		GL11.glEnable(GL11.GL_POLYGON_OFFSET_LINE);
-		// set the offset distance
-		GL11.glPolygonOffset(-2f, -2f);
-		GL11.glDisable(GL11.GL_LIGHTING);
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
-		
-		// left vertical
-		GL11.glBegin(GL11.GL_LINE_STRIP);
-		for (int y = lowest.y; y < highest.y + 1; y++) {
-			
-			GL11.glVertex3f(lowest.x, y, ((MapMesh) Engine.worldEntity.mdl)
-					.getHeight(new float[] {lowest.x, y}));
-		}
-		GL11.glEnd();
-		
-		// right vertical
-		GL11.glBegin(GL11.GL_LINE_STRIP);
-		for (int y = lowest.y; y < highest.y + 1; y++) {
-			
-			GL11.glVertex3f(highest.x, y, ((MapMesh) Engine.worldEntity.mdl)
-					.getHeight(new float[] {highest.x, y}));
-		}
-		GL11.glEnd();
-		
-		// bottom horizontal
-		GL11.glBegin(GL11.GL_LINE_STRIP);
-		for (int y = lowest.x; y < highest.x + 1; y++) {
-			
-			GL11.glVertex3f(y, lowest.y, ((MapMesh) Engine.worldEntity.mdl)
-					.getHeight(new float[] {y, lowest.y}));
-		}
-		GL11.glEnd();
-		
-		// top horizontal
-		GL11.glBegin(GL11.GL_LINE_STRIP);
-		for (int y = lowest.x; y < highest.x + 1; y++) {
-			
-			GL11.glVertex3f(y, highest.y, ((MapMesh) Engine.worldEntity.mdl)
-					.getHeight(new float[] {y, highest.y}));
-		}
-		GL11.glEnd();
-		
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		GL11.glEnable(GL11.GL_LIGHTING);
-		// disable line offset
-		GL11.glDisable(GL11.GL_POLYGON_OFFSET_LINE);
-		// return polygon mode to fill
-		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
-	}
+//	public static void drawSelectionGrid(World world, Coord startCoord,
+//			Coord endCoord) {
+//		
+//		Coord lowest = Coord.lowestCoord(startCoord, endCoord);
+//		Coord highest = Coord.highestCoord(startCoord, endCoord);
+//		
+//		// change from fill polygons to draw wireframe
+//		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+//		// flat shading
+//		GL11.glShadeModel(GL11.GL_FLAT);
+//		// offset the line depth so it does not collide with the other polygons
+//		GL11.glEnable(GL11.GL_POLYGON_OFFSET_LINE);
+//		// set the offset distance
+//		GL11.glPolygonOffset(-2f, -2f);
+//		GL11.glDisable(GL11.GL_LIGHTING);
+//		GL11.glDisable(GL11.GL_DEPTH_TEST);
+//		
+//		// left vertical
+//		GL11.glBegin(GL11.GL_LINE_STRIP);
+//		for (int y = lowest.y; y < highest.y + 1; y++) {
+//			
+//			GL11.glVertex3f(lowest.x, y, ((MapMesh) Engine.worldEntity.mdl)
+//					.getHeight(new float[] {lowest.x, y}));
+//		}
+//		GL11.glEnd();
+//		
+//		// right vertical
+//		GL11.glBegin(GL11.GL_LINE_STRIP);
+//		for (int y = lowest.y; y < highest.y + 1; y++) {
+//			
+//			GL11.glVertex3f(highest.x, y, ((MapMesh) Engine.worldEntity.mdl)
+//					.getHeight(new float[] {highest.x, y}));
+//		}
+//		GL11.glEnd();
+//		
+//		// bottom horizontal
+//		GL11.glBegin(GL11.GL_LINE_STRIP);
+//		for (int y = lowest.x; y < highest.x + 1; y++) {
+//			
+//			GL11.glVertex3f(y, lowest.y, ((MapMesh) Engine.worldEntity.mdl)
+//					.getHeight(new float[] {y, lowest.y}));
+//		}
+//		GL11.glEnd();
+//		
+//		// top horizontal
+//		GL11.glBegin(GL11.GL_LINE_STRIP);
+//		for (int y = lowest.x; y < highest.x + 1; y++) {
+//			
+//			GL11.glVertex3f(y, highest.y, ((MapMesh) Engine.worldEntity.mdl)
+//					.getHeight(new float[] {y, highest.y}));
+//		}
+//		GL11.glEnd();
+//		
+//		GL11.glEnable(GL11.GL_DEPTH_TEST);
+//		GL11.glEnable(GL11.GL_LIGHTING);
+//		// disable line offset
+//		GL11.glDisable(GL11.GL_POLYGON_OFFSET_LINE);
+//		// return polygon mode to fill
+//		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+//	}
 	
-	public static void drawLocalGrid(World world, int centerX, int centerY,
-			int radius) {
-		
-		final float MID = 0.5f;
-		
-		byte[][] worldHeight = world.getWorldHeight();
-		
-		GL11.glPushMatrix();
-		GL11.glDisable(GL11.GL_LIGHTING);
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
-		// GL11.glLineWidth(2);
-		
-		for (int x = -radius; x <= radius + 1; x++) {
-			GL11.glBegin(GL11.GL_LINE_STRIP);
-			
-			int y = (int) Math.sqrt(((float) radius + MID)
-					* ((float) radius + MID) - ((float) x - MID)
-					* ((float) x - MID));
-			
-			for (int i = -y + 1; i <= y; i++) {
-				if (x + centerX < world.getX() && x + centerX >= 0
-						&& i + centerY < world.getY() && i + centerY >= 0) {
-					
-					GL11.glVertex3f(x + centerX - MID, i + centerY - MID,
-							worldHeight[x + centerX][i + centerY]);
-				}
-			}
-			GL11.glEnd();
-		}
-		
-		for (int y = -radius; y <= radius + 1; y++) {
-			GL11.glBegin(GL11.GL_LINE_STRIP);
-			
-			int x = (int) Math.sqrt(((float) radius + MID)
-					* ((float) radius + MID) - ((float) y - MID)
-					* ((float) y - MID));
-			
-			for (int i = -x + 1; i <= x; i++) {
-				if (y + centerY < world.getY() && y + centerY >= 0
-						&& i + centerX < world.getX() && i + centerX >= 0) {
-					
-					GL11.glVertex3f(i + centerX - MID, y + centerY - MID,
-							worldHeight[i + centerX][y + centerY]);
-				}
-			}
-			GL11.glEnd();
-		}
-		
-		GL11.glEnable(GL11.GL_LIGHTING);
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		GL11.glPopMatrix();
-	}
+//	public static void drawLocalGrid(World world, int centerX, int centerY,
+//			int radius) {
+//		
+//		final float MID = 0.5f;
+//		
+//		byte[][] worldHeight = world.getWorldHeight();
+//		
+//		GL11.glPushMatrix();
+//		GL11.glDisable(GL11.GL_LIGHTING);
+//		GL11.glDisable(GL11.GL_DEPTH_TEST);
+//		// GL11.glLineWidth(2);
+//		
+//		for (int x = -radius; x <= radius + 1; x++) {
+//			GL11.glBegin(GL11.GL_LINE_STRIP);
+//			
+//			int y = (int) Math.sqrt(((float) radius + MID)
+//					* ((float) radius + MID) - ((float) x - MID)
+//					* ((float) x - MID));
+//			
+//			for (int i = -y + 1; i <= y; i++) {
+//				if (x + centerX < world.getX() && x + centerX >= 0
+//						&& i + centerY < world.getY() && i + centerY >= 0) {
+//					
+//					GL11.glVertex3f(x + centerX - MID, i + centerY - MID,
+//							worldHeight[x + centerX][i + centerY]);
+//				}
+//			}
+//			GL11.glEnd();
+//		}
+//		
+//		for (int y = -radius; y <= radius + 1; y++) {
+//			GL11.glBegin(GL11.GL_LINE_STRIP);
+//			
+//			int x = (int) Math.sqrt(((float) radius + MID)
+//					* ((float) radius + MID) - ((float) y - MID)
+//					* ((float) y - MID));
+//			
+//			for (int i = -x + 1; i <= x; i++) {
+//				if (y + centerY < world.getY() && y + centerY >= 0
+//						&& i + centerX < world.getX() && i + centerX >= 0) {
+//					
+//					GL11.glVertex3f(i + centerX - MID, y + centerY - MID,
+//							worldHeight[i + centerX][y + centerY]);
+//				}
+//			}
+//			GL11.glEnd();
+//		}
+//		
+//		GL11.glEnable(GL11.GL_LIGHTING);
+//		GL11.glEnable(GL11.GL_DEPTH_TEST);
+//		GL11.glPopMatrix();
+//	}
 	
 	public static void drawActionCircle(int[] cursorStart, int cursorEnd[],
 			int options) {

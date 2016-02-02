@@ -4,15 +4,11 @@ import java.util.HashMap;
 
 public class GUIBoxLayout extends GUILayoutManager {
 	
-	public static final int CENTER = 0;
-	public static final int LEFT = CENTER + 1;
-	public static final int RIGHT = LEFT + 1;
+	public static final float CENTER = 0;
+	public static final float LEFT = 0.5f;
+	public static final float RIGHT = 1.0f;
 	
-	HashMap<GUIElement, Integer> constraints = new HashMap<GUIElement, Integer>();
-	
-	public GUIBoxLayout(Container parent) {
-		super(parent);
-	}
+	HashMap<GUIElement, Float> constraints = new HashMap<GUIElement, Float>();
 	
 	@Override
 	public void layout() {
@@ -23,30 +19,20 @@ public class GUIBoxLayout extends GUILayoutManager {
 			
 			int childX = parent.x + GUI.padding;
 			
-			Integer constraint = constraints.get(child);
-			if (constraint == null) constraint = LEFT;
+			float constraint = constraints.get(child);
 			
-			switch (constraint) {
-			case CENTER:
-				childX += (parent.width - child.width) / 2 - GUI.padding;
-				break;
-			case LEFT:
-				break;
-			case RIGHT:
-				childX += parent.width - child.width - GUI.padding * 2;
-				break;
-			}
+			childX += (parent.width - child.width - GUI.padding * 2) * constraint;
 			
 			child.x = childX;
 			child.y = childY;
 			
-			childY += child.height;
+			childY += child.height + GUI.padding;
 		}
 	}
 
 	@Override
 	public void setConstraint(GUIElement element, Object Constraint) {
 
-		constraints.put(element, (Integer) Constraint);
+		constraints.put(element, ((Number) Constraint).floatValue());
 	}
 }

@@ -58,7 +58,7 @@ public class Vector {
 	 * @param vector
 	 * @return
 	 */
-	public static float[] toCartesian(float[] vector) {
+	public static float[] toCartesian(final float[] vector) {
 
 		float[] coords;
 		coords = new float[3];
@@ -428,7 +428,7 @@ public class Vector {
 	public static float cAngle(float[] vector1, float[] vector2) {
 		
 		return (float)Math.acos(cDotVector(vector1, vector2) / 
-				(cLength(vector1) + cLength(vector2)));
+				(cLength(vector1) * cLength(vector2)));
 	}
 
 	public static float[] normalize(float[] vector) {

@@ -4,7 +4,7 @@ public abstract class GUILayoutManager {
 	
 	Container parent;
 	
-	public GUILayoutManager(Container parent) {
+	protected void setParent(Container parent) {
 		
 		this.parent = parent;
 	}
@@ -17,6 +17,6 @@ public abstract class GUILayoutManager {
 	 */
 	public abstract void layout();
 	
-	public abstract void setConstraint(GUIElement element, Object Constraint);
+	public abstract void setConstraint(GUIElement element, Object constraint);
 	
 }

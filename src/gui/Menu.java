@@ -9,7 +9,7 @@ public class Menu extends Panel {
 	public Menu() {
 		
 		super();
-		super.setlayout(new GUIBoxLayout(this));
+		super.setlayout(new GUIBoxLayout());
 		title = new TextBox();
 //		title.setSize(100, title.getFont().getLineHeight());
 //		title.setText(this.getName());

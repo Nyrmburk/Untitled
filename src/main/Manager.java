@@ -1,10 +1,9 @@
 package main;
 
 import entity.Entity;
+import graphics.InstanceAttributes;
 
 import java.util.ArrayList;
-
-import world.Zone;
 
 /**
  * A global class that has the index of all the Entities. It controls updating
@@ -17,7 +16,6 @@ public class Manager {
 
 	static ArrayList<String> entityID = new ArrayList<String>();
 	public static ArrayList<Entity> entityList = new ArrayList<Entity>();
-	public static ArrayList<Zone> zoneList = new ArrayList<Zone>();
 
 	static int processors = Runtime.getRuntime().availableProcessors();
 //	static int processors = 64;
@@ -30,6 +28,11 @@ public class Manager {
 
 		entityList.add(entity);
 		entityID.add(entity.name);
+		
+		InstanceAttributes attr = new InstanceAttributes();
+		attr.position = entity.location;
+		attr.rotation = entity.rotation;
+		Engine.renderEngine.addModel(entity.mdl, attr);
 	}
 
 	/**
@@ -62,24 +65,6 @@ public class Manager {
 
 		return entityList.get(index);
 
-	}
-	
-	public static void addZone(Zone zone) {
-		
-		zoneList.add(zone);
-	}
-
-	public static void render() {
-
-		for (Entity entity : entityList) {
-			
-			entity.draw();
-		}
-		
-		for (Zone zone : zoneList) {
-			
-			zone.draw();
-		}
 	}
 
 	/**
