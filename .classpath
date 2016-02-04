@@ -17,7 +17,6 @@
 			<attribute name="javadoc_location" value="http://slick.ninjacave.com/javadoc-util/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/jbox2d-library"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jbox2d-serialization"/>
+	<classpathentry kind="lib" path="lib/jars/jbox2d.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
