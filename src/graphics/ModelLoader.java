@@ -32,6 +32,8 @@ public class ModelLoader {
 	public FloatList object;
 	public FloatList group;
 
+	private int id;
+
 	public ModelLoader() {
 	}
 
@@ -178,7 +180,15 @@ public class ModelLoader {
 			indices.put(tri);
 		}
 	}
-	
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	public class FloatList {
 
 		private int stride;

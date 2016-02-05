@@ -2,6 +2,10 @@
 bin/**
 *.class
 
+# IDEA project
+*.idea**
+*.iml
+
 # Windows image file caches
 Thumbs.db
 ehthumbs.db

@@ -19,7 +19,7 @@ public class RenderContext {
 	 * @param attributes
 	 * @return
 	 */
-	public int addModel(ModelLoader model, InstanceAttributes attributes) {
+	public void addModel(ModelLoader model, InstanceAttributes attributes) {
 
 		InstancedModel instancedModel = null;
 
@@ -39,19 +39,18 @@ public class RenderContext {
 		}
 
 		int id = random.nextInt();
+		model.setId(id);
 
 		instancedModel.addInstance(id, attributes);
-
-		return id;
 	}
 
 	/**
-	 * Remove a specific model using the ID given when created.
+	 * Remove a specific model.
 	 * 
-	 * @param id
+	 * @param model
 	 * @return
 	 */
-	public boolean removeModel(int id) {
+	public boolean removeModel(ModelLoader model) {
 
 		Iterator<InstancedModel> it = models.iterator();
 
@@ -59,13 +58,13 @@ public class RenderContext {
 
 		while (it.hasNext()) {
 
-			InstancedModel model = it.next();
+			InstancedModel imodel = it.next();
 
-			if (model.removeInstance(id) != null) {
+			if (imodel.removeInstance(model.getId()) != null) {
 
-				if (model.attributes.isEmpty()) {
+				if (imodel.attributes.isEmpty()) {
 
-					getEngine().removeModel(model);
+					getEngine().removeModel(imodel);
 					it.remove();
 				}
 

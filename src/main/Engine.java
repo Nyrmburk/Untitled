@@ -20,6 +20,7 @@ import activity.Activity;
 import activity.MainMenuActivity;
 import entity.Entity;
 import main.AssetManager;
+import world.Level;
 
 public class Engine {
 
@@ -46,6 +47,7 @@ public class Engine {
 	public static RenderEngine renderEngine;
 	public static UIRenderEngine UIRenderEngine;
 	public static PointerInput pointer;
+	public static Level level;
 
 	/**
 	 * Starts the engine.

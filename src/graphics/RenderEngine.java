@@ -41,14 +41,14 @@ public abstract class RenderEngine {
 		return context;
 	}
 	
-	public int addModel(ModelLoader model, InstanceAttributes attributes) {
+	public void addModel(ModelLoader model, InstanceAttributes attributes) {
 		
-		return context.addModel(model, attributes);
+		context.addModel(model, attributes);
 	}
 	
-	public void removeModel(int id) {
+	public void removeModel(ModelLoader model) {
 		
-		context.removeModel(id);
+		context.removeModel(model);
 	}
 	
 	public abstract void renderUI(UIRenderContext renderContext);
