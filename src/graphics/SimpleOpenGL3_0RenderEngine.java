@@ -74,8 +74,8 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 
 				GL11.glPushMatrix();
 
-				GL11.glTranslatef(instanceAttribute.position[0], instanceAttribute.position[1],
-						instanceAttribute.position[2]);
+				GL11.glTranslatef(instanceAttribute.location[0], instanceAttribute.location[1],
+						instanceAttribute.location[2]);
 				GL11.glRotatef(instanceAttribute.rotation[0], 1, 0, 0);
 				GL11.glRotatef(instanceAttribute.rotation[1], 0, 1, 0);
 				GL11.glRotatef(instanceAttribute.rotation[2], 0, 0, 1);

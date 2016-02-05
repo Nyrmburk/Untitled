@@ -29,9 +29,7 @@ public class Manager {
 		entityList.add(entity);
 		entityID.add(entity.name);
 		
-		InstanceAttributes attr = new InstanceAttributes();
-		attr.position = entity.location;
-		attr.rotation = entity.rotation;
+		InstanceAttributes attr = new InstanceAttributes(entity.location, entity.rotation);
 		Engine.renderEngine.addModel(entity.mdl, attr);
 	}
 
