@@ -14,6 +14,8 @@ import main.Engine;
 
 public class MainMenuActivity extends Activity {
 
+	private int delay = 1500;
+
 	@Override
 	protected void onCreate() {
 		
@@ -24,15 +26,13 @@ public class MainMenuActivity extends Activity {
 		view.setBackgroundColor(Color.WHITE);
 		
 		Panel image = new Panel();
-		image.setAutoWidth(true);
-		image.setAutoHeight(true);
 		try {
 			image.setImage(ImageIO.read(new File("res/textures/untitled.png")));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		view.addChild(image, 0.5);
+		view.addChild(image);
 		
 		Panel aligner = new Panel();
 		aligner.setlayout(new GUIBoxLayout());
@@ -65,9 +65,9 @@ public class MainMenuActivity extends Activity {
 		
 		setView(view);
 		
-		RenderContext context = new RenderContext();
+//		RenderContext context = new RenderContext();
 //		context.addModel(model, attributes);
-		Engine.renderEngine.setContext(context);
+//		Engine.renderEngine.setContext(context);
 	}
 
 	@Override
@@ -108,7 +108,9 @@ public class MainMenuActivity extends Activity {
 	@Override
 	public void onUpdate(int delta) {
 		// TODO Auto-generated method stub
-		
+
+		if ((delay -= delta) <= 0)
+			create();
 	}
 	
 	private void create() {

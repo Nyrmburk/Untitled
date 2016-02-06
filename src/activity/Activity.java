@@ -27,7 +27,7 @@ public abstract class Activity {
 	
 	public abstract void onUpdate(int delta);
 	
-	public static void update() {
+	public static void update(int delta) {
 		
 		int x = (int) Engine.pointer.getX().getValue();
 		int y = (int) Engine.pointer.getY().getValue();
@@ -57,6 +57,9 @@ public abstract class Activity {
 			
 //			if (Engine.pointer.a)
 		}
+
+		currentActivity.onUpdate(delta);
+		currentActivity.getView().revalidate();
 	}
 	
 	public void setView(Container view) {
@@ -124,5 +127,4 @@ public abstract class Activity {
 		activity.onPause();
 		activity.onStop();
 	}
-	
 }

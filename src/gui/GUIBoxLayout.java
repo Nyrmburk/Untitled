@@ -31,8 +31,13 @@ public class GUIBoxLayout extends GUILayoutManager {
 	}
 
 	@Override
-	public void setConstraint(GUIElement element, Object Constraint) {
+	public void setConstraint(GUIElement element, Object constraint) {
 
-		constraints.put(element, ((Number) Constraint).floatValue());
+		float constraintVal = 0.5f;
+
+		if (constraint != null)
+			constraintVal = ((Number) constraint).floatValue();
+
+		constraints.put(element, constraintVal);
 	}
 }

@@ -191,7 +191,7 @@ public class Engine {
 		} catch (Exception e) {
 			System.out.println("Unable to load default look and feel");
 		}
-		
+
 		pointer = new LWJGLMouseInput();
 
 	}
@@ -205,15 +205,16 @@ public class Engine {
 //		renderEngine = new SoftwareRenderEngine(new RenderContext());
 		renderEngine.showWindow(Settings.windowWidth, Settings.windowHeight);
 		UIRenderEngine = new SimpleUIRenderEngine();
-		
+
 		lastFrame = getTime();
 	}
-	
+
 	private void printSystem() {
-		
+
 		System.out.println("OS name " + System.getProperty("os.name"));
 		System.out.println("OS version " + System.getProperty("os.version"));
 		System.out.println("Java version " + System.getProperty("java.version"));
+		System.out.println("AWT Toolkit path " + System.getProperty("awt.toolkit"));
 		System.out.println("LWJGL version " + org.lwjgl.Sys.getVersion());
 		System.out.println("Renderer version " + renderEngine.getRendererVersion());
 		System.out.println("Render Device " + renderEngine.getRenderDevice());
@@ -224,7 +225,7 @@ public class Engine {
 	 * Load the world
 	 */
 	private void initWorld() {
-		
+
 		Manager.addEntity(new Entity("monkey", new float[]{0, 0, 0}, AssetManager.getModel("monkey.obj")));
 		Activity.createActivity(new MainMenuActivity());
 	}
@@ -265,7 +266,7 @@ public class Engine {
 //		GUI.render();
 //		GUI2.update();
 		renderEngine.renderUI(Activity.currentActivity().getRenderContext());
-		
+
 		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
@@ -298,18 +299,18 @@ public class Engine {
 
 	/**
 	 * Calculate all the goings-on in the world
-	 * 
+	 *
 	 * @param delta
 	 *            The amount of time since the last frame
 	 */
 	private void update(int delta) {
-		
+
 		for(InputInterface input : InputInterface.InputInterfaces) {
-			
+
 			input.update(delta);
 		}
-		
-		Activity.update();
+
+		Activity.update(delta);
 
 		// translate camera up and down (zoom)
 		int mousewheel = Mouse.getDWheel();
@@ -327,7 +328,7 @@ public class Engine {
 
 	/**
 	 * get the time in the highest precision possible in milliseconds
-	 * 
+	 *
 	 * @return The current time
 	 */
 	public static long getTime() {
@@ -337,7 +338,7 @@ public class Engine {
 
 	/**
 	 * Calculate how much time has passed since last called
-	 * 
+	 *
 	 * @return change in time in milleconds
 	 */
 	private static int getDelta() {
