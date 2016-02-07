@@ -12,6 +12,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import javax.swing.JFrame;
 
@@ -251,11 +252,13 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 
 		GL11.glEnable(GL11.GL_BLEND);
 
-		for (int index : renderContext.indices) {
+		Iterator<Rectangle> quads = renderContext.coords.iterator();
+		Iterator<TextureInterface> textures = renderContext.textures.iterator();
 
-			bounds = renderContext.coords.get(index);
+		while (textures.hasNext()) {
 
-			OpenGLTexture texture = ((OpenGLTexture) renderContext.textures.get(index));
+			bounds = quads.next();
+			OpenGLTexture texture = (OpenGLTexture) textures.next();
 			texture.bind();
 
 			GL11.glBegin(GL11.GL_QUADS);
@@ -269,6 +272,25 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 			GL11.glVertex2i(bounds.x + bounds.width, bounds.y);
 			GL11.glEnd();
 		}
+
+//		for (int index : renderContext.indices) {
+//
+//			bounds = renderContext.coords.get(index);
+//
+//			OpenGLTexture texture = ((OpenGLTexture) renderContext.textures.get(index));
+//			texture.bind();
+//
+//			GL11.glBegin(GL11.GL_QUADS);
+//			GL11.glTexCoord2f(0, 0);
+//			GL11.glVertex2i(bounds.x, bounds.y);
+//			GL11.glTexCoord2f(0, texture.getHeight());
+//			GL11.glVertex2i(bounds.x, bounds.y + bounds.height);
+//			GL11.glTexCoord2f(texture.getWidth(), texture.getHeight());
+//			GL11.glVertex2i(bounds.x + bounds.width, bounds.y + bounds.height);
+//			GL11.glTexCoord2f(texture.getWidth(), 0);
+//			GL11.glVertex2i(bounds.x + bounds.width, bounds.y);
+//			GL11.glEnd();
+//		}
 
 		GL11.glDisable(GL11.GL_BLEND);
 	}

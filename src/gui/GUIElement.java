@@ -1,13 +1,13 @@
 package gui;
 
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import activity.Activity;
+import graphics.TextureInterface;
 import graphics.UIRenderEngine;
 import main.Engine;
 
@@ -19,6 +19,11 @@ public abstract class GUIElement {
 	 * position.
 	 */
 	protected boolean valid = false;
+
+	/**
+	 * Whether or not the element needs to be painted
+	 */
+	protected boolean repaint = true;
 
 	/**
 	 * Whether or not the element is to be drawn.
@@ -167,7 +172,14 @@ public abstract class GUIElement {
 		}
 			
 		valid = true;
-		
+
+		if (repaint) {
+
+			TextureInterface texture = Engine.renderEngine.getTextureFromImage(this.render(Engine.UIRenderEngine));
+			Activity.currentActivity().getRenderContext().putElement(this, texture);
+			repaint = false;
+		}
+
 		// System.out.println(getName() + " Revalidated");
 	}
 
@@ -349,6 +361,7 @@ public abstract class GUIElement {
 		if (this.height != tempHeight)
 			autoHeight = false;
 
+		this.repaint = true;
 		invalidate();
 
 		onSizeChange(tempWidth, tempHeight);

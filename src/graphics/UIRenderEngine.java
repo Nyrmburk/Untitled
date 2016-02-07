@@ -62,8 +62,6 @@ public abstract class UIRenderEngine {
 
 		UIRenderContext renderContext = new UIRenderContext();
 
-		int index = 0;
-
 		LinkedList<ArrayList<GUIElement>> elements = new LinkedList<ArrayList<GUIElement>>();
 		elements.add(new ArrayList<GUIElement>());
 		elements.peek().add(view);
@@ -73,7 +71,7 @@ public abstract class UIRenderEngine {
 			for (GUIElement element : elements.poll()) {
 
 				TextureInterface texture = Engine.renderEngine.getTextureFromImage(element.render(this));
-				renderContext.putElement(element, texture, index++);
+				renderContext.putElement(element, texture);
 
 				if (element instanceof Container) {
 

@@ -211,6 +211,7 @@ public class TextBox extends GUIElement {
 			
 //			if (renderAsTexture) renderToTexture();
 			invalidate();
+			this.repaint = true;
 		}
 	}
 	

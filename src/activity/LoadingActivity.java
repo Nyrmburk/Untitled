@@ -7,7 +7,7 @@ import java.awt.*;
 
 public class LoadingActivity extends Activity {
 
-	private int percentComplete = 0;
+	private float percentComplete = 0;
 	String loadingMessage = "Loading... %d%%";
 	TextBox loadingText;
 
@@ -21,12 +21,12 @@ public class LoadingActivity extends Activity {
 		view.setBackgroundColor(Color.GRAY);
 
 		loadingText = new TextBox();
-		loadingText.setText(String.format(loadingMessage, percentComplete / 1000));
+		loadingText.setText(String.format(loadingMessage, (int) percentComplete));
 		view.addChild(loadingText);
 
-		gui.Button play = new gui.Button();
-		play.setText("Play");
-		view.addChild(play);
+//		gui.Button play = new gui.Button();
+//		play.setText("Play");
+//		view.addChild(play);
 
 		setView(view);
 	}
@@ -64,8 +64,12 @@ public class LoadingActivity extends Activity {
 	@Override
 	public void onUpdate(int delta) {
 		// TODO Auto-generated method stub
-		percentComplete += delta;
-//		loadingText.setText(String.format(loadingMessage, percentComplete / 1000));
-		loadingText.setText("aloha.");
+		percentComplete += ((float) delta) / 20;
+		if (percentComplete > 100) {
+
+			percentComplete = 100;
+			Activity.stopCurrentActivity();
+		}
+		loadingText.setText(String.format(loadingMessage, (int) percentComplete));
 	}
 }

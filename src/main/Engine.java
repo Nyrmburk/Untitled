@@ -8,7 +8,7 @@ import input.PointerInput;
 import java.io.File;
 import java.io.IOException;
 
-import javax.swing.UIManager;
+import javax.swing.*;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
@@ -19,7 +19,6 @@ import org.lwjgl.opengl.GL11;
 import activity.Activity;
 import activity.MainMenuActivity;
 import entity.Entity;
-import main.AssetManager;
 import world.Level;
 
 public class Engine {
@@ -265,6 +264,7 @@ public class Engine {
 //		GUI.revalidate();
 //		GUI.render();
 //		GUI2.update();
+
 		renderEngine.renderUI(Activity.currentActivity().getRenderContext());
 
 		GL11.glEnable(GL11.GL_LIGHTING);

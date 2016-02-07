@@ -7,6 +7,7 @@ import java.awt.Rectangle;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.util.Iterator;
 
 import javax.swing.JFrame;
 
@@ -106,11 +107,13 @@ public class SoftwareRenderEngine extends RenderEngine {
 		Rectangle bounds;
 		BufferedImage image;
 
-		for (int index : renderContext.indices) {
+		Iterator<Rectangle> quads = renderContext.coords.iterator();
+		Iterator<TextureInterface> textures = renderContext.textures.iterator();
 
-			bounds = renderContext.map.get(index).getBounds();
-			image = ((SoftwareTexture) renderContext.textures.get(index)).texture;
+		while (textures.hasNext()) {
 
+			bounds = quads.next();
+			image = ((SoftwareTexture) textures.next()).texture;
 			graphics.drawImage(image, bounds.x, bounds.y, bounds.width, bounds.height, null);
 		}
 	}
