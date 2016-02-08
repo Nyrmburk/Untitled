@@ -6,8 +6,6 @@ public interface PointerListener {
 
 	public void onRelease();
 
-	public void onClick();
-
 	public void onEnter();
 
 	public void onExit();

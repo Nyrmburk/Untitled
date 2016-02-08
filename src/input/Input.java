@@ -13,10 +13,12 @@ package input;
  */
 public abstract class Input {
 
-	public static InputInterface input;
+//	public static InputInterface input;
 
-	public String name;
-	private Object binding;
+	private InputContext context;
+
+	private String name;
+//	private Object binding;
 
 	private float delta;
 	private float range;
@@ -24,11 +26,9 @@ public abstract class Input {
 
 	private float value;
 
-	public Input(Object binding, String name, float range) {
+	public Input(String name) {
 
-		this.binding = binding;
 		this.name = name;
-		this.range = range;
 	}
 
 	public abstract void onUpdate(int delta);
@@ -59,8 +59,13 @@ public abstract class Input {
 		return range;
 	}
 
-	public Object getBinding() {
+	protected void setRange(float range) {
 
-		return binding;
+		this.range = range;
+	}
+
+	public String getName() {
+
+		return name;
 	}
 }

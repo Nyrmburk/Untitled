@@ -1,6 +1,5 @@
 package main;
 
-import entity.Mob2;
 import graphics.Camera;
 
 // collision code somehow
@@ -9,12 +8,10 @@ import graphics.Camera;
 
 public class Player {
 
-	Mob2 mob;
 	Camera camera;
 	
-	public Player(Mob2 mob) {
+	public Player() {
 
-		this.mob = mob;
 	}
 	
 	public void update() {

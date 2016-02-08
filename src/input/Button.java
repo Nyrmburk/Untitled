@@ -2,8 +2,8 @@ package input;
 
 public abstract class Button extends Input {
 	
-	public Button(Object binding, String name) {
-		super(binding, name, 1);
+	public Button(String name) {
+		super(name);
 	}
 
 	public void setValue(float value) {

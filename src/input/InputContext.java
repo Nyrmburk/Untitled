@@ -1,6 +1,7 @@
 package input;
 
-import java.util.TreeMap;
+
+import java.util.ArrayList;
 
 /**
  * @author Nyrmburk
@@ -12,20 +13,25 @@ import java.util.TreeMap;
  *         context. It would block the underlying inputs so that the pause menu
  *         can prevent the player from moving while paused.
  */
-public abstract class InputContext {
+public class InputContext {
 
-	public TreeMap<Object, Input> inputs = new TreeMap<Object, Input>();
+	private static InputContext currentContext;
 
-	public abstract boolean isValid();
+	public ArrayList<Input> inputs = new ArrayList<Input>();
 
-	public void addInput(Input input) {
+	public void setAsCurrentContext() {
 
-		inputs.put(input.getBinding(), input);
+		currentContext = this;
+	}
+
+	public static InputContext getCurrentContext() {
+
+		return currentContext;
 	}
 
 	public void update(int delta) {
 
-		for (Input input : inputs.values()) {
+		for (Input input : inputs) {
 
 			input.onUpdate(delta);
 		}

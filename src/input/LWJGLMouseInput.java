@@ -1,98 +1,48 @@
 package input;
 
 import org.lwjgl.input.Mouse;
-
-import main.Engine;
+import org.lwjgl.opengl.Display;
 
 public class LWJGLMouseInput extends PointerInput {
-
-	public static final int MOUSE_X = Mouse.getButtonCount() + 1;
-	public static final int MOUSE_Y = Mouse.getButtonCount() + 2;
-	public static final int MOUSE_WHEEL = Mouse.getButtonCount() + 3;
-
-	private Input pointerX;
-	private Input pointerY;
-
-	public LWJGLMouseInput() {
-
-		this.addInputContext(new InputContext() {
-
-			{
-
-				pointerX = new Input(MOUSE_X, "pointerX", 1) {
-					@Override
-					public void onUpdate(int delta) {
-					}
-				};
-				pointerY = new Input(MOUSE_Y, "pointerY", 1) {
-					@Override
-					public void onUpdate(int delta) {
-					}
-				};
-				
-				this.addInput(pointerX);
-				this.addInput(pointerY);
-			}
-
-			@Override
-			public boolean isValid() {
-				return true;
-			}
-
-			@Override
-			public void update(int delta) {
-			}
-		});
-	}
 
 	@Override
 	public void getInputs() {
 
+		Input input;
+
 		while (Mouse.next()) {
 
-			for (InputContext context : this) {
+			input = inputs.get(translateBindings(Mouse.getEventButton()));
 
-				Input input = context.inputs.get(Mouse.getEventButton());
-
-				if (input == null)
-					continue;
-
+			if (input != null)
 				input.setValue(Mouse.getEventButtonState() ? input.getRange() : -input.getRange());
-			}
 		}
 
-		for (InputContext context : this) {
-
-			Input input = context.inputs.get(MOUSE_X);
-
-			if (input == null)
-				continue;
-
+		input = inputs.get(bindings.X_COORD);
+		if (input != null)
 			input.setValue(Mouse.getX());
-			
-			input = context.inputs.get(MOUSE_Y);
+		input = inputs.get(bindings.Y_COORD);
+		if (input != null)
+			input.setValue(Display.getHeight() - Mouse.getY());
 
-			if (input == null)
-				continue;
-
-			input.setValue(Engine.renderEngine.getHeight() - Mouse.getY());
-
-			input = context.inputs.get(MOUSE_WHEEL);
-
-			if (input == null)
-				continue;
-
+		input = inputs.get(bindings.X_SCROLL);
+		if (input != null)
 			input.setValue(Mouse.getDWheel());
-		}
+
+		// Y_SCROLL not supported by lwjgl
+	}
+
+	@Override
+	public Object getBinding(String name) {
+
+		return PointerInput.bindings.valueOf(name);
 	}
 
 	@Override
 	public String[] getInputNames() {
 
-		String[] names = new String[Mouse.getButtonCount()];
-
-		for (int i = 0; i < names.length; i++)
-			names[i] = Mouse.getButtonName(i);
+		bindings[] bindings = PointerInput.bindings.values();
+		String[] names = new String[bindings.length];
 
 		return names;
 	}
@@ -101,19 +51,23 @@ public class LWJGLMouseInput extends PointerInput {
 	public int getChangedInput() {
 
 		if (Mouse.next())
+//			return translateBindings(Mouse.getEventButton()).ordinal();
 			return Mouse.getEventButton();
 		return -1;
 	}
 
 	@Override
-	public Input getX() {
+	public float getRange(Object Binding) {
 
-		return pointerX;
+		return 1;
 	}
 
-	@Override
-	public Input getY() {
+	private static bindings translateBindings(int lwjglMouseIndex) {
 
-		return pointerY;
+		bindings bindings = null;
+		if (lwjglMouseIndex > -1)
+			bindings = bindings.values()[lwjglMouseIndex + bindings.BUTTON_0.ordinal()];
+
+		return bindings;
 	}
 }

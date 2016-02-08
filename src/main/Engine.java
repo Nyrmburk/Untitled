@@ -1,9 +1,7 @@
 package main;
 
 import graphics.*;
-import input.InputInterface;
-import input.LWJGLMouseInput;
-import input.PointerInput;
+import input.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -305,10 +303,13 @@ public class Engine {
 	 */
 	private void update(int delta) {
 
-		for(InputInterface input : InputInterface.InputInterfaces) {
+		for(InputInterface input : InputInterface.inputInterfaces) {
 
 			input.update(delta);
 		}
+
+		for (Input input : InputContext.getCurrentContext().inputs)
+			input.onUpdate(delta);
 
 		Activity.update(delta);
 

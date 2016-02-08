@@ -1,47 +1,52 @@
 package input;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 
 /**
  * @author Nyrmburk InputInterface is an interface for raw inputs. It collects
  *         raw values from some device such as a keyboard or joystick and puts
  *         the values into Inputs.
  */
-public abstract class InputInterface implements Iterable<InputContext> {
+public abstract class InputInterface {
 
-	public static ArrayList<InputInterface> InputInterfaces = new ArrayList<InputInterface>();
+	public static ArrayList<InputInterface> inputInterfaces = new ArrayList<InputInterface>();
 
-	private ArrayList<InputContext> contexts = new ArrayList<InputContext>();
+	public HashMap<Object, Input> inputs;
 
 	public InputInterface() {
 
-		InputInterfaces.add(this);
+		inputInterfaces.add(this);
+		inputs = new HashMap<Object, Input>();
 	}
 
-	// provide some means to get hardware input and map it to Input2
+	// provide some means to get hardware input and map it to Input
 	public abstract void getInputs();
+
+	public abstract Object getBinding(String name);
 
 	public final void update(int delta) {
 
 		getInputs();
 
-		for (InputContext context : contexts) {
+		for (Input input : inputs.values()) {
 
-			context.update(delta);
+			input.onUpdate(delta);
 		}
 	}
 
 	// is this necessary?
-	public void addInputContext(InputContext context) {
+	public void addInput(Input input) {
 
-		contexts.add(context);
+		Object binding = getBinding(input.getName());
+
+		inputs.put(binding, input);
+		input.setRange(this.getRange(binding));
 	}
 
-	@Override
-	public Iterator<InputContext> iterator() {
+	public void removeInput(Input input) {
 
-		return new ContextIterator(contexts.iterator());
+		inputs.remove(input);
 	}
 
 	public void save() {
@@ -55,35 +60,6 @@ public abstract class InputInterface implements Iterable<InputContext> {
 	public abstract String[] getInputNames();
 
 	public abstract int getChangedInput();
-}
 
-class ContextIterator implements Iterator<InputContext> {
-
-	Iterator<InputContext> iterator;
-
-	ContextIterator(Iterator<InputContext> iterator) {
-
-		ArrayList<InputContext> validContexts = new ArrayList<InputContext>();
-
-		while (iterator.hasNext()) {
-
-			InputContext context = iterator.next();
-
-			if (context.isValid())
-				validContexts.add(context);
-		}
-		this.iterator = validContexts.iterator();
-	}
-
-	@Override
-	public boolean hasNext() {
-
-		return iterator.hasNext();
-	}
-
-	@Override
-	public InputContext next() {
-
-		return iterator.next();
-	}
+	public abstract float getRange(Object Binding);
 }

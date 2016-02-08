@@ -109,11 +109,6 @@ public class MainMenuActivity extends Activity {
 	public void onUpdate(int delta) {
 		// TODO Auto-generated method stub
 
-		if ((delay -= delta) <= 0) {
-
-			create();
-			delay = 1500;
-		}
 	}
 	
 	private void create() {

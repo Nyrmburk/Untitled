@@ -2,23 +2,24 @@ package input;
 
 import org.lwjgl.input.Keyboard;
 
-public class LWJGLKeyInput extends InputInterface {
+public class LWJGLKeyInput extends KeyboardInterface {
 
 	@Override
 	public void getInputs() {
 
 		while (Keyboard.next()) {
 
-			for (InputContext context : this) {
+			Input input = inputs.get(Keyboard.getEventKey());
 
-				Input input = context.inputs.get(Keyboard.getEventKey());
-
-				if (input == null)
-					continue;
-
+			if (input != null)
 				input.setValue(Keyboard.getEventKeyState() ? input.getRange() : -input.getRange());
-			}
 		}
+	}
+
+	@Override
+	public Object getBinding(String name) {
+
+		return Keyboard.getKeyIndex(name);
 	}
 
 	@Override
@@ -38,5 +39,11 @@ public class LWJGLKeyInput extends InputInterface {
 		if (Keyboard.next())
 			return Keyboard.getEventKey();
 		return -1;
+	}
+
+	@Override
+	public float getRange(Object Binding) {
+
+		return 1;
 	}
 }
