@@ -3,7 +3,10 @@ package entity;
 import graphics.InstanceAttributes;
 import graphics.ModelLoader;
 import main.Engine;
-import physics.PhysicsShape;
+import physics.PhysicsObject;
+import physics.PhysicsObjectDef;
+
+import java.util.ArrayList;
 
 /**
  * The binding glue of the different observable components. It binds orientation to the physics and graphics.
@@ -11,6 +14,8 @@ import physics.PhysicsShape;
  *
  */
 public class Entity2 {
+
+	private static ArrayList<Entity2> entities = new ArrayList<Entity2>();
 
 	private String name;
 
@@ -21,14 +26,21 @@ public class Entity2 {
 	private float[] location = new float[3];
 
 	private ModelLoader model;
-	private PhysicsShape shape;
+	private PhysicsObject physicsObject;
 
 	public Entity2(String name) {
+
 		this.setName(name);
+		entities.add(this);
 	}
 
-	public void update(int delta) {
+	public static void update(int delta) {
 
+		for (Entity2 entity : entities) {
+
+			entity.setLocation(entity.getPhysicsObject().getPosition());
+//			entity.onUpdate(delta);
+		}
 	}
 
 	public String getName() {
@@ -52,7 +64,11 @@ public class Entity2 {
 	}
 
 	public void setRotation(float[] rotation) {
-		this.rotation = rotation;
+
+		for (int i = 0; i < location.length; i++) {
+
+			this.rotation[i] = rotation[i];
+		}
 	}
 
 	public float[] getLocation() {
@@ -60,7 +76,11 @@ public class Entity2 {
 	}
 
 	public void setLocation(float[] location) {
-		this.location = location;
+
+		for (int i = 0; i < location.length; i++) {
+
+			this.location[i] = location[i];
+		}
 	}
 
 	public ModelLoader getModel() {
@@ -75,15 +95,14 @@ public class Entity2 {
 		this.model = model;
 	}
 
-	public PhysicsShape getShape() {
-		return shape;
+	public PhysicsObject getPhysicsObject() {
+		return physicsObject;
 	}
 
-	public void setShape(PhysicsShape shape) {
+	public void setPhysicsObject(PhysicsObjectDef physicsObjectDef) {
 
-		if (this.shape != null)
-			Engine.level.physicsEngine.removeShape(this.shape);
-		Engine.level.physicsEngine.addShape(shape);
-		this.shape = shape;
+		if (this.physicsObject != null)
+			Engine.level.physicsEngine.removePhysicsObject(this.physicsObject);
+		this.physicsObject = Engine.level.physicsEngine.createPhysicsObject(physicsObjectDef);
 	}
 }

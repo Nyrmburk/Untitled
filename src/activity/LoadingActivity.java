@@ -1,7 +1,14 @@
 package activity;
 
+import entity.Entity2;
+import graphics.ModelLoader;
 import gui.*;
 import gui.Panel;
+import main.AssetManager;
+import main.Engine;
+import physics.PhysicsObject;
+import physics.PhysicsObjectDef;
+import world.Level;
 
 import java.awt.*;
 
@@ -23,10 +30,6 @@ public class LoadingActivity extends Activity {
 		loadingText = new TextBox();
 		loadingText.setText(String.format(loadingMessage, (int) percentComplete));
 		view.addChild(loadingText);
-
-//		gui.Button play = new gui.Button();
-//		play.setText("Play");
-//		view.addChild(play);
 
 		setView(view);
 	}
@@ -64,11 +67,19 @@ public class LoadingActivity extends Activity {
 	@Override
 	public void onUpdate(int delta) {
 		// TODO Auto-generated method stub
-		percentComplete += ((float) delta) / 20;
+		percentComplete += ((float) delta) / 5;
 		if (percentComplete > 100) {
 
 			percentComplete = 100;
 			Activity.stopCurrentActivity();
+
+			Engine.level = new Level();
+
+			ModelLoader model = AssetManager.getModel("monkey.obj");
+			PhysicsObjectDef shape = Engine.level.physicsEngine.getPhysicsObjectDef(PhysicsObject.Type.DYNAMIC, new float[]{0, 0, 0, 1, 1, 1, 1, 0});
+			Entity2 entity = new Entity2("monkeybox");
+			entity.setModel(model);
+			entity.setPhysicsObject(shape);
 		}
 		loadingText.setText(String.format(loadingMessage, (int) percentComplete));
 	}

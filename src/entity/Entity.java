@@ -5,7 +5,7 @@ import graphics.ModelLoader;
 import java.util.Arrays;
 
 import main.AssetManager;
-import physics.PhysicsShape;
+import physics.PhysicsObjectDef;
 
 /**
  * Holds data about every entity such as the model, location, rotation, and
@@ -25,7 +25,7 @@ public class Entity {
 	public float[] location = new float[3];
 
 	public ModelLoader mdl;
-	public PhysicsShape shape;
+	public PhysicsObjectDef shape;
 
 	public Entity(String name, float[] location, String fileName) {
 		this(name, location, AssetManager.getModel(fileName));

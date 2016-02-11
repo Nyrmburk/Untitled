@@ -2,12 +2,15 @@ package physics;
 
 public interface PhysicsEngine {
 
-	public void update(int milliseconds);
+	void update(int milliseconds);
 	
-	public void addShape(PhysicsShape shape);
-	public void removeShape(PhysicsShape shape);
+	PhysicsObject createPhysicsObject(PhysicsObjectDef objectDef);
+
+	boolean removePhysicsObject(PhysicsObject object);
 	
-	public String[] settingsNames();
-	public String settingOptions(int setting);
-	public boolean setSetting(int setting, Object option);
+	String[] settingsNames();
+	String settingOptions(int setting);
+	boolean setSetting(int setting, Object option);
+
+	PhysicsObjectDef getPhysicsObjectDef(PhysicsObject.Type physicsType, float[] vertices);
 }

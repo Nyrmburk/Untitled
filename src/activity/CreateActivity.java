@@ -1,10 +1,19 @@
 package activity;
 
+import entity.Entity2;
+import graphics.ModelLoader;
 import gui.GUIBoxLayout;
 import gui.GUIElement;
 import gui.Panel;
+import main.AssetManager;
+import main.Engine;
+import physics.PhysicsObject;
+import physics.PhysicsObjectDef;
+import world.Level;
 
 public class CreateActivity extends Activity {
+
+	private Entity2 entity;
 
 	@Override
 	protected void onCreate() {
@@ -18,6 +27,8 @@ public class CreateActivity extends Activity {
 		LoadingActivity loading = new LoadingActivity();
 //		loading.loadElements(something);
 		createActivity(loading);
+
+
 	}
 
 	@Override
@@ -53,6 +64,8 @@ public class CreateActivity extends Activity {
 	@Override
 	public void onUpdate(int delta) {
 		// TODO Auto-generated method stub
-		
+//		float[] location = entity.getLocation();
+//		location[0] += 0.02f;
+//		entity.setLocation(location);
 	}
 }

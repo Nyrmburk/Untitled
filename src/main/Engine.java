@@ -1,5 +1,6 @@
 package main;
 
+import entity.Entity2;
 import graphics.*;
 import input.*;
 
@@ -16,7 +17,6 @@ import org.lwjgl.opengl.GL11;
 
 import activity.Activity;
 import activity.MainMenuActivity;
-import entity.Entity;
 import world.Level;
 
 public class Engine {
@@ -211,7 +211,6 @@ public class Engine {
 		System.out.println("OS name " + System.getProperty("os.name"));
 		System.out.println("OS version " + System.getProperty("os.version"));
 		System.out.println("Java version " + System.getProperty("java.version"));
-		System.out.println("AWT Toolkit path " + System.getProperty("awt.toolkit"));
 		System.out.println("LWJGL version " + org.lwjgl.Sys.getVersion());
 		System.out.println("Renderer version " + renderEngine.getRendererVersion());
 		System.out.println("Render Device " + renderEngine.getRenderDevice());
@@ -223,7 +222,8 @@ public class Engine {
 	 */
 	private void initWorld() {
 
-		Manager.addEntity(new Entity("monkey", new float[]{0, 0, 0}, AssetManager.getModel("monkey.obj")));
+//		Manager.addEntity(new Entity("monkey", new float[]{0, 0, 0}, AssetManager.getModel("monkey.obj")));
+
 		Activity.createActivity(new MainMenuActivity());
 	}
 
@@ -320,7 +320,16 @@ public class Engine {
 		// actually translate the camera based on the previous commands
 		Camera.look();
 
+		if (level != null) {
+
+			level.physicsEngine.update(delta);
+//			float[] coords = level.test.getPosition();
+//			System.out.println(coords[0] + ", " + coords[1]);
+		}
+		Entity2.update(delta);
+
 		// update the entity list
+		// deprecated
 		Manager.update(delta);
 
 		// calculate fps and stuff

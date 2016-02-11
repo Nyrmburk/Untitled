@@ -2,7 +2,7 @@ package gui;
 
 public class GUIBorderLayout extends GUILayoutManager {
 
-	enum layouts {
+	public enum layouts {
 		TOP, BOTTOM, LEFT, RIGHT, CENTER
 	}
 
