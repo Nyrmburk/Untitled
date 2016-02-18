@@ -7,16 +7,15 @@ import java.util.Stack;
 import java.util.TreeMap;
 
 import uuid.IDGenerator;
-import graphics.ModelLoader;
 
 public class Actor extends Entity {
 
 	private IDGenerator generator;
 	protected TreeMap<Integer, Stack<State>> states;
 
-	public Actor(String name, float[] location, ModelLoader model) {
-		super(name, location, model);
-		
+	public Actor(String name) {
+
+		super(name);
 		generator = new IDGenerator();
 		states = new TreeMap<Integer, Stack<State>>();
 	}
@@ -30,7 +29,7 @@ public class Actor extends Entity {
 //		}
 //	}
 	
-	public void update(int delta) {
+	public void onUpdate(int delta) {
 		
 		Iterator<Stack<State>> it = states.values().iterator();
 		while (it.hasNext()) {

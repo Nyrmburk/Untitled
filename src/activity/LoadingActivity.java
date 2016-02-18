@@ -1,6 +1,6 @@
 package activity;
 
-import entity.Entity2;
+import entity.Entity;
 import graphics.ModelLoader;
 import gui.*;
 import gui.Panel;
@@ -77,7 +77,7 @@ public class LoadingActivity extends Activity {
 
 			ModelLoader model = AssetManager.getModel("monkey.obj");
 			PhysicsObjectDef shape = Engine.level.physicsEngine.getPhysicsObjectDef(PhysicsObject.Type.DYNAMIC, new float[]{0, 0, 0, 1, 1, 1, 1, 0});
-			Entity2 entity = new Entity2("monkeybox");
+			Entity entity = new Entity("monkeybox");
 			entity.setModel(model);
 			entity.setPhysicsObject(shape);
 		}

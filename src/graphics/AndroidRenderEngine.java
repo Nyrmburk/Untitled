@@ -2,7 +2,7 @@ package graphics;
 
 import java.awt.image.BufferedImage;
 
-import entity.Camera2;
+import entity.Camera;
 import graphics.RenderContext.InstancedModel;
 
 public class AndroidRenderEngine extends RenderEngine {
@@ -19,7 +19,7 @@ public class AndroidRenderEngine extends RenderEngine {
 	}
 
 	@Override
-	public void look(Camera2 camera) {
+	public void look(Camera camera) {
 		// TODO Auto-generated method stub
 
 	}

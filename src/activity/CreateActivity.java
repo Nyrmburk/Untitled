@@ -1,19 +1,13 @@
 package activity;
 
-import entity.Entity2;
-import graphics.ModelLoader;
+import entity.Entity;
 import gui.GUIBoxLayout;
 import gui.GUIElement;
 import gui.Panel;
-import main.AssetManager;
-import main.Engine;
-import physics.PhysicsObject;
-import physics.PhysicsObjectDef;
-import world.Level;
 
 public class CreateActivity extends Activity {
 
-	private Entity2 entity;
+	private Entity entity;
 
 	@Override
 	protected void onCreate() {

@@ -2,14 +2,14 @@ package entity;
 
 import graphics.ModelLoader;
 
-public class Camera2 extends Entity {
+public class Camera extends Entity {
 
 	private float aspectRatio;
 //	private float fieldOfView = 90;
 //	private float[] quaternion = new float[16];
 	
-	public Camera2(String name, float[] location, ModelLoader model) {
-		super(name, location, model);
+	public Camera(String name, float[] location, ModelLoader model) {
+		super(name);
 	}
 	
 	public float getAspectRatio() {

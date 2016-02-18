@@ -2,7 +2,7 @@ package graphics;
 
 import java.awt.image.BufferedImage;
 
-import entity.Camera2;
+import entity.Camera;
 import graphics.RenderContext.InstancedModel;
 
 public abstract class RenderEngine {
@@ -17,7 +17,7 @@ public abstract class RenderEngine {
 	}
 	
 	public abstract int render();
-	public abstract void look(Camera2 camera);	
+	public abstract void look(Camera camera);
 	public abstract void showWindow(int width, int height);
 	
 	public void setContext(RenderContext context) {

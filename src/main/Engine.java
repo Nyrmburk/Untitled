@@ -1,6 +1,6 @@
 package main;
 
-import entity.Entity2;
+import entity.Entity;
 import graphics.*;
 import input.*;
 
@@ -222,8 +222,6 @@ public class Engine {
 	 */
 	private void initWorld() {
 
-//		Manager.addEntity(new Entity("monkey", new float[]{0, 0, 0}, AssetManager.getModel("monkey.obj")));
-
 		Activity.createActivity(new MainMenuActivity());
 	}
 
@@ -326,11 +324,7 @@ public class Engine {
 //			float[] coords = level.test.getPosition();
 //			System.out.println(coords[0] + ", " + coords[1]);
 		}
-		Entity2.update(delta);
-
-		// update the entity list
-		// deprecated
-		Manager.update(delta);
+		Entity.update(delta);
 
 		// calculate fps and stuff
 		updateFPS();

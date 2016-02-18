@@ -2,11 +2,12 @@ package gui;
 
 public interface PointerListener {
 
-	public void onPress();
+	//TODO add pointer location as argument
+	void onPress();
 
-	public void onRelease();
+	void onRelease();
 
-	public void onEnter();
+	void onEnter();
 
-	public void onExit();
+	void onExit();
 }

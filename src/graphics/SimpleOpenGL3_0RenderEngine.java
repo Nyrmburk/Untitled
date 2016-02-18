@@ -24,7 +24,7 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-import entity.Camera2;
+import entity.Camera;
 import graphics.RenderContext.InstancedModel;
 import main.Engine;
 import main.Settings;
@@ -183,7 +183,7 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 	}
 
 	@Override
-	public void look(Camera2 camera) {
+	public void look(Camera camera) {
 		// TODO Auto-generated method stub
 
 	}

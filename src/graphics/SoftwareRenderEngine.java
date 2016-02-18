@@ -15,7 +15,7 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
-import entity.Camera2;
+import entity.Camera;
 import graphics.RenderContext.InstancedModel;
 import main.Engine;
 
@@ -63,7 +63,7 @@ public class SoftwareRenderEngine extends RenderEngine {
 	}
 
 	@Override
-	public void look(Camera2 camera) {
+	public void look(Camera camera) {
 		// TODO Auto-generated method stub
 
 	}
