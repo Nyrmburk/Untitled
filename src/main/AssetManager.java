@@ -27,11 +27,12 @@ import script.Script;
  */
 public class AssetManager {
 
-	private static final String ROOT = "res" + File.separator;
-	private static final String MODEL_ROOT = ROOT + "models" + File.separator;
-	private static final String TEXTURE_ROOT = ROOT + "textures" + File.separator;
-	private static final String SHADER_ROOT = ROOT + "shaders" + File.separator;
-	private static final String SCRIPT_ROOT = ROOT + "scripts" + File.separator;
+	public static final String ROOT = "res" + File.separator;
+	public static final String MODEL_ROOT = ROOT + "models" + File.separator;
+	public static final String TEXTURE_ROOT = ROOT + "textures" + File.separator;
+	public static final String SHADER_ROOT = ROOT + "shaders" + File.separator;
+	public static final String SCRIPT_ROOT = ROOT + "scripts" + File.separator;
+	public static final String INPUT_ROOT = ROOT + "input" + File.separator;
 
 	static HashMap<String, ModelLoader> modelMap = new HashMap<String, ModelLoader>();
 	static HashMap<String, TextureInterface> textureMap = new HashMap<String, TextureInterface>();

@@ -2,11 +2,9 @@ package entity;
 
 import graphics.InstanceAttributes;
 import graphics.ModelLoader;
-import main.Engine;
 import physics.PhysicsObject;
 import physics.PhysicsObjectDef;
-
-import java.util.ArrayList;
+import world.Level;
 
 /**
  * The binding glue of the different observable components. It binds orientation to the physics and graphics.
@@ -14,10 +12,6 @@ import java.util.ArrayList;
  *
  */
 public class Entity {
-
-	private static ArrayList<Entity> entities = new ArrayList<Entity>();
-
-	private String name;
 
 	private boolean isActive = true;
 
@@ -27,28 +21,17 @@ public class Entity {
 
 	private ModelLoader model;
 	private PhysicsObject physicsObject;
+	private Level level;
 
-	public Entity(String name) {
+	public Entity(Level level) {
 
-		this.setName(name);
-		entities.add(this);
+		this.level = level;
+		this.level.addEntity(this);
 	}
 
-	public static void update(int delta) {
+	public void update(int delta) {
 
-		for (Entity entity : entities) {
-
-			entity.setLocation(entity.getPhysicsObject().getPosition());
-//			entity.onUpdate(delta);
-		}
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
+		setLocation(getPhysicsObject().getPosition());
 	}
 
 	public boolean isActive() {
@@ -81,6 +64,9 @@ public class Entity {
 
 			this.location[i] = location[i];
 		}
+
+		if (physicsObject != null)
+			physicsObject.setPosition(this.location);
 	}
 
 	public ModelLoader getModel() {
@@ -90,8 +76,8 @@ public class Entity {
 	public void setModel(ModelLoader model) {
 
 		if (this.model != null)
-			Engine.renderEngine.removeModel(this.model);
-		Engine.renderEngine.addModel(model, new InstanceAttributes(location, rotation));
+			level.getRenderContext().removeModel(this.model);
+		level.getRenderContext().addModel(model, new InstanceAttributes(location, rotation));
 		this.model = model;
 	}
 
@@ -102,7 +88,7 @@ public class Entity {
 	public void setPhysicsObject(PhysicsObjectDef physicsObjectDef) {
 
 		if (this.physicsObject != null)
-			Engine.level.physicsEngine.removePhysicsObject(this.physicsObject);
-		this.physicsObject = Engine.level.physicsEngine.createPhysicsObject(physicsObjectDef);
+			level.physicsEngine.removePhysicsObject(this.physicsObject);
+		this.physicsObject = level.physicsEngine.createPhysicsObject(physicsObjectDef);
 	}
 }

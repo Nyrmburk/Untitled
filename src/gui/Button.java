@@ -50,8 +50,8 @@ public class Button extends GUIElement implements PointerListener {
 		this();
 
 		textBox = new TextBox(GUI.mainFont.clone());
-		// setBounds(0, 0, textBox.getFont().getWidth(label), textBox.getFont()
-		// .getHeight());
+		// setBounds(0, 0, textBox.getFont().getWidthRatio(label), textBox.getFont()
+		// .getHeightRatio());
 		// textBox.setBounds(this);
 		textBox.getFont().horizontalAlignment = FormattedFont.HorizontalAlignment.CENTER;
 		textBox.getFont().verticalAlignment = FormattedFont.VerticalAlignment.CENTER;

@@ -7,15 +7,16 @@ import java.util.Stack;
 import java.util.TreeMap;
 
 import uuid.IDGenerator;
+import world.Level;
 
 public class Actor extends Entity {
 
 	private IDGenerator generator;
 	protected TreeMap<Integer, Stack<State>> states;
 
-	public Actor(String name) {
+	public Actor(Level level) {
 
-		super(name);
+		super(level);
 		generator = new IDGenerator();
 		states = new TreeMap<Integer, Stack<State>>();
 	}

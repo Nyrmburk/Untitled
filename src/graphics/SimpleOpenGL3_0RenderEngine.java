@@ -7,6 +7,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferInt;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -29,6 +30,7 @@ import graphics.RenderContext.InstancedModel;
 import main.Engine;
 import main.Settings;
 import sun.awt.image.ByteInterleavedRaster;
+import sun.awt.image.IntegerInterleavedRaster;
 
 public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 
@@ -228,6 +230,9 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 	@Override
 	public TextureInterface getTextureFromImage(BufferedImage image) {
 
+		if (image == null)
+			return null;
+
 		return new OpenGLTexture(image);
 	}
 
@@ -252,7 +257,7 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 
 		GL11.glEnable(GL11.GL_BLEND);
 
-		Iterator<Rectangle> quads = renderContext.coords.iterator();
+		Iterator<Rectangle> quads = renderContext.quads.iterator();
 		Iterator<TextureInterface> textures = renderContext.textures.iterator();
 
 		while (textures.hasNext()) {
@@ -264,18 +269,18 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 			GL11.glBegin(GL11.GL_QUADS);
 			GL11.glTexCoord2f(0, 0);
 			GL11.glVertex2i(bounds.x, bounds.y);
-			GL11.glTexCoord2f(0, texture.getHeight());
+			GL11.glTexCoord2f(0, texture.getHeightRatio());
 			GL11.glVertex2i(bounds.x, bounds.y + bounds.height);
-			GL11.glTexCoord2f(texture.getWidth(), texture.getHeight());
+			GL11.glTexCoord2f(texture.getWidthRatio(), texture.getHeightRatio());
 			GL11.glVertex2i(bounds.x + bounds.width, bounds.y + bounds.height);
-			GL11.glTexCoord2f(texture.getWidth(), 0);
+			GL11.glTexCoord2f(texture.getWidthRatio(), 0);
 			GL11.glVertex2i(bounds.x + bounds.width, bounds.y);
 			GL11.glEnd();
 		}
 
 //		for (int index : renderContext.indices) {
 //
-//			bounds = renderContext.coords.get(index);
+//			bounds = renderContext.quads.get(index);
 //
 //			OpenGLTexture texture = ((OpenGLTexture) renderContext.textures.get(index));
 //			texture.bind();
@@ -283,11 +288,11 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 //			GL11.glBegin(GL11.GL_QUADS);
 //			GL11.glTexCoord2f(0, 0);
 //			GL11.glVertex2i(bounds.x, bounds.y);
-//			GL11.glTexCoord2f(0, texture.getHeight());
+//			GL11.glTexCoord2f(0, texture.getHeightRatio());
 //			GL11.glVertex2i(bounds.x, bounds.y + bounds.height);
-//			GL11.glTexCoord2f(texture.getWidth(), texture.getHeight());
+//			GL11.glTexCoord2f(texture.getWidthRatio(), texture.getHeightRatio());
 //			GL11.glVertex2i(bounds.x + bounds.width, bounds.y + bounds.height);
-//			GL11.glTexCoord2f(texture.getWidth(), 0);
+//			GL11.glTexCoord2f(texture.getWidthRatio(), 0);
 //			GL11.glVertex2i(bounds.x + bounds.width, bounds.y);
 //			GL11.glEnd();
 //		}
@@ -317,122 +322,147 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 	public String getRenderDevice() {
 		return GL11.glGetString(GL11.GL_RENDERER);
 	}
-}
 
-class OpenGLTexture implements TextureInterface {
+	private class OpenGLTexture implements TextureInterface {
 
-	private int id = 0;
+		private int id = 0;
 
-	private int originalWidth = 0;
-	private int originalHeight = 0;
+		private int originalWidth = 0;
+		private int originalHeight = 0;
 
-	private int actualWidth = 0;
-	private int actualHeight = 0;
+		private int actualWidth = 0;
+		private int actualHeight = 0;
 
-	OpenGLTexture(BufferedImage texture) {
+		OpenGLTexture(BufferedImage texture) {
 
-		originalWidth = texture.getWidth();
-		originalHeight = texture.getHeight();
+			originalWidth = texture.getWidth();
+			originalHeight = texture.getHeight();
 
-		actualWidth = getMinimumPowerOfTwo(originalWidth);
-		actualHeight = getMinimumPowerOfTwo(originalHeight);
+			actualWidth = getMinimumPowerOfTwo(originalWidth);
+			actualHeight = getMinimumPowerOfTwo(originalHeight);
 
-		ByteBuffer buffer = getNativeData(actualWidth, actualHeight, texture);
-//		ByteBuffer buffer = null;
+			ByteBuffer buffer = getNativeData(actualWidth, actualHeight, texture);
+//			ByteBuffer buffer = null;
 
-		int type = texture.getColorModel().hasAlpha() ? GL11.GL_RGBA : GL11.GL_RGB;
+			int type = texture.getColorModel().hasAlpha() ? GL11.GL_RGBA : GL11.GL_RGB;
 
-		id = GL11.glGenTextures();
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, actualWidth, actualHeight, 0, type,
-				GL11.GL_UNSIGNED_BYTE, (ByteBuffer) buffer);
-	}
-
-	public void bind() {
-
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
-	}
-
-	public float getWidth() {
-
-		return ((float) originalWidth) / actualWidth;
-	}
-
-	public float getHeight() {
-
-		return ((float) originalHeight) / actualHeight;
-	}
-
-	private int getMinimumPowerOfTwo(int x) {
-
-		int powerOfTwo = 2;// opengl minimum texture size is 64x64?
-
-		while (powerOfTwo < x)
-			powerOfTwo += powerOfTwo; // addition is faster than multiplication
-
-		return powerOfTwo;
-	}
-
-	private ByteBuffer getNativeData(int actualWidth, int actualHeight, BufferedImage texture) {
-		// http://stackoverflow.com/questions/6524196/java-get-pixel-array-from-image
-
-		final int bytesPerPixel = texture.getColorModel().hasAlpha() ? 4 : 3;
-
-		int height = texture.getHeight();
-		int width = texture.getWidth();
-
-		boolean fallback = !(texture.getRaster() instanceof ByteInterleavedRaster);
-
-		ByteBuffer texBuffer = BufferUtils.createByteBuffer(actualWidth * actualHeight * bytesPerPixel);
-		byte[] pixels = null;
-		byte[] slice = null;
-
-		if (!fallback) {
-			pixels = ((DataBufferByte) texture.getRaster().getDataBuffer()).getData();
-			slice = new byte[width * bytesPerPixel];
+			id = GL11.glGenTextures();
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+			GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, actualWidth, actualHeight, 0, type,
+					GL11.GL_UNSIGNED_BYTE, buffer);
 		}
 
-		if (!fallback) {
-			
-			for (int y = 0; y < height; y++) {
+		public void bind() {
 
-				texBuffer.position(y * actualWidth * bytesPerPixel);
-				System.arraycopy(pixels, y * width * bytesPerPixel, slice, 0, slice.length);
-				texBuffer.put(slice);
-			}
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
+		}
 
-		} else {
+		public int getWidth() {
 
-			int pixel = 0;
+			return originalWidth;
+		}
 
-			for (int y = 0; y < height; y++) {
+		public int getHeight() {
 
-				texBuffer.position(y * actualWidth * bytesPerPixel);
-				for (int x = 0; x < width; x++) {
+			return originalHeight;
+		}
 
-					// the offending statement is right here
-					pixel = texture.getRGB(x, y);
-					texBuffer.put((byte) ((pixel & 0x00FF0000) >>> 16));
-					texBuffer.put((byte) ((pixel & 0x0000FF00) >>> 8));
-					texBuffer.put((byte) (pixel & 0x000000FF));
-					if (bytesPerPixel == 4)
-						texBuffer.put((byte) ((pixel & 0xFF000000) >>> 24));
+		public float getWidthRatio() {
+
+			return ((float) originalWidth) / actualWidth;
+		}
+
+		public float getHeightRatio() {
+
+			return ((float) originalHeight) / actualHeight;
+		}
+
+		private int getMinimumPowerOfTwo(int x) {
+
+			int powerOfTwo = 2;// opengl minimum texture size is 64x64?
+
+			while (powerOfTwo < x)
+				powerOfTwo += powerOfTwo; // addition is faster than multiplication
+
+			return powerOfTwo;
+		}
+
+		private ByteBuffer getNativeData(int actualWidth, int actualHeight, BufferedImage texture) {
+			// http://stackoverflow.com/questions/6524196/java-get-pixel-array-from-image
+
+			final int bytesPerPixel = texture.getColorModel().hasAlpha() ? 4 : 3;
+
+			int height = texture.getHeight();
+			int width = texture.getWidth();
+
+			ByteBuffer texBuffer = BufferUtils.createByteBuffer(actualWidth * actualHeight * bytesPerPixel);
+
+
+			if (texture.getRaster() instanceof ByteInterleavedRaster) {
+
+				byte[] pixels = ((DataBufferByte) texture.getRaster().getDataBuffer()).getData();
+				byte[] slice = new byte[width * bytesPerPixel];
+
+				for (int y = 0; y < height; y++) {
+
+					texBuffer.position(y * actualWidth * bytesPerPixel);
+					System.arraycopy(pixels, y * width * bytesPerPixel, slice, 0, slice.length);
+					texBuffer.put(slice);
+				}
+
+//			} else if (texture.getRaster() instanceof IntegerInterleavedRaster) {
+//
+//				// This is going to be a large speedup.
+//
+//				if (originalWidth == 800)
+//					System.out.println(originalHeight);
+//
+//				int[] pixels = ((DataBufferInt) texture.getRaster().getDataBuffer()).getData();
+//				int[] slice = new int[width];
+//				IntBuffer intTexBuffer = texBuffer.asIntBuffer();
+//
+//				for (int y = 0; y < height; y++) {
+//
+//					texBuffer.position(y * actualWidth);
+//					System.arraycopy(pixels, y * width, slice, 0, slice.length);
+//					intTexBuffer.put(slice);
+//				}
+
+			} else {
+
+//				System.err.println("slow image: " + texture.getRaster());
+
+				int pixel = 0;
+
+				for (int y = 0; y < height; y++) {
+
+					texBuffer.position(y * actualWidth * bytesPerPixel);
+					for (int x = 0; x < width; x++) {
+
+						// the offending statement is right here
+						pixel = texture.getRGB(x, y);
+						texBuffer.put((byte) ((pixel & 0x00FF0000) >>> 16));
+						texBuffer.put((byte) ((pixel & 0x0000FF00) >>> 8));
+						texBuffer.put((byte) (pixel & 0x000000FF));
+						if (bytesPerPixel == 4)
+							texBuffer.put((byte) ((pixel & 0xFF000000) >>> 24));
+					}
 				}
 			}
+
+			texBuffer.rewind();
+
+			return texBuffer;
 		}
 
-		texBuffer.rewind();
+		@Override
+		public void release() {
 
-		return texBuffer;
-	}
-
-	@Override
-	public void release() {
-
-		GL11.glDeleteTextures(id);
+			GL11.glDeleteTextures(id);
+		}
 	}
 }

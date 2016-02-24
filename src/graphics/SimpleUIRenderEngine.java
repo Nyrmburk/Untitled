@@ -19,6 +19,9 @@ public class SimpleUIRenderEngine extends UIRenderEngine {
 	@Override
 	public BufferedImage renderPanel(Panel panel) {
 
+		if (panel.getWidth() == 0 && panel.getHeight() == 0)
+			return null;
+
 		BufferedImage image = new BufferedImage(
 				panel.getWidth(), panel.getHeight(), 
 				BufferedImage.TYPE_INT_ARGB);
@@ -44,6 +47,9 @@ public class SimpleUIRenderEngine extends UIRenderEngine {
 
 	@Override
 	public BufferedImage renderTextBox(TextBox textBox) {
+
+		if (textBox.getWidth() == 0 && textBox.getHeight() == 0)
+			return null;
 
 		int width = textBox.getWidth();
 		int height = textBox.getHeight();
@@ -186,6 +192,9 @@ public class SimpleUIRenderEngine extends UIRenderEngine {
 	@Override
 	public BufferedImage renderButton(Button button) {
 
+		if (button.getWidth() == 0 && button.getHeight() == 0)
+			return null;
+
 		BufferedImage image = new BufferedImage(button.getWidth(), button.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
 		Graphics g = image.getGraphics();
@@ -202,7 +211,7 @@ public class SimpleUIRenderEngine extends UIRenderEngine {
 			// render text
 			TextBox textBox = new TextBox();
 			textBox.setText(button.getText());
-			// look into the coords to see if adjustment needed
+			// look into the quads to see if adjustment needed
 			g.drawImage(renderTextBox(textBox), 0, 0, null);
 		} else if (button.hasImage()) {
 

@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 
 import graphics.RenderContext;
 import gui.*;
+import main.AssetManager;
 import main.Engine;
 
 public class MainMenuActivity extends Activity {
@@ -57,6 +58,14 @@ public class MainMenuActivity extends Activity {
 		
 		Button options = new Button();
 		options.setText("Options");
+		options.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				if (e.getActionCommand().equals(Button.CLICKED))
+					createActivity(new BindingActivity());
+			}
+		});
 		aligner.addChild(options, 0);
 		
 		Button quit = new Button();

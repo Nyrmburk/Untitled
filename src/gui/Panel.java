@@ -64,6 +64,20 @@ public class Panel extends Container {
 		
 		return foregroundColor;
 	}
+
+	@Override
+	public void pack() {
+
+		super.pack();
+		if (image != null) {
+
+			width = getWidth() > image.getWidth() ? getWidth() : image.getWidth();
+			height = getHeight() > image.getHeight() ? getHeight() : image.getHeight();
+//			setBounds(getX(), getY(), width, height);
+//			this.width = width;
+//			this.height = height;
+		}
+	}
 	
 	@Override
 	protected void onPositionChange(int oldX, int oldY) {

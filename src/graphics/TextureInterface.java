@@ -2,5 +2,9 @@ package graphics;
 
 public interface TextureInterface {
 
-	public void release();
+	int getWidth();
+
+	int getHeight();
+
+	void release();
 }

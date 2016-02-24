@@ -6,6 +6,7 @@ public abstract class Button extends Input {
 		super(name);
 	}
 
+	@Override
 	public void setValue(float value) {
 		
 		if (value > 0) {
@@ -17,16 +18,23 @@ public abstract class Button extends Input {
 		}
 		
 		super.setValue(value);
-		
+
 		if (getDelta() < getRange()) {
-			
+
 			onRelease();
 		} else if (getDelta() >= getRange()) {
-			
+
 			onPress();
-		} else {
-			
-			onHold();
+		}
+	}
+
+	@Override
+	public void onUpdate(int delta) {
+
+//		System.out.println(this.getName() + " = " + getDelta());
+
+		if (getDelta() >= getRange()) {
+			onHold(delta);
 		}
 	}
 	
@@ -34,5 +42,5 @@ public abstract class Button extends Input {
 	
 	public abstract void onRelease();
 	
-	public abstract void onHold();
+	public abstract void onHold(int delta);
 }

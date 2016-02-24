@@ -5,8 +5,10 @@ import org.lwjgl.opengl.Display;
 
 public class LWJGLMouseInput extends PointerInput {
 
+	private static final String NAME = "LWJGLMouseInput";
+
 	@Override
-	public void getInputs() {
+	public void updateInputs() {
 
 		Input input;
 
@@ -33,9 +35,20 @@ public class LWJGLMouseInput extends PointerInput {
 	}
 
 	@Override
+	public String getName() {
+		return NAME;
+	}
+
+	@Override
 	public Object getBinding(String name) {
 
 		return PointerInput.bindings.valueOf(name);
+	}
+
+	@Override
+	public String getBindingName(Object binding) {
+
+		return ((PointerInput.bindings) binding).name();
 	}
 
 	@Override
@@ -57,7 +70,7 @@ public class LWJGLMouseInput extends PointerInput {
 	}
 
 	@Override
-	public float getRange(Object Binding) {
+	public float getRange(Object binding) {
 
 		return 1;
 	}
@@ -70,4 +83,26 @@ public class LWJGLMouseInput extends PointerInput {
 
 		return bindings;
 	}
+
+//	private class LWJGLMouseBinding extends Binding {
+//
+//		public PointerInput.bindings binding;
+//
+//		public LWJGLMouseBinding(PointerInput.bindings binding) {
+//
+//			this.binding = binding;
+//		}
+//
+//		@Override
+//		public String getName() {
+//
+//			return getBindingName(this);
+//		}
+//
+//		@Override
+//		public int compareTo(Binding binding) {
+//
+//			return this.binding.compareTo(((LWJGLMouseBinding) binding).binding);
+//		}
+//	}
 }

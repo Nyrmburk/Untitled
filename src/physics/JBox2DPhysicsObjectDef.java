@@ -28,6 +28,7 @@ public class JBox2DPhysicsObjectDef implements PhysicsObjectDef {
 		shape = new PolygonShape();
 
 		Vec2[] vec2Vertices = floatArrayToVec2Array(vertices);
+
 		shape.set(vec2Vertices, vec2Vertices.length);
 
 		fixtureDef.setShape(shape);
@@ -176,7 +177,7 @@ public class JBox2DPhysicsObjectDef implements PhysicsObjectDef {
 
 		for (int i = 0; i < points.length/2; i++) {
 
-			vec2s[i] = new Vec2(points[i], points[i+1]);
+			vec2s[i] = new Vec2(points[i*2], points[i*2+1]);
 		}
 
 		return vec2s;

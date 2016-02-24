@@ -74,10 +74,12 @@ public class LoadingActivity extends Activity {
 			Activity.stopCurrentActivity();
 
 			Engine.level = new Level();
+			Engine.renderEngine.setContext(Engine.level.getRenderContext());
+			Engine.level.load();
 
 			ModelLoader model = AssetManager.getModel("monkey.obj");
 			PhysicsObjectDef shape = Engine.level.physicsEngine.getPhysicsObjectDef(PhysicsObject.Type.DYNAMIC, new float[]{0, 0, 0, 1, 1, 1, 1, 0});
-			Entity entity = new Entity("monkeybox");
+			Entity entity = new Entity(Engine.level);
 			entity.setModel(model);
 			entity.setPhysicsObject(shape);
 		}

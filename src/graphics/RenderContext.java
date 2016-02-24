@@ -35,7 +35,9 @@ public class RenderContext {
 		if (instancedModel == null) {
 			instancedModel = new InstancedModel(model);
 			models.add(instancedModel);
-			getEngine().addModel(instancedModel);
+
+			if (engine != null)
+				getEngine().addModel(instancedModel);
 		}
 
 		int id = random.nextInt();
@@ -64,7 +66,8 @@ public class RenderContext {
 
 				if (imodel.attributes.isEmpty()) {
 
-					getEngine().removeModel(imodel);
+					if (engine != null)
+						getEngine().removeModel(imodel);
 					it.remove();
 				}
 

@@ -1,11 +1,12 @@
 package main;
 
-import entity.Entity;
+import activity.MainMenuActivity;
 import graphics.*;
 import input.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.swing.*;
 
@@ -16,7 +17,6 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 import activity.Activity;
-import activity.MainMenuActivity;
 import world.Level;
 
 public class Engine {
@@ -105,9 +105,10 @@ public class Engine {
 						 renderEngine.getHeight());
 				
 				graphics.Render.initGL();
+
 				Activity activity = Activity.currentActivity();
-				activity.setView(activity.getView());
-				//GUI2.setView(GUI2.getView());
+				if (activity != null)
+					activity.setView(activity.getView());
 //				GUI.revalidate();
 			}
 
@@ -222,6 +223,45 @@ public class Engine {
 	 */
 	private void initWorld() {
 
+
+		HashMap<String, String> map = new HashMap<>();
+
+		map.put("jump", "LWJGLKeyInput:SPACE");
+		map.put("left", "LWJGLKeyInput:A");
+		map.put("right", "LWJGLKeyInput:D");
+		map.put("up", "LWJGLKeyInput:W");
+		map.put("crouch", "LWJGLKeyInput:S");
+
+		INIWriter.write(map, new File("res\\input\\player.ini"));
+
+		map.clear();
+		map.put("primary", "LWJGLMouseInput:BUTTON_0");
+		map.put("x_axis", "LWJGLMouseInput:X_COORD");
+		map.put("y_axis", "LWJGLMouseInput:Y_COORD");
+		INIWriter.write(map, new File("res\\input\\ui.ini"));
+
+		LWJGLKeyInput input = new LWJGLKeyInput();
+		Binding.load(new File("res\\input\\player.ini"));
+		Binding.load(new File("res\\input\\ui.ini"));
+
+//		LWJGLKeyInput keyInput = new LWJGLKeyInput();
+//		keyInput.addInput(new Input("one") {
+//			@Override
+//			public void onUpdate(int delta) {
+//
+//			}
+//		});
+//
+//		keyInput.addInput(new Input("two") {
+//			@Override
+//			public void onUpdate(int delta) {
+//
+//			}
+//		});
+
+//		level = new Level();
+//		renderEngine.setContext(level.getRenderContext());
+
 		Activity.createActivity(new MainMenuActivity());
 	}
 
@@ -233,35 +273,36 @@ public class Engine {
 		GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 1);
 
-		// GL11.glShadeModel(GL11.GL_SMOOTH);
+		 GL11.glShadeModel(GL11.GL_SMOOTH);
 
 //		 Draw the triangle of death
 //		 GL11.glBegin(GL11.GL_TRIANGLES);
 //		 GL11.glColor3f(1, 0, 0);
-//		 GL11.glVertex3f(450, 660, 1);
+//		 GL11.glVertex2f(450, 660);
 //		 GL11.glColor3f(0, 1, 0);
-//		 GL11.glVertex3f(450, 140, 1);
+//		 GL11.glVertex2f(450, 140);
 //		 GL11.glColor3f(0, 0, 1);
-//		 GL11.glVertex3f(900, 400, 1);
+//		 GL11.glVertex2f(900, 400);
 //		 GL11.glEnd();
 
 		// Render.drawActionCircle(new int[] {Input.mouseX, Input.mouseY},
-		// new int[2], 5);
-		//
-		// GL11.glColor3f(1, 1, 1);
-		// GL11.glBegin(GL11.GL_LINE_LOOP);
-		// GL11.glVertex2i(1, 1);
-		// GL11.glVertex2i(1199, 1);
-		// GL11.glVertex2i(1199, 899);
-		// GL11.glVertex2i(1, 899);
-		// GL11.glEnd();
+//		 new int[2], 5);
+
+//		 GL11.glColor3f(1, 1, 1);
+//		 GL11.glBegin(GL11.GL_LINE_LOOP);
+//		 GL11.glVertex2i(1, 1);
+//		 GL11.glVertex2i(1199, 1);
+//		 GL11.glVertex2i(1199, 899);
+//		 GL11.glVertex2i(1, 899);
+//		 GL11.glEnd();
 
 //		GUI.update();
 //		GUI.revalidate();
 //		GUI.render();
 //		GUI2.update();
 
-		renderEngine.renderUI(Activity.currentActivity().getRenderContext());
+		if (Activity.currentActivity() != null)
+			renderEngine.renderUI(Activity.currentActivity().getRenderContext());
 
 		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -301,13 +342,12 @@ public class Engine {
 	 */
 	private void update(int delta) {
 
-		for(InputInterface input : InputInterface.inputInterfaces) {
+		for(InputInterface input : InputInterface.getInterfaces()) {
 
 			input.update(delta);
 		}
 
-		for (Input input : InputContext.getCurrentContext().inputs)
-			input.onUpdate(delta);
+		InputContext.getCurrentContext().update(delta);
 
 		Activity.update(delta);
 
@@ -318,13 +358,8 @@ public class Engine {
 		// actually translate the camera based on the previous commands
 		Camera.look();
 
-		if (level != null) {
-
-			level.physicsEngine.update(delta);
-//			float[] coords = level.test.getPosition();
-//			System.out.println(coords[0] + ", " + coords[1]);
-		}
-		Entity.update(delta);
+		if (level != null)
+			level.update(delta);
 
 		// calculate fps and stuff
 		updateFPS();

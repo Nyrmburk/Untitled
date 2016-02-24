@@ -100,7 +100,7 @@ public class Render {
 //		for (int y = lowest.y; y < highest.y + 1; y++) {
 //			
 //			GL11.glVertex3f(lowest.x, y, ((MapMesh) Engine.worldEntity.mdl)
-//					.getHeight(new float[] {lowest.x, y}));
+//					.getHeightRatio(new float[] {lowest.x, y}));
 //		}
 //		GL11.glEnd();
 //		
@@ -109,7 +109,7 @@ public class Render {
 //		for (int y = lowest.y; y < highest.y + 1; y++) {
 //			
 //			GL11.glVertex3f(highest.x, y, ((MapMesh) Engine.worldEntity.mdl)
-//					.getHeight(new float[] {highest.x, y}));
+//					.getHeightRatio(new float[] {highest.x, y}));
 //		}
 //		GL11.glEnd();
 //		
@@ -118,7 +118,7 @@ public class Render {
 //		for (int y = lowest.x; y < highest.x + 1; y++) {
 //			
 //			GL11.glVertex3f(y, lowest.y, ((MapMesh) Engine.worldEntity.mdl)
-//					.getHeight(new float[] {y, lowest.y}));
+//					.getHeightRatio(new float[] {y, lowest.y}));
 //		}
 //		GL11.glEnd();
 //		
@@ -127,7 +127,7 @@ public class Render {
 //		for (int y = lowest.x; y < highest.x + 1; y++) {
 //			
 //			GL11.glVertex3f(y, highest.y, ((MapMesh) Engine.worldEntity.mdl)
-//					.getHeight(new float[] {y, highest.y}));
+//					.getHeightRatio(new float[] {y, highest.y}));
 //		}
 //		GL11.glEnd();
 //		

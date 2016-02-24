@@ -33,9 +33,7 @@ public abstract class Activity {
 	private static MultiInput pointerInput = new MultiInput(ACTIVITY_INPUT) {
 
 		{
-			this.setInputs(
-					new PartInput(PointerInput.bindings.X_COORD.toString(), Engine.pointer),
-					new PartInput (PointerInput.bindings.Y_COORD.toString(), Engine.pointer));
+			this.setInputs(new SimpleInput("x_axis"), new SimpleInput("y_axis"));
 		}
 
 		@Override
@@ -70,10 +68,11 @@ public abstract class Activity {
 			}
 		}
 	};
-	private static Button pointerButton = new Button(PointerInput.bindings.BUTTON_0.toString()) {
+	private static Button pointerButton = new Button("primary") {
 
 		{
-			Engine.pointer.addInput(this);
+//			Engine.pointer.addInput(this, );
+			Binding.delegate(this);
 		}
 
 		@Override
@@ -89,11 +88,7 @@ public abstract class Activity {
 		}
 
 		@Override
-		public void onHold() {
-		}
-
-		@Override
-		public void onUpdate(int delta) {
+		public void onHold(int delta) {
 		}
 	};
 	
@@ -108,8 +103,11 @@ public abstract class Activity {
 
 		Activity currentActivity = Activity.currentActivity();
 
-		currentActivity.onUpdate(delta);
-		currentActivity.getView().revalidate();
+		if (currentActivity != null) {
+
+			currentActivity.onUpdate(delta);
+			currentActivity.getView().revalidate();
+		}
 	}
 	
 	public void setView(Container view) {
@@ -188,8 +186,18 @@ public abstract class Activity {
 	}
 	
 	public static Activity currentActivity() {
-		
-		return stack.peek();
+
+		Activity currentActivity;
+
+		if (stack.isEmpty()) {
+
+			currentActivity = null;
+		} else {
+
+			currentActivity = stack.peek();
+		}
+
+		return currentActivity;
 	}
 	
 	private static void startActivity(Activity activity) {

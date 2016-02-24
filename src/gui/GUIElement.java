@@ -149,7 +149,7 @@ public abstract class GUIElement {
 			}
 			break;
 		case WRAP_CONTENT:
-			pack();
+//			pack();
 			break;
 		}
 		
@@ -167,7 +167,7 @@ public abstract class GUIElement {
 			}
 			break;
 		case WRAP_CONTENT:
-			pack();
+//			pack();
 			break;
 		}
 			

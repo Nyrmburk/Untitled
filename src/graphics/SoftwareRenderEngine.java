@@ -107,7 +107,7 @@ public class SoftwareRenderEngine extends RenderEngine {
 		Rectangle bounds;
 		BufferedImage image;
 
-		Iterator<Rectangle> quads = renderContext.coords.iterator();
+		Iterator<Rectangle> quads = renderContext.quads.iterator();
 		Iterator<TextureInterface> textures = renderContext.textures.iterator();
 
 		while (textures.hasNext()) {
@@ -165,20 +165,31 @@ public class SoftwareRenderEngine extends RenderEngine {
 		return renderDevice;
 	}
 
-}
+	private class SoftwareTexture implements TextureInterface {
 
-class SoftwareTexture implements TextureInterface {
+		public BufferedImage texture;
 
-	public BufferedImage texture;
-	
-	SoftwareTexture(BufferedImage texture) {
-		
-		this.texture = texture;
-	}
-	
-	@Override
-	public void release() {
-		
-		texture = null;
+		SoftwareTexture(BufferedImage texture) {
+
+			this.texture = texture;
+		}
+
+		@Override
+		public int getWidth() {
+
+			return texture.getWidth();
+		}
+
+		@Override
+		public int getHeight() {
+
+			return texture.getHeight();
+		}
+
+		@Override
+		public void release() {
+
+			texture = null;
+		}
 	}
 }

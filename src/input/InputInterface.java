@@ -1,7 +1,10 @@
 package input;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import main.AssetManager;
+import main.INIWriter;
+
+import java.io.File;
+import java.util.*;
 
 /**
  * @author Nyrmburk InputInterface is an interface for raw inputs. It collects
@@ -10,9 +13,9 @@ import java.util.HashMap;
  */
 public abstract class InputInterface {
 
-	public static ArrayList<InputInterface> inputInterfaces = new ArrayList<InputInterface>();
+	private static List<InputInterface> inputInterfaces = new ArrayList<InputInterface>();
 
-	public HashMap<Object, Input> inputs;
+	public Map<Object, Input> inputs;
 
 	public InputInterface() {
 
@@ -20,46 +23,68 @@ public abstract class InputInterface {
 		inputs = new HashMap<Object, Input>();
 	}
 
-	// provide some means to get hardware input and map it to Input
-	public abstract void getInputs();
+	public void addInput(Input input, Object binding) {
 
-	public abstract Object getBinding(String name);
-
-	public final void update(int delta) {
-
-		getInputs();
-
-		for (Input input : inputs.values()) {
-
-			input.onUpdate(delta);
-		}
-	}
-
-	// is this necessary?
-	public void addInput(Input input) {
-
-		Object binding = getBinding(input.getName());
-
+//		Object binding = Binding.getBindingFromName(input.getName());
 		inputs.put(binding, input);
 		input.setRange(this.getRange(binding));
 	}
 
 	public void removeInput(Input input) {
 
+		//broken
 		inputs.remove(input);
+	}
+
+	// provide some means to get hardware input and map it to Input
+	public abstract void updateInputs();
+
+	public abstract String getName();
+
+	public abstract Object getBinding(String name);
+
+	public abstract String getBindingName(Object binding);
+
+	public final void update(int delta) {
+
+		updateInputs();
+
+//		for (Input input : inputs.values()) {
+//
+//			input.onUpdate(delta);
+//		}
 	}
 
 	public void save() {
 
+		Map<String, String> map = new TreeMap<String, String>();
+
+		for (Map.Entry<Object, Input> entry : inputs.entrySet()) {
+
+			map.put(entry.getValue().getName(), getBindingName(entry.getKey()));
+		}
+
+		INIWriter.write(map, new File(AssetManager.INPUT_ROOT + getName()));
 	}
 
 	public void load() {
 
+		Map<String, String> map = INIWriter.read(new File(AssetManager.INPUT_ROOT + getName()));
+
+		for (Map.Entry<String, String> entry : map.entrySet()) {
+
+			inputs.get(getBinding(entry.getValue()));
+		}
 	}
 
 	public abstract String[] getInputNames();
 
 	public abstract int getChangedInput();
 
-	public abstract float getRange(Object Binding);
+	public abstract float getRange(Object binding);
+
+	public static List<InputInterface> getInterfaces() {
+
+		return inputInterfaces;
+	}
 }

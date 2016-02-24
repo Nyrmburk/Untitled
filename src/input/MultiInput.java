@@ -12,12 +12,12 @@ public abstract class MultiInput extends Input {
 		super(name);
 	}
 
-	public void setInputs(PartInput... inputs) {
+	public void setInputs(Input... inputs) {
 
 		this.inputs = inputs;
 
-		for (PartInput input : inputs)
-			input.inputInterface.addInput(input);
+		for (Input input : inputs)
+			Binding.delegate(input);
 	}
 
 	@Override
@@ -28,14 +28,10 @@ public abstract class MultiInput extends Input {
 
 	public abstract void onUpdate(Input[] inputs, int delta);
 
-	public class PartInput extends Input {
+	public class SimpleInput extends Input {
 
-		InputInterface inputInterface;
-
-		public PartInput(String name, InputInterface inputInterface) {
-
+		public SimpleInput(String name) {
 			super(name);
-			this.inputInterface = inputInterface;
 		}
 
 		@Override

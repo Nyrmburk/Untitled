@@ -70,14 +70,39 @@ public class JBox2DPhysicsObject implements PhysicsObject {
 	public Type getPhysicsType() {
 
 		BodyType type = body.getType();
+		PhysicsObject.Type physicsType = null;
 
-		return null;
+		switch (type) {
+
+			case STATIC:
+				physicsType = Type.STATIC;
+				break;
+			case KINEMATIC:
+				physicsType = Type.KINEMATIC;
+				break;
+			case DYNAMIC:
+				physicsType = Type.DYNAMIC;
+				break;
+		}
+
+		return physicsType;
 	}
 
 	@Override
 	public void setPhysicsType(Type physicsType) {
 
-		body.setType(null);
+		switch (physicsType) {
+
+			case STATIC:
+				body.setType(BodyType.STATIC);
+				break;
+			case KINEMATIC:
+				body.setType(BodyType.KINEMATIC);
+				break;
+			case DYNAMIC:
+				body.setType(BodyType.DYNAMIC);
+				break;
+		}
 	}
 
 	@Override

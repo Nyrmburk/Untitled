@@ -13,7 +13,7 @@ package input;
  */
 public abstract class Input {
 
-//	public static InputInterface input;
+//	public InputInterface input;
 
 	private InputContext context;
 
