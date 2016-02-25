@@ -8,7 +8,6 @@ import java.io.File;
 public interface Resource {
 
 	String getName();
-	File getPath();
 
 	Resource save(File file);
 	Resource load(File file);
