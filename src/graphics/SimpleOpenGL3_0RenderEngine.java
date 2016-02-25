@@ -124,19 +124,19 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 			VAOID = GL30.glGenVertexArrays();
 			GL30.glBindVertexArray(VAOID);
 
-			GL11.glEnable(GL11.GL_VERTEX_ARRAY);
+			GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
 
 			if (!model.normals.isEmpty()) {
 				normals = true;
-				GL11.glEnable(GL11.GL_NORMAL_ARRAY);
+				GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
 			} else {
-				GL11.glDisable(GL11.GL_NORMAL_ARRAY);
+				GL11.glDisableClientState(GL11.GL_NORMAL_ARRAY);
 			}
 			if (!model.colorAmbient.isEmpty()) {
 				colors = true;
-				GL11.glEnable(GL11.GL_COLOR_ARRAY);
+				GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
 			} else {
-				GL11.glDisable(GL11.GL_COLOR_ARRAY);
+				GL11.glDisableClientState(GL11.GL_COLOR_ARRAY);
 			}
 			if (!model.textureCoords.isEmpty()) {
 				textures = true;
