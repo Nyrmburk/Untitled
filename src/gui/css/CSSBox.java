@@ -1,5 +1,7 @@
 package gui.css;
 
+import org.fit.cssbox.layout.Box;
+
 import java.awt.*;
 
 /**
@@ -8,4 +10,12 @@ import java.awt.*;
 public class CSSBox extends Rectangle {
 
 	boolean transparent;
+
+	public CSSBox () {
+	}
+
+	public CSSBox (Box box) {
+
+		super(box.getAbsoluteBounds());
+	}
 }

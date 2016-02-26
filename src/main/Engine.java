@@ -1,9 +1,13 @@
 package main;
 
+import activity.CSSActivity;
 import activity.MainMenuActivity;
 import graphics.*;
+import gui.css.CSSCanvas;
+import gui.css.CSSDocument;
 import input.*;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -223,6 +227,17 @@ public class Engine {
 	 */
 	private void initWorld() {
 
+//		System.out.println("start");
+//		org.fit.cssbox.demo.TextBoxes.main(new String[]{"file:///C:\\Users\\Nyrmburk\\Documents\\GitHub\\untitled\\dev\\Motherfucking Website.html"});
+//		System.out.println("end");
+
+		CSSDocument doc = new CSSDocument();
+		try {
+			doc.load(new File("C:\\Users\\Nyrmburk\\Documents\\GitHub\\untitled\\dev\\Motherfucking Website.html"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		CSSCanvas canvas = new CSSCanvas(doc, new Dimension(Settings.windowWidth, Settings.windowHeight));
 
 		HashMap<String, String> map = new HashMap<>();
 
@@ -262,7 +277,8 @@ public class Engine {
 //		level = new Level();
 //		renderEngine.setContext(level.getRenderContext());
 
-		Activity.createActivity(new MainMenuActivity());
+//		Activity.createActivity(new MainMenuActivity());
+		Activity.createActivity(new CSSActivity(canvas));
 	}
 
 	public void renderUI() {

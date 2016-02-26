@@ -1,10 +1,14 @@
 package gui.css;
 
+import cz.vutbr.web.css.MediaSpec;
 import graphics.TextureInterface;
 import main.Engine;
+import org.fit.cssbox.css.CSSNorm;
+import org.fit.cssbox.css.DOMAnalyzer;
 import org.fit.cssbox.layout.*;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  * Created by Nyrmburk on 2/24/2016.
@@ -26,13 +30,22 @@ public class CSSCanvas {
 
 	public void layout() {
 
+		DOMAnalyzer da = new DOMAnalyzer(document.document, null);
+		da.setMediaSpec(new MediaSpec("screen"));//try and remove later
+		da.attributesToStyles();
+		da.addStyleSheet(null, CSSNorm.stdStyleSheet(), DOMAnalyzer.Origin.AGENT);
+		da.addStyleSheet(null, CSSNorm.userStyleSheet(), DOMAnalyzer.Origin.AGENT);
+		da.addStyleSheet(null, CSSNorm.formsStyleSheet(), DOMAnalyzer.Origin.AGENT);
+		da.getStyleSheets();
+
 		//TODO figure out boxfactory's arguments
-		BoxFactory factory = new BoxFactory(null, null);
-		factory.setConfig(null);
+		BoxFactory factory = new BoxFactory(da, null);
+//		factory.setConfig(null);
 		factory.reset();
 
 		VisualContext ctx = new VisualContext(null, factory);
-		viewport = factory.createViewportTree(null, null, ctx, bounds.width, bounds.height);
+		BufferedImage graphicsDonor = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+		viewport = factory.createViewportTree(da.getRoot(), graphicsDonor.createGraphics(), ctx, bounds.width, bounds.height);
 		viewport.setVisibleRect(new Rectangle(bounds));
 		viewport.initSubtree();
 
@@ -60,13 +73,13 @@ public class CSSCanvas {
 
 			composite.elementBoxes.add(new CSSElementBox(el));
 
-			if (!el.getBackgroundImages().isEmpty()) {
+			if (el.getBackgroundImages() != null) {
 
 				for (BackgroundImage bgImage : el.getBackgroundImages()) {
 
 					TextureInterface texture = Engine.renderEngine.getTextureFromImage(bgImage.getBufferedImage());
-					CSSImageBox imageBox = new CSSImageBox(texture);
-					imageBox.setBounds(el.getBounds());
+					CSSImageBox imageBox = new CSSImageBox(el.getBounds(), texture);
+					imageBox.setBounds(el.getAbsoluteBounds());
 					composite.imageBoxes.add(imageBox);
 				}
 			}

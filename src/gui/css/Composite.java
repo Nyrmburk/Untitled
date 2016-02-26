@@ -8,9 +8,9 @@ import java.util.List;
  */
 public class Composite {
 
-	List<CSSTextBox> textBoxes = new ArrayList<CSSTextBox>();
-	List<CSSElementBox> elementBoxes = new ArrayList<CSSElementBox>();
-	List<CSSImageBox> imageBoxes = new ArrayList<CSSImageBox>();
-	List<CSSBorder> borders = new ArrayList<CSSBorder>();
+	public	List<CSSTextBox> textBoxes = new ArrayList<CSSTextBox>();
+	public	List<CSSElementBox> elementBoxes = new ArrayList<CSSElementBox>();
+	public	List<CSSImageBox> imageBoxes = new ArrayList<CSSImageBox>();
+	public List<CSSBorder> borders = new ArrayList<CSSBorder>();
 
 }

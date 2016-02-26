@@ -13,8 +13,10 @@ public class CSSElementBox extends CSSBox {
 
 	public CSSElementBox(ElementBox elementBox) {
 
+		super(elementBox);
 		this.elementBox = elementBox;
-		this.transparent = elementBox.getBgcolor().getAlpha() > 0;
+		if (elementBox.getBgcolor() != null)
+			this.transparent = elementBox.getBgcolor().getAlpha() > 0;
 	}
 
 	public ElementBox getElementBox() {

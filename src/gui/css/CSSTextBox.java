@@ -18,6 +18,7 @@ public class CSSTextBox extends CSSBox {
 
 	public CSSTextBox(TextBox textBox) {
 
+		super(textBox);
 		this.text = textBox.getText();
 	}
 

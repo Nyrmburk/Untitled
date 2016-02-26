@@ -18,5 +18,13 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/jars/jbox2d.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/slf4j-api-1.7.12"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/nekohtml-1.9.22"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/antlr-runtime-3.5.2"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jstyleparser-1.21"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/xercesImpl-2.11.0"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/unbescape-1.1.1.RELEASE"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/xml-apis-1.4.01"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/cssbox-4.10"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

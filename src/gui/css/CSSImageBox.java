@@ -2,6 +2,8 @@ package gui.css;
 
 import graphics.TextureInterface;
 
+import java.awt.*;
+
 /**
  * Created by Nyrmburk on 2/24/2016.
  */
@@ -18,14 +20,16 @@ public class CSSImageBox extends CSSBox {
 		transparent = true;
 	}
 
-	public CSSImageBox(TextureInterface... texture) {
+	public CSSImageBox(Rectangle bounds, TextureInterface... texture) {
 
+		setBounds(bounds);
 		this.textures = texture;
 		delays = null;
 	}
 
-	public CSSImageBox(TextureInterface[] textures, int[] delays) {
+	public CSSImageBox(Rectangle bounds, TextureInterface[] textures, int[] delays) {
 
+		setBounds(bounds);
 		this.textures = textures;
 		this.delays = delays;
 	}
