@@ -4,6 +4,7 @@ import activity.CSSActivity;
 import activity.MainMenuActivity;
 import graphics.*;
 import gui.css.CSSCanvas;
+import gui.css.CSSComposite;
 import gui.css.CSSDocument;
 import input.*;
 
@@ -52,7 +53,7 @@ public class Engine {
 
 	/**
 	 * Starts the engine.
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	public void start() throws IOException {
@@ -64,7 +65,7 @@ public class Engine {
 			e.printStackTrace();
 			System.exit(0);
 		}
-		
+
 		Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 
 		// set lastFPS to current Time
@@ -77,7 +78,7 @@ public class Engine {
 
 			// get the change in time since the last frame
 			delta = getDelta();
-			
+
 //			if (!Display.isActive()) {
 //
 //				// switch to state based game
@@ -102,18 +103,19 @@ public class Engine {
 
 			// handle resizing the window
 			if (Display.wasResized()) {
-				
+
 				Settings.windowWidth = renderEngine.getWidth();
 				Settings.windowHeight = renderEngine.getHeight();
 				GL11.glViewport(0, 0, renderEngine.getWidth(),
 						 renderEngine.getHeight());
-				
+
 				graphics.Render.initGL();
 
 				Activity activity = Activity.currentActivity();
 				if (activity != null)
 					activity.setView(activity.getView());
-//				GUI.revalidate();
+
+				canvas.setBounds(new Rectangle(0, 0, renderEngine.getWidth(), renderEngine.getHeight()));
 			}
 
 			// update the window with the now rendered image
@@ -155,7 +157,7 @@ public class Engine {
 
 	/**
 	 * Initialize everything
-	 * 
+	 *
 	 * @throws IOException
 	 * @throws LWJGLException
 	 */
@@ -231,13 +233,18 @@ public class Engine {
 //		org.fit.cssbox.demo.TextBoxes.main(new String[]{"file:///C:\\Users\\Nyrmburk\\Documents\\GitHub\\untitled\\dev\\Motherfucking Website.html"});
 //		System.out.println("end");
 
+//		new GraphicsFont(new Font("Roboto", Font.ITALIC, 72));
+
 		CSSDocument doc = new CSSDocument();
 		try {
 			doc.load(new File("C:\\Users\\Nyrmburk\\Documents\\GitHub\\untitled\\dev\\Motherfucking Website.html"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		CSSCanvas canvas = new CSSCanvas(doc, new Dimension(Settings.windowWidth, Settings.windowHeight));
+
+		long time = System.nanoTime();
+		canvas = new CSSCanvas(doc, new Rectangle(0, 0, Settings.windowWidth, Settings.windowHeight));
+		System.out.println(((float) System.nanoTime() - time) / 1000000);
 
 		HashMap<String, String> map = new HashMap<>();
 
@@ -277,17 +284,20 @@ public class Engine {
 //		level = new Level();
 //		renderEngine.setContext(level.getRenderContext());
 
-//		Activity.createActivity(new MainMenuActivity());
-		Activity.createActivity(new CSSActivity(canvas));
+		Activity.createActivity(new MainMenuActivity());
+//		long time = System.nanoTime();
+//		Activity.createActivity(new CSSActivity(canvas));
+//		System.out.println(((float) System.nanoTime() - time) / 1000000);
+//		canvas.setBounds(new Dimension(100, 100));
 	}
 
+	private CSSCanvas canvas;
 	public void renderUI() {
 
 		Camera.UI();
 
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_LIGHTING);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 1);
 
 		 GL11.glShadeModel(GL11.GL_SMOOTH);
 
@@ -317,8 +327,10 @@ public class Engine {
 //		GUI.render();
 //		GUI2.update();
 
-		if (Activity.currentActivity() != null)
-			renderEngine.renderUI(Activity.currentActivity().getRenderContext());
+//		if (Activity.currentActivity() != null)
+//			renderEngine.renderUI(Activity.currentActivity().getRenderContext());
+
+		((SimpleOpenGL3_0RenderEngine) renderEngine).renderUI2(canvas.getComposite());
 
 		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);

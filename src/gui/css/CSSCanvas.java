@@ -1,14 +1,20 @@
 package gui.css;
 
+import cz.vutbr.web.css.CSSProperty;
 import cz.vutbr.web.css.MediaSpec;
+import graphics.GraphicsFont;
 import graphics.TextureInterface;
 import main.Engine;
 import org.fit.cssbox.css.CSSNorm;
 import org.fit.cssbox.css.DOMAnalyzer;
 import org.fit.cssbox.layout.*;
+import org.w3c.dom.Document;
 
 import java.awt.*;
+import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
+import java.util.*;
+import java.util.List;
 
 /**
  * Created by Nyrmburk on 2/24/2016.
@@ -16,21 +22,56 @@ import java.awt.image.BufferedImage;
 public class CSSCanvas {
 
 	private CSSDocument document;
-	private Dimension bounds;
+	private Rectangle bounds;
 	private Viewport viewport;
 
-	private Composite composite = new Composite();
+	private CSSComposite composite;
 
-	//TODO integrate CSSDocuemnt
-	public CSSCanvas(CSSDocument document, Dimension bounds) {
+	private Map<Font, GraphicsFont> fonts = new HashMap<Font, GraphicsFont>();
+	private Map<BufferedImage, TextureInterface> textures = new HashMap<BufferedImage, TextureInterface>();
 
+	Graphics2D g;
+	DOMAnalyzer da;
+	BoxFactory factory;
+
+	public CSSCanvas(CSSDocument document, Rectangle bounds) {
+
+		composite = new CSSComposite(bounds);
 		this.document = document;
-		getBounds(bounds);
+		da =  createDomAnalyzer(document.document);
+		factory = createBoxFactory(da);
+		g = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB).createGraphics();
+
+		setBounds(bounds);
 	}
 
 	public void layout() {
 
-		DOMAnalyzer da = new DOMAnalyzer(document.document, null);
+		factory.reset();
+
+		VisualContext ctx = new VisualContext(null, factory);
+		viewport = factory.createViewportTree(da.getRoot(), g, ctx, bounds.width, bounds.height);
+		viewport.setVisibleRect(new Rectangle(bounds));
+		viewport.initSubtree();
+
+		viewport.doLayout(bounds.width, true, true);
+
+//		unsure
+		viewport.updateBounds(bounds.getSize());
+
+		viewport.absolutePositions();
+
+		populateComposite(viewport);
+	}
+
+	public BoxFactory createBoxFactory(DOMAnalyzer da){
+
+		return new BoxFactory(da, null);
+	}
+
+	public DOMAnalyzer createDomAnalyzer(Document doc) {
+
+		DOMAnalyzer da = new DOMAnalyzer(doc, null);
 		da.setMediaSpec(new MediaSpec("screen"));//try and remove later
 		da.attributesToStyles();
 		da.addStyleSheet(null, CSSNorm.stdStyleSheet(), DOMAnalyzer.Origin.AGENT);
@@ -38,60 +79,79 @@ public class CSSCanvas {
 		da.addStyleSheet(null, CSSNorm.formsStyleSheet(), DOMAnalyzer.Origin.AGENT);
 		da.getStyleSheets();
 
-		//TODO figure out boxfactory's arguments
-		BoxFactory factory = new BoxFactory(da, null);
-//		factory.setConfig(null);
-		factory.reset();
-
-		VisualContext ctx = new VisualContext(null, factory);
-		BufferedImage graphicsDonor = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-		viewport = factory.createViewportTree(da.getRoot(), graphicsDonor.createGraphics(), ctx, bounds.width, bounds.height);
-		viewport.setVisibleRect(new Rectangle(bounds));
-		viewport.initSubtree();
-
-		viewport.doLayout(bounds.width, true, true);
-
-		//unsure
-		viewport.updateBounds(bounds);
-
-		viewport.absolutePositions();
-
-		populateComposite(viewport);
+		return da;
 	}
 
-	private void populateComposite(Box root)
-	{
-		if (root instanceof TextBox)
-		{
+	private void populateComposite(Box root) {
+
+		if (root instanceof TextBox) {
+
 			TextBox text = (TextBox) root;
+			VisualContext ctx = text.getVisualContext();
 
-			composite.textBoxes.add(new CSSTextBox(text));
-		}
-		else if (root instanceof ElementBox)
-		{
-			ElementBox el = (ElementBox) root;
+			Map<TextAttribute, Object> map = new Hashtable<TextAttribute, Object>();
+			List<CSSProperty.TextDecoration> decoration = ctx.getTextDecoration();
 
-			composite.elementBoxes.add(new CSSElementBox(el));
+			for (CSSProperty.TextDecoration dec : decoration) {
 
-			if (el.getBackgroundImages() != null) {
+				switch(dec.name()) {
 
-				for (BackgroundImage bgImage : el.getBackgroundImages()) {
+					case "UNDERLINE":
+						map.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+						break;
 
-					TextureInterface texture = Engine.renderEngine.getTextureFromImage(bgImage.getBufferedImage());
-					CSSImageBox imageBox = new CSSImageBox(el.getBounds(), texture);
-					imageBox.setBounds(el.getAbsoluteBounds());
-					composite.imageBoxes.add(imageBox);
+					default:
+						System.out.println(dec.name());
+						break;
 				}
 			}
 
+			Font font = text.getVisualContext().getFont();
+			font = font.deriveFont(map);
+			GraphicsFont gFont = fonts.get(font);
+
+			if (gFont == null) {
+
+				gFont = new GraphicsFont(font);
+				fonts.put(font, gFont);
+			}
+
+			composite.textBoxes.add(new CSSTextBox(text, gFont));
+		} else if (root instanceof ElementBox) {
+
+			ElementBox el = (ElementBox) root;
+
+			if (!el.containsTextOnly() && el.getBgcolor() != null) {
+
+				composite.elementBoxes.add(new CSSElementBox(el));
+
+				if (el.getBackgroundImages() != null) {
+
+					for (BackgroundImage bgImage : el.getBackgroundImages()) {
+
+						BufferedImage image = bgImage.getBufferedImage();
+						TextureInterface texture = textures.get(image);
+
+						if (texture == null) {
+							texture = Engine.renderEngine.getTextureFromImage(image);
+							textures.put(image, texture);
+						}
+
+						CSSImageBox imageBox = new CSSImageBox(el.getBounds(), texture);
+						imageBox.setBounds(el.getAbsoluteBounds());
+						composite.imageBoxes.add(imageBox);
+					}
+				}
+
 			//TODO find a way to get borders and outlines
+			}
 
 			for (int i = el.getStartChild(); i < el.getEndChild(); i++)
 				populateComposite(el.getSubBox(i));
 		}
 	}
 
-	public Composite getComposite() {
+	public CSSComposite getComposite() {
 
 		return composite;
 	}
@@ -101,13 +161,15 @@ public class CSSCanvas {
 		return document;
 	}
 
-	public void getBounds(Dimension bounds) {
+	public void setBounds(Rectangle bounds) {
 
+		composite.clear();
+		composite.setBounds(bounds);
 		this.bounds = bounds;
 		layout();
 	}
 
-	public Dimension getBounds() {
+	public Rectangle getBounds() {
 
 		return bounds;
 	}

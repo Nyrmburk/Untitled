@@ -5,7 +5,6 @@ import gui.TextBox;
 import gui.css.CSSCanvas;
 import gui.css.CSSElementBox;
 import gui.css.CSSTextBox;
-import gui.css.Composite;
 
 /**
  * Created by Nyrmburk on 2/26/2016.
@@ -23,7 +22,7 @@ public class CSSActivity extends Activity {
 	protected void onCreate() {
 
 		Panel view = new Panel();
-		view.setSize(canvas.getBounds());
+		view.setBounds(canvas.getBounds());
 
 		for (CSSElementBox elembox : canvas.getComposite().elementBoxes) {
 

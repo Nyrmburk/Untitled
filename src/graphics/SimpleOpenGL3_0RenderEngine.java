@@ -1,8 +1,6 @@
 package graphics;
 
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -14,9 +12,15 @@ import java.nio.IntBuffer;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.JFrame;
 
+import gui.css.CSSComposite;
+import gui.css.CSSElementBox;
+import gui.css.CSSImageBox;
+import gui.css.CSSTextBox;
+import org.fit.cssbox.layout.ElementBox;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
@@ -300,6 +304,108 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 		GL11.glDisable(GL11.GL_BLEND);
 	}
 
+	public void renderUI2(CSSComposite composite) {
+
+		for (CSSElementBox elementBox : composite.elementBoxes) {
+
+			if (!composite.getBounds().intersects(elementBox))
+				continue;
+
+			Color color = elementBox.getElementBox().getBgcolor();
+			setColor(color);
+
+			GL11.glBegin(GL11.GL_QUADS);
+			GL11.glVertex2i(elementBox.x, elementBox.y);
+			GL11.glVertex2i(elementBox.x, elementBox.y + elementBox.height);
+			GL11.glVertex2i(elementBox.x + elementBox.width, elementBox.y + elementBox.height);
+			GL11.glVertex2i(elementBox.x + elementBox.width, elementBox.y);
+			GL11.glEnd();
+		}
+
+		for (CSSTextBox textBox : composite.textBoxes) {
+
+			if (!composite.getBounds().intersects(textBox))
+				continue;
+
+			String text = textBox.getText();
+			GraphicsFont font = textBox.getFont();
+
+			setColor(textBox.getColor());
+
+			GL11.glEnable(GL11.GL_BLEND);
+
+			drawString(textBox.x, textBox.y, font, text);
+		}
+
+		for (CSSImageBox image : composite.imageBoxes) {
+
+			if (!composite.getBounds().intersects(image))
+				continue;
+
+			OpenGLTexture texture = (OpenGLTexture) image.getTexture(0);
+			Rectangle bounds = image.getBounds();
+
+			texture.bind();
+
+			GL11.glBegin(GL11.GL_QUADS);
+			GL11.glTexCoord2f(0, 0);
+			GL11.glVertex2i(bounds.x, bounds.y);
+			GL11.glTexCoord2f(0, texture.getHeightRatio());
+			GL11.glVertex2i(bounds.x, bounds.y + bounds.height);
+			GL11.glTexCoord2f(texture.getWidthRatio(), texture.getHeightRatio());
+			GL11.glVertex2i(bounds.x + bounds.width, bounds.y + bounds.height);
+			GL11.glTexCoord2f(texture.getWidthRatio(), 0);
+			GL11.glVertex2i(bounds.x + bounds.width, bounds.y);
+			GL11.glEnd();
+		}
+	}
+
+	public void drawString(int x, int y, GraphicsFont font, String text) {
+
+		FontMetrics metrics = font.fontMetrics;
+		OpenGLTexture texture = (OpenGLTexture) font.atlas;
+		texture.bind();
+
+		Rectangle placement;
+		int advance = x;
+		int height = y;
+
+		for (int i = 0; i < text.length(); i++) {
+
+			char c = text.charAt(i);
+
+			if (c > 255)
+				c = ' ';
+
+			Rectangle bounds = font.bounds[c];
+
+			if (bounds != null) {
+
+				placement = bounds.getBounds();
+				placement.x = advance;
+				placement.y = height;
+
+				GL11.glBegin(GL11.GL_QUADS);
+
+				GL11.glTexCoord2f(texture.xRatio(bounds.x), texture.yRatio(bounds.y));
+				GL11.glVertex2i(placement.x, placement.y);
+
+				GL11.glTexCoord2f(texture.xRatio(bounds.x), texture.yRatio(bounds.y + bounds.height));
+				GL11.glVertex2i(placement.x, placement.y + placement.height);
+
+				GL11.glTexCoord2f(texture.xRatio(bounds.x + bounds.width), texture.yRatio(bounds.y + bounds.height));
+				GL11.glVertex2i(placement.x + placement.width, placement.y + placement.height);
+
+				GL11.glTexCoord2f(texture.xRatio(bounds.x + bounds.width), texture.yRatio(bounds.y));
+				GL11.glVertex2i(placement.x + placement.width, placement.y);
+
+				GL11.glEnd();
+			}
+
+			advance += metrics.charWidth(c);
+		}
+	}
+
 	@Override
 	public int getWidth() {
 
@@ -321,6 +427,14 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 	@Override
 	public String getRenderDevice() {
 		return GL11.glGetString(GL11.GL_RENDERER);
+	}
+
+	private void setColor(Color color) {
+
+		GL11.glColor4f(((float) color.getRed())/255,
+				((float) color.getGreen())/255,
+				((float) color.getBlue())/255,
+				((float) color.getAlpha())/255);
 	}
 
 	private class OpenGLTexture implements TextureInterface {
@@ -381,6 +495,17 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 			return ((float) originalHeight) / actualHeight;
 		}
 
+		public float xRatio(int x) {
+
+			float coord = ((float) x) / getWidth() * getWidthRatio();
+			return coord;
+		}
+
+		public float yRatio(int y) {
+
+			return ((float) y) / getHeight() * getHeightRatio();
+		}
+
 		private int getMinimumPowerOfTwo(int x) {
 
 			int powerOfTwo = 2;// opengl minimum texture size is 64x64?
@@ -417,9 +542,10 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 //			} else if (texture.getRaster() instanceof IntegerInterleavedRaster) {
 //
 //				// This is going to be a large speedup.
+////				System.out.println("fast int image");
 //
-//				if (originalWidth == 800)
-//					System.out.println(originalHeight);
+////				if (originalWidth == 800)
+////					System.out.println(originalHeight);
 //
 //				int[] pixels = ((DataBufferInt) texture.getRaster().getDataBuffer()).getData();
 //				int[] slice = new int[width];
