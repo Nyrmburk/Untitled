@@ -237,7 +237,7 @@ public class Engine {
 
 		CSSDocument doc = new CSSDocument();
 		try {
-			doc.load(new File("C:\\Users\\Nyrmburk\\Documents\\GitHub\\untitled\\dev\\Motherfucking Website.html"));
+			doc.load(new File("C:\\Users\\Nyrmburk\\Documents\\GitHub\\untitled\\dev\\ui\\mainmenu.html"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

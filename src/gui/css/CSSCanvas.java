@@ -9,6 +9,10 @@ import org.fit.cssbox.css.CSSNorm;
 import org.fit.cssbox.css.DOMAnalyzer;
 import org.fit.cssbox.layout.*;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import script.Script;
 
 import java.awt.*;
 import java.awt.font.TextAttribute;
@@ -29,6 +33,7 @@ public class CSSCanvas {
 
 	private Map<Font, GraphicsFont> fonts = new HashMap<Font, GraphicsFont>();
 	private Map<BufferedImage, TextureInterface> textures = new HashMap<BufferedImage, TextureInterface>();
+	private Map<NamedNodeMap, Script> scripts = new HashMap<NamedNodeMap, Script>();
 
 	Graphics2D g;
 	DOMAnalyzer da;
@@ -64,12 +69,12 @@ public class CSSCanvas {
 		populateComposite(viewport);
 	}
 
-	public BoxFactory createBoxFactory(DOMAnalyzer da){
+	private BoxFactory createBoxFactory(DOMAnalyzer da){
 
 		return new BoxFactory(da, null);
 	}
 
-	public DOMAnalyzer createDomAnalyzer(Document doc) {
+	private DOMAnalyzer createDomAnalyzer(Document doc) {
 
 		DOMAnalyzer da = new DOMAnalyzer(doc, null);
 		da.setMediaSpec(new MediaSpec("screen"));//try and remove later
@@ -84,46 +89,43 @@ public class CSSCanvas {
 
 	private void populateComposite(Box root) {
 
+		//TODO find a way to add scripts, buttons, iframes, and a new way to get images without contacting the web
+
+		NamedNodeMap nnmap = root.getNode().getAttributes();
+
+		Node node = null;
+		if (nnmap != null)
+			node = nnmap.getNamedItem("type");
+
+		if (node != null) {
+			switch (node.getNodeValue()) {
+
+				case "button":
+					composite.buttons.add(makeButton(root, nnmap));
+					break;
+
+				default:
+					System.out.println("add " + nnmap.getNamedItem("type").getNodeValue() + " to populateComposite()");
+			}
+		}
+
+		if (nnmap != null)
+			node = nnmap.getNamedItem("onclick");
+		if (node != null)
+			System.out.println(node.getNodeValue());
+
 		if (root instanceof TextBox) {
 
-			TextBox text = (TextBox) root;
-			VisualContext ctx = text.getVisualContext();
+			TextBox textbox = (TextBox) root;
 
-			Map<TextAttribute, Object> map = new Hashtable<TextAttribute, Object>();
-			List<CSSProperty.TextDecoration> decoration = ctx.getTextDecoration();
-
-			for (CSSProperty.TextDecoration dec : decoration) {
-
-				switch(dec.name()) {
-
-					case "UNDERLINE":
-						map.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
-						break;
-
-					default:
-						System.out.println(dec.name());
-						break;
-				}
-			}
-
-			Font font = text.getVisualContext().getFont();
-			font = font.deriveFont(map);
-			GraphicsFont gFont = fonts.get(font);
-
-			if (gFont == null) {
-
-				gFont = new GraphicsFont(font);
-				fonts.put(font, gFont);
-			}
-
-			composite.textBoxes.add(new CSSTextBox(text, gFont));
+			composite.textBoxes.add(makeTextBox(textbox));
 		} else if (root instanceof ElementBox) {
 
 			ElementBox el = (ElementBox) root;
 
-			if (!el.containsTextOnly() && el.getBgcolor() != null) {
+			if (el.getBgcolor() != null) {
 
-				composite.elementBoxes.add(new CSSElementBox(el));
+				composite.elementBoxes.add(makeElementBox(el));
 
 				if (el.getBackgroundImages() != null) {
 
@@ -143,12 +145,65 @@ public class CSSCanvas {
 					}
 				}
 
-			//TODO find a way to get borders and outlines
+				//TODO find a way to get borders and outlines
 			}
 
 			for (int i = el.getStartChild(); i < el.getEndChild(); i++)
 				populateComposite(el.getSubBox(i));
 		}
+	}
+
+	private CSSButton makeButton(Box box, NamedNodeMap nnmap) {
+
+		Script script = scripts.get(nnmap);
+
+		if (script == null) {
+
+			//TODO fix script and load the string here
+			script = new Script();
+			scripts.put(nnmap, script);
+		}
+
+		return new CSSButton(box, script);
+	}
+
+	private CSSTextBox makeTextBox(TextBox textbox) {
+
+		VisualContext ctx = textbox.getVisualContext();
+
+		Map<TextAttribute, Object> map = new Hashtable<TextAttribute, Object>();
+		List<CSSProperty.TextDecoration> decoration = ctx.getTextDecoration();
+
+		for (CSSProperty.TextDecoration dec : decoration) {
+
+			switch(dec.name()) {
+
+				case "UNDERLINE":
+					map.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+					break;
+
+				default:
+					System.out.println(dec.name());
+					break;
+			}
+		}
+
+		Font font = textbox.getVisualContext().getFont();
+		font = font.deriveFont(map);
+		GraphicsFont gFont = fonts.get(font);
+
+		if (gFont == null) {
+
+			gFont = new GraphicsFont(font);
+			fonts.put(font, gFont);
+		}
+
+		return new CSSTextBox(textbox, gFont);
+	}
+
+	private CSSElementBox makeElementBox(ElementBox el) {
+
+		return new CSSElementBox(el);
 	}
 
 	public CSSComposite getComposite() {

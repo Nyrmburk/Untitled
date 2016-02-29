@@ -15,6 +15,7 @@ public class CSSComposite {
 	public List<CSSElementBox> elementBoxes = new ArrayList<CSSElementBox>();
 	public List<CSSImageBox> imageBoxes = new ArrayList<CSSImageBox>();
 	public List<CSSBorder> borders = new ArrayList<CSSBorder>();
+	public List<CSSButton> buttons = new ArrayList<CSSButton>();
 
 	public CSSComposite(Rectangle clipping) {
 
@@ -37,5 +38,6 @@ public class CSSComposite {
 		textBoxes.clear();
 		imageBoxes.clear();
 		borders.clear();
+		buttons.clear();
 	}
 }

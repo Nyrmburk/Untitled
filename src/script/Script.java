@@ -34,6 +34,7 @@ public class Script {
 	public Script() {
 	}
 
+	//TODO make uncompiled and compiled options, async vs main thread, loading by string, extend resource, etc.
 	public Script(File file) {
 		if (factory == null)
 			factory = new ScriptEngineManager();

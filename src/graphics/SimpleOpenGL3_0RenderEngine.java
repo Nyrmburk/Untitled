@@ -16,10 +16,7 @@ import java.util.List;
 
 import javax.swing.JFrame;
 
-import gui.css.CSSComposite;
-import gui.css.CSSElementBox;
-import gui.css.CSSImageBox;
-import gui.css.CSSTextBox;
+import gui.css.*;
 import org.fit.cssbox.layout.ElementBox;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
@@ -306,6 +303,21 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 
 	public void renderUI2(CSSComposite composite) {
 
+//		for (CSSButton button : composite.buttons) {
+//
+//			if (!composite.getBounds().intersects(button))
+//				continue;
+//
+//			setColor(Color.LIGHT_GRAY);
+//
+//			GL11.glBegin(GL11.GL_QUADS);
+//			GL11.glVertex2i(button.x, button.y);
+//			GL11.glVertex2i(button.x, button.y + button.height);
+//			GL11.glVertex2i(button.x + button.width, button.y + button.height);
+//			GL11.glVertex2i(button.x + button.width, button.y);
+//			GL11.glEnd();
+//		}
+
 		for (CSSElementBox elementBox : composite.elementBoxes) {
 
 			if (!composite.getBounds().intersects(elementBox))
@@ -335,6 +347,15 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 			GL11.glEnable(GL11.GL_BLEND);
 
 			drawString(textBox.x, textBox.y, font, text);
+
+//			GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+//
+//			GL11.glBegin(GL11.GL_LINE_LOOP);
+//			GL11.glVertex2i(textBox.x, textBox.y);
+//			GL11.glVertex2i(textBox.x, textBox.y + textBox.height);
+//			GL11.glVertex2i(textBox.x + textBox.width, textBox.y + textBox.height);
+//			GL11.glVertex2i(textBox.x + textBox.width, textBox.y);
+//			GL11.glEnd();
 		}
 
 		for (CSSImageBox image : composite.imageBoxes) {
