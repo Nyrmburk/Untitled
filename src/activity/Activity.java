@@ -1,13 +1,14 @@
 package activity;
 
-import java.awt.Point;
+import java.awt.*;
 import java.util.Stack;
 
-import graphics.UIRenderContext;
 import gui.Container;
 import gui.GUIElement;
+import gui.Panel;
 import gui.PointerListener;
 import input.*;
+import input.Button;
 import main.Engine;
 
 public abstract class Activity {
@@ -16,7 +17,6 @@ public abstract class Activity {
 	private static boolean killCurrentActivity = false;
 	
 	protected Container view;
-	private UIRenderContext context;
 	
 	protected abstract void onCreate();
 	protected abstract void onStart();
@@ -106,32 +106,19 @@ public abstract class Activity {
 		if (currentActivity != null) {
 
 			currentActivity.onUpdate(delta);
-			currentActivity.getView().revalidate();
+//			currentActivity.getView().revalidate();
 		}
 	}
 	
 	public void setView(Container view) {
-		
-		if (context != null) {
-			context.clear();
-			context = null;
-		}
 
-		context = Engine.UIRenderEngine.getUIRenderContext(view);
 		this.view = view;
 		view.revalidate();
 	}
-	
-	//me no likey
+
 	public Container getView() {
 
 		return view;
-	}
-	
-	//me no likey either
-	public UIRenderContext getRenderContext() {
-
-		return context;
 	}
 	
 	public static void createActivity(Activity activity) {
@@ -210,5 +197,10 @@ public abstract class Activity {
 		
 		activity.onPause();
 		activity.onStop();
+	}
+
+	public void setSize(Dimension size) {
+
+		this.view.setBounds(0, 0, size.width, size.height);
 	}
 }

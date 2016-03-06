@@ -17,27 +17,20 @@ public class GUIBorderLayout extends GUILayoutManager {
 		
 		int widthLeft = parent.getWidth() - (left.getWidth() + right.getWidth());
 		int heightLeft = parent.getHeight() - (top.getHeight() + bottom.getHeight());
-		
-		top.x = parent.getX();
-		top.y = parent.getY();
-		top.width = parent.getWidth();
-		
-		bottom.x = parent.getX();
-		bottom.y = parent.getY() + parent.getHeight() - bottom.getHeight();
-		bottom.width = parent.getWidth();
-		
-		left.x = parent.getX();
-		left.y = parent.getY() + top.getHeight();
-		left.height = heightLeft;
-		
-		right.x = parent.getX() + parent.getWidth() - right.getWidth();
-		right.y = parent.getY() + top.getHeight();
-		right.height = heightLeft;
-		
-		center.x = parent.getX() + left.getWidth();
-		center.y = parent.getY() + top.getHeight();
-		center.width = widthLeft;
-		center.height = heightLeft;
+
+		top.setBounds(parent.getX(), parent.getY(), parent.getWidth(), top.getHeight());
+
+		bottom.setBounds(parent.getX(),
+				parent.getY() + parent.getHeight() - bottom.getHeight(),
+				parent.getWidth(), bottom.getHeight());
+
+		left.setBounds(parent.getX(), parent.getY() + top.getHeight(), left.getWidth(), heightLeft);
+
+		right.setBounds(parent.getX() + parent.getWidth() - right.getWidth(),
+				parent.getY() + top.getHeight(), right.getWidth(), heightLeft);
+
+		center.setBounds(parent.getX() + left.getWidth(),
+				parent.getY() + top.getHeight(), widthLeft, heightLeft);
 	}
 
 	@Override

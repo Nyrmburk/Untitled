@@ -1,13 +1,9 @@
 package graphics;
 
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.util.Iterator;
 
 import javax.swing.JFrame;
 
@@ -18,6 +14,8 @@ import org.lwjgl.opengl.DisplayMode;
 import entity.Camera;
 import graphics.RenderContext.InstancedModel;
 import main.Engine;
+
+import gui.Container;
 
 public class SoftwareRenderEngine extends RenderEngine {
 
@@ -102,20 +100,20 @@ public class SoftwareRenderEngine extends RenderEngine {
 	}
 
 	@Override
-	public void renderUI(UIRenderContext renderContext) {
+	public void renderUI(Container view) {
 
-		Rectangle bounds;
-		BufferedImage image;
-
-		Iterator<Rectangle> quads = renderContext.quads.iterator();
-		Iterator<TextureInterface> textures = renderContext.textures.iterator();
-
-		while (textures.hasNext()) {
-
-			bounds = quads.next();
-			image = ((SoftwareTexture) textures.next()).texture;
-			graphics.drawImage(image, bounds.x, bounds.y, bounds.width, bounds.height, null);
-		}
+//		Rectangle bounds;
+//		BufferedImage image;
+//
+//		Iterator<Rectangle> quads = renderContext.quads.iterator();
+//		Iterator<TextureInterface> textures = renderContext.textures.iterator();
+//
+//		while (textures.hasNext()) {
+//
+//			bounds = quads.next();
+//			image = ((SoftwareTexture) textures.next()).texture;
+//			graphics.drawImage(image, bounds.x, bounds.y, bounds.width, bounds.height, null);
+//		}
 	}
 
 	@Override
@@ -134,6 +132,12 @@ public class SoftwareRenderEngine extends RenderEngine {
 	protected void removeModel(InstancedModel model) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public void drawString(int x, int y, GraphicsFont font, String text) {
+
+		graphics.setFont(font.font);
+		graphics.drawString(text, x, y);
 	}
 	
 	@Override

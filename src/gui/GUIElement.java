@@ -1,15 +1,8 @@
 package gui;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-
-import activity.Activity;
-import graphics.TextureInterface;
-import graphics.UIRenderEngine;
-import main.Engine;
 
 // TODO make the validity system work better and add documentation.
 public abstract class GUIElement {
@@ -19,11 +12,6 @@ public abstract class GUIElement {
 	 * position.
 	 */
 	protected boolean valid = false;
-
-	/**
-	 * Whether or not the element needs to be painted
-	 */
-	protected boolean repaint = true;
 
 	/**
 	 * Whether or not the element is to be drawn.
@@ -36,34 +24,28 @@ public abstract class GUIElement {
 	protected boolean enabled = true;
 
 	/**
-	 * The name of the element. A good name consists of a prefix and a name. An
-	 * example is 'btn_menu'.
+	 * Indicates whether this Element can be focused.
 	 */
-	private String name;
+	boolean focusable;
 
 	/**
 	 * Position of the element.
 	 */
-	protected int x, y;
+	private int x, y;
 
 	/**
 	 * Size of the element.
 	 */
-	protected int width, height;
+	private int width, height;
 
-	//TODO remove
-	/**
-	 * Allows an element to set it's own width.
-	 */
-	protected boolean autoWidth = true;
+	protected Dimension minSize;
 
-	//TODO remove
-	/**
-	 * Allows an element to set it's own height.
-	 */
-	protected boolean autoHeight = true;
-	
-	
+	protected Dimension prefSize;
+
+	protected Dimension maxSize;
+
+	protected Insets insets;
+
 	public enum layout {
 		
 		FILL_PARENT,
@@ -78,11 +60,14 @@ public abstract class GUIElement {
 	 * The parent container that this element belongs to. 'null' means it is the
 	 * root element.
 	 */
-	Container parent;
+	protected Container parent;
+
+	private Color backgroundColor;
+	private Color foregroundColor;
+
+	private ContextBox box;
 
 	ArrayList<ActionListener> listeners;
-
-	public static final String UPDATE = "update";
 
 	/**
 	 * Initialize a new GUIElement with size [0,0] and position at [0,0].
@@ -91,33 +76,16 @@ public abstract class GUIElement {
 
 		x = 0;
 		y = 0;
-		width = 64;
-		height = 64;
+		width = 0;
+		height = 0;
+		insets = new Insets(0, 0, 0, 0);
 		listeners = new ArrayList<ActionListener>();
-	}
-
-	
-	/**
-	 * TODO remove because this functionality is bad
-	 */
-	public void update() {
-
-		for (ActionListener listener : listeners)
-			if (listener != null)
-				listener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, UPDATE));
 	}
 
 	public void addActionListener(ActionListener actionListener) {
 
 		this.listeners.add(actionListener);
 	}
-
-	/**
-	 * Render the element as intended.
-	 */
-	public abstract void draw();
-	
-	public abstract BufferedImage render(UIRenderEngine renderEngine);
 
 	/**
 	 * Check if the element has valid properties.
@@ -135,53 +103,36 @@ public abstract class GUIElement {
 	 */
 	public void revalidate() {
 
-		switch (widthLayout) {
-		case DISCRETE:
-			break;
-		case FILL_PARENT:
-			
-			if (parent != null) {
-				x = parent.getX();
-				width = parent.getWidth();
-			} else {
-				x = 0;
-				width = Engine.renderEngine.getWidth();
+		invalidate();
+
+		Container root = parent;
+		if (parent == null) {
+
+			validate();
+		} else {
+
+			while (true) {
+
+				if (root.parent == null)
+					break;
+
+				root = root.parent;
 			}
-			break;
-		case WRAP_CONTENT:
-//			pack();
-			break;
+
+			root.validate();
 		}
-		
-		switch (heightLayout) {
-		case DISCRETE:
-			break;
-		case FILL_PARENT:
-			
-			if (parent != null) {
-				y = parent.getY();
-				height = parent.getHeight();
-			} else {
-				y = 0;
-				height = Engine.renderEngine.getHeight();
-			}
-			break;
-		case WRAP_CONTENT:
-//			pack();
-			break;
-		}
-			
+
 		valid = true;
-
-		if (repaint) {
-
-			TextureInterface texture = Engine.renderEngine.getTextureFromImage(this.render(Engine.UIRenderEngine));
-			Activity.currentActivity().getRenderContext().putElement(this, texture);
-			repaint = false;
-		}
-
-		// System.out.println(getName() + " Revalidated");
 	}
+
+	protected void validate() {
+
+		layout();
+		box = createBox();
+		valid = true;
+	}
+
+	protected abstract void layout();
 
 	/**
 	 * Invalidate the element. Also invalidate the parent if not already done.
@@ -205,35 +156,7 @@ public abstract class GUIElement {
 	 */
 	public String toString() {
 
-		return getName();
-	}
-
-	/**
-	 * Return the name of the element. If a name has not been set, It generates
-	 * one identical to Java's default object <code>toString()</code>.
-	 * 
-	 * @return The GUIElement's name.
-	 */
-	public String getName() {
-
-		if (name != null) {
-
-			return name;
-		} else {
-
-			return getClass().getName() + '@' + Integer.toHexString(hashCode());
-		}
-	}
-
-	/**
-	 * Set the element's name.
-	 * 
-	 * @param name
-	 *            The name to set the element to.
-	 */
-	public void setName(String name) {
-
-		this.name = name;
+		return "[" + x + ", " + y + ", " + width + ", " + height + "]";
 	}
 	
 	public GUIElement getParent() {
@@ -322,15 +245,13 @@ public abstract class GUIElement {
 
 	public void setPosition(int x, int y) {
 
-		int tempX = this.x;
-		int tempY = this.y;
+		if (this.x == x && this.y == y)
+			return;
 
 		this.x = x;
 		this.y = y;
 
 		invalidate();
-
-		onPositionChange(tempX, tempY);
 	}
 
 	public Point getPosition() {
@@ -350,36 +271,18 @@ public abstract class GUIElement {
 
 	public void setSize(int width, int height) {
 
-		int tempWidth = this.width;
-		int tempHeight = this.height;
+		if (this.width == width && this.height == height)
+			return;
 
 		this.width = width;
 		this.height = height;
 
-		if (this.width != tempWidth)
-			autoWidth = false;
-		if (this.height != tempHeight)
-			autoHeight = false;
-
-		this.repaint = true;
 		invalidate();
-
-		onSizeChange(tempWidth, tempHeight);
 	}
 
 	public Dimension getSize() {
 
 		return new Dimension(width, height);
-	}
-
-	public void setAutoWidth(boolean auto) {
-
-		this.autoWidth = auto;
-	}
-
-	public void setAutoHeight(boolean auto) {
-
-		this.autoHeight = auto;
 	}
 
 	public void setBounds(Rectangle rect) {
@@ -414,9 +317,15 @@ public abstract class GUIElement {
 		this.heightLayout = heightLayout;
 		invalidate();
 	}
-	
-	public void pack() {
-		
+
+	public Insets getInsets() {
+
+		return insets;
+	}
+
+	public void setInsets(Insets insets) {
+
+		this.insets = insets;
 	}
 
 	public boolean isVisible() {
@@ -429,7 +338,33 @@ public abstract class GUIElement {
 		this.visible = visible;
 	}
 
-	protected abstract void onPositionChange(int oldX, int oldY);
 
-	protected abstract void onSizeChange(int oldWidth, int oldHeight);
+	public void setBackgroundColor(Color backgroundColor) {
+
+		this.backgroundColor = backgroundColor;
+	}
+
+	public Color getBackgroundColor() {
+
+		return backgroundColor;
+	}
+
+	public void setForegroundColor(Color foregroundColor) {
+
+		this.foregroundColor = foregroundColor;
+	}
+
+	public Color getForegroundColor() {
+
+		return foregroundColor;
+	}
+
+	protected abstract ContextBox createBox();
+
+	public ContextBox getBox() {
+
+		if (box == null)
+			revalidate();
+		return box;
+	}
 }

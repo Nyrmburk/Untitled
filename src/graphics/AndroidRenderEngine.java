@@ -4,6 +4,8 @@ import java.awt.image.BufferedImage;
 
 import entity.Camera;
 import graphics.RenderContext.InstancedModel;
+import gui.Container;
+import gui.GUIAppearance;
 
 public class AndroidRenderEngine extends RenderEngine {
 
@@ -43,7 +45,7 @@ public class AndroidRenderEngine extends RenderEngine {
 	}
 
 	@Override
-	public void renderUI(UIRenderContext renderContext) {
+	public void renderUI(Container renderContext) {
 		// TODO Auto-generated method stub
 		
 	}

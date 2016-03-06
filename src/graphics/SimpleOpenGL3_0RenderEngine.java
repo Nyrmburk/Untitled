@@ -4,20 +4,18 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.awt.image.DataBufferInt;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 
 import javax.swing.JFrame;
 
+import gui.Container;
+import gui.ContextBox;
+import gui.GUIElement;
 import gui.css.*;
-import org.fit.cssbox.layout.ElementBox;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
@@ -30,8 +28,6 @@ import entity.Camera;
 import graphics.RenderContext.InstancedModel;
 import main.Engine;
 import main.Settings;
-import sun.awt.image.ByteInterleavedRaster;
-import sun.awt.image.IntegerInterleavedRaster;
 
 public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 
@@ -250,55 +246,62 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 	}
 
 	@Override
-	public void renderUI(UIRenderContext renderContext) {
-
-		Rectangle bounds;
-
-		// Camera.UI();
+	public void renderUI(Container view) {
 
 		GL11.glEnable(GL11.GL_BLEND);
 
-		Iterator<Rectangle> quads = renderContext.quads.iterator();
-		Iterator<TextureInterface> textures = renderContext.textures.iterator();
-
-		while (textures.hasNext()) {
-
-			bounds = quads.next();
-			OpenGLTexture texture = (OpenGLTexture) textures.next();
-			texture.bind();
-
-			GL11.glBegin(GL11.GL_QUADS);
-			GL11.glTexCoord2f(0, 0);
-			GL11.glVertex2i(bounds.x, bounds.y);
-			GL11.glTexCoord2f(0, texture.getHeightRatio());
-			GL11.glVertex2i(bounds.x, bounds.y + bounds.height);
-			GL11.glTexCoord2f(texture.getWidthRatio(), texture.getHeightRatio());
-			GL11.glVertex2i(bounds.x + bounds.width, bounds.y + bounds.height);
-			GL11.glTexCoord2f(texture.getWidthRatio(), 0);
-			GL11.glVertex2i(bounds.x + bounds.width, bounds.y);
-			GL11.glEnd();
-		}
-
-//		for (int index : renderContext.indices) {
-//
-//			bounds = renderContext.quads.get(index);
-//
-//			OpenGLTexture texture = ((OpenGLTexture) renderContext.textures.get(index));
-//			texture.bind();
-//
-//			GL11.glBegin(GL11.GL_QUADS);
-//			GL11.glTexCoord2f(0, 0);
-//			GL11.glVertex2i(bounds.x, bounds.y);
-//			GL11.glTexCoord2f(0, texture.getHeightRatio());
-//			GL11.glVertex2i(bounds.x, bounds.y + bounds.height);
-//			GL11.glTexCoord2f(texture.getWidthRatio(), texture.getHeightRatio());
-//			GL11.glVertex2i(bounds.x + bounds.width, bounds.y + bounds.height);
-//			GL11.glTexCoord2f(texture.getWidthRatio(), 0);
-//			GL11.glVertex2i(bounds.x + bounds.width, bounds.y);
-//			GL11.glEnd();
-//		}
+		renderElement(view);
 
 		GL11.glDisable(GL11.GL_BLEND);
+	}
+
+	private void renderElement(GUIElement element) {
+
+		//render box
+		renderBox(element.getBox());
+
+		// recursively render children
+		if (element instanceof Container) {
+
+			for (GUIElement child : ((Container) element).getChildren()) {
+
+				renderElement(child);
+			}
+		}
+	}
+
+	private void renderBox(ContextBox box) {
+
+		if (box == null)
+			return;
+
+		if (box.color != null)
+			setColor(box.color);
+
+		if (box.texture != null) {
+			drawTexture(box, (OpenGLTexture) box.texture);
+		} else if (box.color != null) {
+
+			drawRect(box);
+		}
+
+		if (box.texts != null) {
+
+			for (ContextBox.Text text : box.texts) {
+
+				GraphicsFont font = text.font;
+				Color fontColor = text.color;
+				setColor(fontColor);
+
+				drawString(text.x, text.y, font, text.text);
+			}
+		}
+
+		if (box.subBoxes != null) {
+
+			for (ContextBox subBox : box.subBoxes)
+				renderBox(subBox);
+		}
 	}
 
 	public void renderUI2(CSSComposite composite) {
@@ -326,12 +329,7 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 			Color color = elementBox.getElementBox().getBgcolor();
 			setColor(color);
 
-			GL11.glBegin(GL11.GL_QUADS);
-			GL11.glVertex2i(elementBox.x, elementBox.y);
-			GL11.glVertex2i(elementBox.x, elementBox.y + elementBox.height);
-			GL11.glVertex2i(elementBox.x + elementBox.width, elementBox.y + elementBox.height);
-			GL11.glVertex2i(elementBox.x + elementBox.width, elementBox.y);
-			GL11.glEnd();
+			drawRect(elementBox);
 		}
 
 		for (CSSTextBox textBox : composite.textBoxes) {
@@ -366,22 +364,37 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 			OpenGLTexture texture = (OpenGLTexture) image.getTexture(0);
 			Rectangle bounds = image.getBounds();
 
-			texture.bind();
-
-			GL11.glBegin(GL11.GL_QUADS);
-			GL11.glTexCoord2f(0, 0);
-			GL11.glVertex2i(bounds.x, bounds.y);
-			GL11.glTexCoord2f(0, texture.getHeightRatio());
-			GL11.glVertex2i(bounds.x, bounds.y + bounds.height);
-			GL11.glTexCoord2f(texture.getWidthRatio(), texture.getHeightRatio());
-			GL11.glVertex2i(bounds.x + bounds.width, bounds.y + bounds.height);
-			GL11.glTexCoord2f(texture.getWidthRatio(), 0);
-			GL11.glVertex2i(bounds.x + bounds.width, bounds.y);
-			GL11.glEnd();
+			drawTexture(bounds, texture);
 		}
 	}
 
-	public void drawString(int x, int y, GraphicsFont font, String text) {
+	private void drawRect(Rectangle bounds) {
+
+		GL11.glBegin(GL11.GL_QUADS);
+		GL11.glVertex2i(bounds.x, bounds.y);
+		GL11.glVertex2i(bounds.x, bounds.y + bounds.height);
+		GL11.glVertex2i(bounds.x + bounds.width, bounds.y + bounds.height);
+		GL11.glVertex2i(bounds.x + bounds.width, bounds.y);
+		GL11.glEnd();
+	}
+
+	private void drawTexture(Rectangle bounds, OpenGLTexture texture) {
+
+		texture.bind();
+
+		GL11.glBegin(GL11.GL_QUADS);
+		GL11.glTexCoord2f(0, 0);
+		GL11.glVertex2i(bounds.x, bounds.y);
+		GL11.glTexCoord2f(0, texture.getHeightRatio());
+		GL11.glVertex2i(bounds.x, bounds.y + bounds.height);
+		GL11.glTexCoord2f(texture.getWidthRatio(), texture.getHeightRatio());
+		GL11.glVertex2i(bounds.x + bounds.width, bounds.y + bounds.height);
+		GL11.glTexCoord2f(texture.getWidthRatio(), 0);
+		GL11.glVertex2i(bounds.x + bounds.width, bounds.y);
+		GL11.glEnd();
+	}
+
+	private void drawString(int x, int y, GraphicsFont font, String text) {
 
 		FontMetrics metrics = font.fontMetrics;
 		OpenGLTexture texture = (OpenGLTexture) font.atlas;
@@ -548,17 +561,17 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 			ByteBuffer texBuffer = BufferUtils.createByteBuffer(actualWidth * actualHeight * bytesPerPixel);
 
 
-			if (texture.getRaster() instanceof ByteInterleavedRaster) {
-
-				byte[] pixels = ((DataBufferByte) texture.getRaster().getDataBuffer()).getData();
-				byte[] slice = new byte[width * bytesPerPixel];
-
-				for (int y = 0; y < height; y++) {
-
-					texBuffer.position(y * actualWidth * bytesPerPixel);
-					System.arraycopy(pixels, y * width * bytesPerPixel, slice, 0, slice.length);
-					texBuffer.put(slice);
-				}
+//			if (texture.getRaster() instanceof ByteInterleavedRaster) {
+//
+//				byte[] pixels = ((DataBufferByte) texture.getRaster().getDataBuffer()).getData();
+//				byte[] slice = new byte[width * bytesPerPixel];
+//
+//				for (int y = 0; y < height; y++) {
+//
+//					texBuffer.position(y * actualWidth * bytesPerPixel);
+//					System.arraycopy(pixels, y * width * bytesPerPixel, slice, 0, slice.length);
+//					texBuffer.put(slice);
+//				}
 
 //			} else if (texture.getRaster() instanceof IntegerInterleavedRaster) {
 //
@@ -579,7 +592,7 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 //					intTexBuffer.put(slice);
 //				}
 
-			} else {
+//			} else {
 
 //				System.err.println("slow image: " + texture.getRaster());
 
@@ -599,7 +612,7 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 							texBuffer.put((byte) ((pixel & 0xFF000000) >>> 24));
 					}
 				}
-			}
+//			}
 
 			texBuffer.rewind();
 

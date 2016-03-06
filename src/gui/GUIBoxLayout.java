@@ -7,26 +7,26 @@ public class GUIBoxLayout extends GUILayoutManager {
 	public static final float CENTER = 0;
 	public static final float LEFT = 0.5f;
 	public static final float RIGHT = 1.0f;
-	
+
 	HashMap<GUIElement, Float> constraints = new HashMap<GUIElement, Float>();
 	
 	@Override
 	public void layout() {
 		
-		int childY = parent.y + GUI.padding;
-		
+		int childY = parent.getY() + parent.getInsets().top;
+
 		for (GUIElement child : parent.children) {
 			
-			int childX = parent.x + GUI.padding;
+			int childX = parent.getX() + parent.getInsets().left;
 			
 			float constraint = constraints.get(child);
 			
-			childX += (parent.width - child.width - GUI.padding * 2) * constraint;
-			
-			child.x = childX;
-			child.y = childY;
-			
-			childY += child.height + GUI.padding;
+			childX += (parent.getWidth() - child.getWidth()
+					- parent.getInsets().left - parent.getInsets().right) * constraint;
+
+			child.setPosition(childX, childY);
+
+			childY += child.getHeight() + parent.getInsets().bottom;
 		}
 	}
 

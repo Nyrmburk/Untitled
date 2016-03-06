@@ -1,6 +1,9 @@
 package gui;
 
+import main.Engine;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Container extends GUIElement {
 	
@@ -31,64 +34,67 @@ public abstract class Container extends GUIElement {
 		invalidate();
 	}
 	
-	public boolean containsChild(String childName) {
-		
-		for (GUIElement child : children) {
-			
-			if (child.getName().equals(childName)) {
-				
-				return true;
-				
-			} else if (child instanceof Container) {
-				
-				((Container) child).containsChild(childName);
-			}
-		}
-		
-		return false;
-	}
-	
-	public GUIElement getChild(int index) {
-		
-		return children.get(index);
-	}
-	
-	public GUIElement getChild(String childName) {
-		
-		for (GUIElement child : children) {
-			
-			if (child.getName().equals(childName)) {
-				
-				return child;
-				
-			} else if (child instanceof Container) {
-				
-				((Container) child).containsChild(childName);
-			}
-		}
-		
-		return null;
-	}
-	
-	public ArrayList<GUIElement> getChildren() {
+	public List<GUIElement> getChildren() {
 		
 		return children;
 	}
-	
-	public final void updateChildren() {
-		
-		for (GUIElement child : children) {
-			
-			child.update();
+
+	public void clearChildren() {
+
+		children.clear();
+	}
+
+	@Override
+	protected void validate() {
+
+		if (isValid())
+			return;
+
+		super.validate();
+
+		for (GUIElement child : getChildren()) {
+
+			child.validate();
 		}
 	}
-	
-	public void renderChildren() {
-		
-		for (GUIElement child : children) {
-			
-			if (child.isVisible()) child.draw();
+
+	@Override
+	protected void layout() {
+
+		switch (widthLayout) {
+		case DISCRETE:
+			break;
+		case FILL_PARENT:
+
+			if (parent != null) {
+				setBounds(parent.getX(), getY(), parent.getWidth(), getHeight());
+			} else {
+				setBounds(0, getY(), Engine.renderEngine.getWidth(), getHeight());
+			}
+			break;
+		case WRAP_CONTENT:
+//			pack();
+			break;
 		}
+
+		switch (heightLayout) {
+		case DISCRETE:
+			break;
+		case FILL_PARENT:
+
+			if (parent != null) {
+				setBounds(getX(), parent.getY(), getWidth(), parent.getHeight());
+			} else {
+				setBounds(getX(), 0, getWidth(), Engine.renderEngine.getHeight());
+			}
+			break;
+		case WRAP_CONTENT:
+			break;
+		}
+
+		for (GUIElement child : children)
+			child.layout();
+		layoutManager.layout();
 	}
 	
 	public void setlayout(GUILayoutManager manager) {
@@ -101,56 +107,5 @@ public abstract class Container extends GUIElement {
 	public GUILayoutManager getLayout() {
 		
 		return layoutManager;
-	}
-	
-	public void pack() {
-
-		int maxRight = 0;
-		int maxBottom = 0;
-		for (GUIElement child : children) {
-
-			int right = child.getX() + child.getWidth() - getX();
-			if (right > maxRight)
-				maxRight = right;
-
-			int bottom = child.getY() + child.getHeight() - getY();
-			if (bottom > maxBottom)
-				maxBottom = bottom;
-		}
-
-		if (maxRight == 0 && maxBottom == 0)
-			System.out.println(this + ", no height or width");
-
-//		this.setBounds(this.getX(), this.getY(), maxRight, maxBottom);
-		this.width = maxRight;
-		this.height = maxBottom;
-		repaint = true;
-//		this.setBounds(this.getX(), this.getY(), this.getWidthRatio(), this.getHeightRatio());
-	}
-	
-//	public void update() {
-//		
-//		for (GUIElement child : children) {
-//			
-//			child.update();
-//		}
-//	}
-	
-	public void revalidate() {
-		
-		super.revalidate();
-		
-		this.layoutManager.layout();
-
-		// summons demons from a dark deep forgotten temple of the underworld
-		// TODO find and close portal to hell
-//		pack();
-
-		for (GUIElement child : children) {
-
-			child.revalidate();
-		}
-
-		valid = true;
 	}
 }

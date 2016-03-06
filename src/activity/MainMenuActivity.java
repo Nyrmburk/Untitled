@@ -27,35 +27,30 @@ public class MainMenuActivity extends Activity {
 		view.setBackgroundColor(Color.WHITE);
 		
 		Panel image = new Panel();
-		try {
-			image.setImage(ImageIO.read(new File("res/textures/untitled.png")));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		image.setImage(AssetManager.getTexture("untitled.png"));
 		view.addChild(image);
 		
 		Panel aligner = new Panel();
 		aligner.setlayout(new GUIBoxLayout());
 		view.addChild(aligner, 0.15);
-		
+
 		Button play = new Button();
 		play.setText("Play");
 		aligner.addChild(play, 0);
-		
+
 		Button create = new Button();
 		create.setText("Create");
 		create.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+
 				if (e.getActionCommand().equals(Button.CLICKED))
 					create();
 			}
 		});
 		aligner.addChild(create, 0);
-		
+
 		Button options = new Button();
 		options.setText("Options");
 		options.addActionListener(new ActionListener() {
@@ -67,7 +62,7 @@ public class MainMenuActivity extends Activity {
 			}
 		});
 		aligner.addChild(options, 0);
-		
+
 		Button quit = new Button();
 		quit.setText("Quit");
 		aligner.addChild(quit, 0);

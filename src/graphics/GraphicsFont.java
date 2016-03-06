@@ -88,6 +88,8 @@ public class GraphicsFont {
 //			gr.setColor(Color.GRAY);
 //			gr.fillRect(rect.x, rect.y, rect.width, rect.height);
 			gr.setColor(Color.WHITE);
+			if (rect.c == 'j')
+				rect.x++;
 			gr.drawChars(new char[]{rect.c}, 0, 1, rect.x + 1, rect.y + fontMetrics.getAscent());
 			rect.width -= OFFSET - 1;
 			rect.height -= OFFSET - 1;

@@ -21,8 +21,6 @@ public class CreateActivity extends Activity {
 		LoadingActivity loading = new LoadingActivity();
 //		loading.loadElements(something);
 		createActivity(loading);
-
-
 	}
 
 	@Override

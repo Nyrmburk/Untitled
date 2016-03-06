@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 
 import entity.Camera;
 import graphics.RenderContext.InstancedModel;
+import gui.Container;
 
 public abstract class RenderEngine {
 	
@@ -51,7 +52,7 @@ public abstract class RenderEngine {
 		context.removeModel(model);
 	}
 	
-	public abstract void renderUI(UIRenderContext renderContext);
+	public abstract void renderUI(Container view);
 	
 	public abstract TextureInterface getTextureFromImage(BufferedImage image);
 	

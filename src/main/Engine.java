@@ -3,6 +3,7 @@ package main;
 import activity.CSSActivity;
 import activity.MainMenuActivity;
 import graphics.*;
+import gui.GUIAppearance;
 import gui.css.CSSCanvas;
 import gui.css.CSSComposite;
 import gui.css.CSSDocument;
@@ -47,7 +48,6 @@ public class Engine {
 	public static boolean isClosing = false;
 
 	public static RenderEngine renderEngine;
-	public static UIRenderEngine UIRenderEngine;
 	public static PointerInput pointer;
 	public static Level level;
 
@@ -113,9 +113,9 @@ public class Engine {
 
 				Activity activity = Activity.currentActivity();
 				if (activity != null)
-					activity.setView(activity.getView());
+					activity.getView().revalidate();
 
-				canvas.setBounds(new Rectangle(0, 0, renderEngine.getWidth(), renderEngine.getHeight()));
+//				canvas.setBounds(new Rectangle(0, 0, renderEngine.getWidth(), renderEngine.getHeight()));
 			}
 
 			// update the window with the now rendered image
@@ -208,7 +208,6 @@ public class Engine {
 		renderEngine = new SimpleOpenGL3_0RenderEngine(new RenderContext());
 //		renderEngine = new SoftwareRenderEngine(new RenderContext());
 		renderEngine.showWindow(Settings.windowWidth, Settings.windowHeight);
-		UIRenderEngine = new SimpleUIRenderEngine();
 
 		lastFrame = getTime();
 	}
@@ -235,16 +234,16 @@ public class Engine {
 
 //		new GraphicsFont(new Font("Roboto", Font.ITALIC, 72));
 
-		CSSDocument doc = new CSSDocument();
-		try {
-			doc.load(new File("C:\\Users\\Nyrmburk\\Documents\\GitHub\\untitled\\dev\\ui\\mainmenu.html"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		CSSDocument doc = new CSSDocument();
+//		try {
+//			doc.load(new File("C:\\Users\\Nyrmburk\\Documents\\GitHub\\untitled\\dev\\ui\\mainmenu.html"));
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 
-		long time = System.nanoTime();
-		canvas = new CSSCanvas(doc, new Rectangle(0, 0, Settings.windowWidth, Settings.windowHeight));
-		System.out.println(((float) System.nanoTime() - time) / 1000000);
+//		long time = System.nanoTime();
+//		canvas = new CSSCanvas(doc, new Rectangle(0, 0, Settings.windowWidth, Settings.windowHeight));
+//		System.out.println(((float) System.nanoTime() - time) / 1000000);
 
 		HashMap<String, String> map = new HashMap<>();
 
@@ -327,10 +326,10 @@ public class Engine {
 //		GUI.render();
 //		GUI2.update();
 
-//		if (Activity.currentActivity() != null)
-//			renderEngine.renderUI(Activity.currentActivity().getRenderContext());
+		if (Activity.currentActivity() != null)
+			renderEngine.renderUI(Activity.currentActivity().getView());
 
-		((SimpleOpenGL3_0RenderEngine) renderEngine).renderUI2(canvas.getComposite());
+//		((SimpleOpenGL3_0RenderEngine) renderEngine).renderUI2(canvas.getComposite());
 
 		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
