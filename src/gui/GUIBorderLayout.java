@@ -1,5 +1,7 @@
 package gui;
 
+import java.awt.*;
+
 public class GUIBorderLayout extends GUILayoutManager {
 
 	public enum layouts {
@@ -53,5 +55,10 @@ public class GUIBorderLayout extends GUILayoutManager {
 			center = element;
 			break;
 		}
+	}
+
+	@Override
+	public Dimension getPreferredSize() {
+		return parent.getSize();
 	}
 }

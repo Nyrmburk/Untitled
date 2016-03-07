@@ -2,9 +2,11 @@ package activity;
 
 import gui.Panel;
 import gui.TextBox;
+import gui.View;
 import gui.css.CSSCanvas;
 import gui.css.CSSElementBox;
 import gui.css.CSSTextBox;
+import main.Engine;
 
 /**
  * Created by Nyrmburk on 2/26/2016.
@@ -21,7 +23,7 @@ public class CSSActivity extends Activity {
 	@Override
 	protected void onCreate() {
 
-		Panel view = new Panel();
+		View view = new View(Engine.renderEngine);
 		view.setBounds(canvas.getBounds());
 
 		for (CSSElementBox elembox : canvas.getComposite().elementBoxes) {

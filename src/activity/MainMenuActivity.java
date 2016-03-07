@@ -15,14 +15,10 @@ import main.Engine;
 
 public class MainMenuActivity extends Activity {
 
-	private int delay = 1500;
-
 	@Override
 	protected void onCreate() {
-		
-		Panel view = new Panel();
-		view.setWidthLayout(GUIElement.layout.FILL_PARENT);
-		view.setHeightLayout(GUIElement.layout.FILL_PARENT);
+
+		View view = new View(Engine.renderEngine);
 		view.setlayout(new GUIBoxLayout());
 		view.setBackgroundColor(Color.WHITE);
 		

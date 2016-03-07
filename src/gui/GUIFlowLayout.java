@@ -1,5 +1,7 @@
 package gui;
 
+import java.awt.*;
+
 public class GUIFlowLayout extends GUILayoutManager {
 
 	
@@ -14,5 +16,10 @@ public class GUIFlowLayout extends GUILayoutManager {
 	public void setConstraint(GUIElement element, Object Constraint) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Dimension getPreferredSize() {
+		return parent.getSize();
 	}
 }

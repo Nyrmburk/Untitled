@@ -44,17 +44,7 @@ public abstract class GUIElement {
 
 	protected Dimension maxSize;
 
-	protected Insets insets;
-
-	public enum layout {
-		
-		FILL_PARENT,
-		WRAP_CONTENT,
-		DISCRETE
-	}
-	
-	protected layout widthLayout = layout.WRAP_CONTENT;
-	protected layout heightLayout = layout.WRAP_CONTENT;
+	private Insets insets;
 
 	/**
 	 * The parent container that this element belongs to. 'null' means it is the
@@ -121,8 +111,6 @@ public abstract class GUIElement {
 
 			root.validate();
 		}
-
-		valid = true;
 	}
 
 	protected void validate() {
@@ -132,7 +120,10 @@ public abstract class GUIElement {
 		valid = true;
 	}
 
-	protected abstract void layout();
+	protected void layout() {
+
+		setSize(getPreferredSize());
+	}
 
 	/**
 	 * Invalidate the element. Also invalidate the parent if not already done.
@@ -285,6 +276,19 @@ public abstract class GUIElement {
 		return new Dimension(width, height);
 	}
 
+	public Dimension getPreferredSize() {
+
+		Dimension size = prefSize;
+		if (size == null)
+			size = getSize();
+		return size;
+	}
+
+	public void setPreferredSize(Dimension prefSize) {
+
+		this.prefSize = prefSize;
+	}
+
 	public void setBounds(Rectangle rect) {
 
 		setBounds(rect.x, rect.y, rect.width, rect.height);
@@ -304,18 +308,6 @@ public abstract class GUIElement {
 	public Rectangle getBounds() {
 
 		return new Rectangle(x, y, width, height);
-	}
-	
-	public void setWidthLayout(layout widthLayout) {
-		
-		this.widthLayout = widthLayout;
-		invalidate();
-	}
-	
-	public void setHeightLayout(layout heightLayout) {
-		
-		this.heightLayout = heightLayout;
-		invalidate();
 	}
 
 	public Insets getInsets() {

@@ -3,10 +3,9 @@ package activity;
 import java.awt.*;
 import java.util.Stack;
 
+import gui.*;
 import gui.Container;
-import gui.GUIElement;
 import gui.Panel;
-import gui.PointerListener;
 import input.*;
 import input.Button;
 import main.Engine;
@@ -16,7 +15,7 @@ public abstract class Activity {
 	private static Stack<Activity> stack = new Stack<Activity>();
 	private static boolean killCurrentActivity = false;
 	
-	protected Container view;
+	protected View view;
 	
 	protected abstract void onCreate();
 	protected abstract void onStart();
@@ -106,17 +105,17 @@ public abstract class Activity {
 		if (currentActivity != null) {
 
 			currentActivity.onUpdate(delta);
-//			currentActivity.getView().revalidate();
+			currentActivity.getView().revalidate();
 		}
 	}
 	
-	public void setView(Container view) {
+	public void setView(View view) {
 
 		this.view = view;
 		view.revalidate();
 	}
 
-	public Container getView() {
+	public View getView() {
 
 		return view;
 	}

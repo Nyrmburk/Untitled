@@ -21,11 +21,9 @@ public class LoadingActivity extends Activity {
 	@Override
 	protected void onCreate() {
 
-		Panel view = new Panel();
-		view.setWidthLayout(GUIElement.layout.FILL_PARENT);
-		view.setHeightLayout(GUIElement.layout.FILL_PARENT);
+		View view = new View(Engine.renderEngine);
 		view.setlayout(new GUIBoxLayout());
-		view.setBackgroundColor(Color.GRAY);
+		view.setBackgroundColor(Color.WHITE);
 
 		loadingText = new TextBox();
 		loadingText.setText(String.format(loadingMessage, (int) percentComplete));

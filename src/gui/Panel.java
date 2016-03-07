@@ -2,6 +2,8 @@ package gui;
 
 import graphics.TextureInterface;
 
+import java.awt.*;
+
 public class Panel extends Container {
 	
 	private TextureInterface image;
@@ -16,7 +18,7 @@ public class Panel extends Container {
 	
 	public void setImage(TextureInterface image) {
 
-		this.setBounds(this.getX(), this.getY(), image.getWidth(), image.getHeight());
+		this.setPreferredSize(new Dimension(image.getWidth(), image.getHeight()));
 		
 		this.image = image;
 	}

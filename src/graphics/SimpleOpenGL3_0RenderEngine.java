@@ -61,6 +61,8 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 
 		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
 
+		setColor(Color.WHITE);
+
 		for (RenderAttributes renderAttribute : renderAttributes) {
 
 			ModelLoader model = renderAttribute.iModel.model;
@@ -248,11 +250,7 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 	@Override
 	public void renderUI(Container view) {
 
-		GL11.glEnable(GL11.GL_BLEND);
-
 		renderElement(view);
-
-		GL11.glDisable(GL11.GL_BLEND);
 	}
 
 	private void renderElement(GUIElement element) {
@@ -380,6 +378,7 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 
 	private void drawTexture(Rectangle bounds, OpenGLTexture texture) {
 
+		GL11.glEnable(GL11.GL_BLEND);
 		texture.bind();
 
 		GL11.glBegin(GL11.GL_QUADS);
@@ -392,6 +391,8 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 		GL11.glTexCoord2f(texture.getWidthRatio(), 0);
 		GL11.glVertex2i(bounds.x + bounds.width, bounds.y);
 		GL11.glEnd();
+		GL11.glDisable(GL11.GL_BLEND);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 	}
 
 	private void drawString(int x, int y, GraphicsFont font, String text) {
@@ -404,6 +405,7 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 		int advance = x;
 		int height = y;
 
+		GL11.glEnable(GL11.GL_BLEND);
 		for (int i = 0; i < text.length(); i++) {
 
 			char c = text.charAt(i);
@@ -438,6 +440,7 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 
 			advance += metrics.charWidth(c);
 		}
+		GL11.glDisable(GL11.GL_BLEND);
 	}
 
 	@Override

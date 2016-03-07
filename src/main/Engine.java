@@ -10,10 +10,12 @@ import gui.css.CSSDocument;
 import input.*;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import org.lwjgl.LWJGLException;
@@ -227,6 +229,14 @@ public class Engine {
 	 * Load the world
 	 */
 	private void initWorld() {
+
+		BufferedImage image = null;
+		try {
+			image = ImageIO.read(new File("C:\\Users\\Nyrmburk\\Documents\\GitHub\\untitled\\dev\\plain.9.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		new NinePatch(image);
 
 //		System.out.println("start");
 //		org.fit.cssbox.demo.TextBoxes.main(new String[]{"file:///C:\\Users\\Nyrmburk\\Documents\\GitHub\\untitled\\dev\\Motherfucking Website.html"});

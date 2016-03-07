@@ -7,8 +7,6 @@ import graphics.RenderContext.InstancedModel;
 import gui.Container;
 
 public abstract class RenderEngine {
-	
-	//TODO add a method to return a texture/texture reference given a bufferedimage 
 
 	protected RenderContext context;
 	

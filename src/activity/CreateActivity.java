@@ -4,6 +4,8 @@ import entity.Entity;
 import gui.GUIBoxLayout;
 import gui.GUIElement;
 import gui.Panel;
+import gui.View;
+import main.Engine;
 
 public class CreateActivity extends Activity {
 
@@ -12,9 +14,7 @@ public class CreateActivity extends Activity {
 	@Override
 	protected void onCreate() {
 
-		Panel view = new Panel();
-		view.setWidthLayout(GUIElement.layout.FILL_PARENT);
-		view.setHeightLayout(GUIElement.layout.FILL_PARENT);
+		View view = new View(Engine.renderEngine);
 		view.setlayout(new GUIBoxLayout());
 		setView(view);
 

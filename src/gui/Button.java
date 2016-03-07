@@ -149,6 +149,7 @@ public class Button extends GUIElement implements PointerListener {
 		textBox.setPosition(getPosition());
 		textBox.layout();
 		setSize(textBox.getSize());
+		textBox.revalidate();
 	}
 
 	@Override

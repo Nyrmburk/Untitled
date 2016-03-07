@@ -1,5 +1,7 @@
 package gui;
 
+import java.awt.*;
+
 public abstract class GUILayoutManager {
 	
 	Container parent;
@@ -18,5 +20,6 @@ public abstract class GUILayoutManager {
 	public abstract void layout();
 	
 	public abstract void setConstraint(GUIElement element, Object constraint);
-	
+
+	public abstract Dimension getPreferredSize();
 }

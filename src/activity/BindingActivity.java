@@ -4,6 +4,7 @@ import gui.*;
 import gui.Panel;
 import input.Input;
 import input.InputInterface;
+import main.Engine;
 
 import java.awt.*;
 import java.util.Map;
@@ -16,11 +17,9 @@ public class BindingActivity extends Activity {
 	@Override
 	protected void onCreate() {
 
-		Panel view = new Panel();
-		view.setWidthLayout(GUIElement.layout.FILL_PARENT);
-		view.setHeightLayout(GUIElement.layout.FILL_PARENT);
+		View view = new View(Engine.renderEngine);
 		view.setlayout(new GUIBoxLayout());
-		view.setBackgroundColor(Color.DARK_GRAY);
+		view.setBackgroundColor(Color.WHITE);
 
 		for (InputInterface inputInterface : InputInterface.getInterfaces()) {
 			for (Map.Entry<Object, Input> entry : inputInterface.inputs.entrySet()) {
