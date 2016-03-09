@@ -74,8 +74,8 @@ public class JBox2DPhysicsEngine implements PhysicsEngine {
 	}
 
 	@Override
-	public PhysicsObjectDef getPhysicsObjectDef(PhysicsObject.Type physicsType, float[] vertices) {
+	public PhysicsObjectDef getPhysicsObjectDef(PhysicsObject.Type physicsType, Polygon polygon) {
 
-		return new JBox2DPhysicsObjectDef(physicsType, vertices);
+		return new JBox2DPhysicsObjectDef(physicsType, polygon);
 	}
 }

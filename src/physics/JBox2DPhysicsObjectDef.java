@@ -16,7 +16,7 @@ public class JBox2DPhysicsObjectDef implements PhysicsObjectDef {
 
 	PhysicsObject.Type physicsType;
 
-	public JBox2DPhysicsObjectDef(PhysicsObject.Type physicsType, float[] vertices) {
+	public JBox2DPhysicsObjectDef(PhysicsObject.Type physicsType, Polygon polygon) {
 
 		bodyDef = new BodyDef();
 		fixtureDef = new FixtureDef();
@@ -27,7 +27,7 @@ public class JBox2DPhysicsObjectDef implements PhysicsObjectDef {
 		//change based on analysis of the points
 		shape = new PolygonShape();
 
-		Vec2[] vec2Vertices = floatArrayToVec2Array(vertices);
+		Vec2[] vec2Vertices = polygonToVec2Array(polygon);
 
 		shape.set(vec2Vertices, vec2Vertices.length);
 
@@ -171,15 +171,14 @@ public class JBox2DPhysicsObjectDef implements PhysicsObjectDef {
 		bodyDef.setAngularDamping(angularDamping);
 	}
 
-	private Vec2[] floatArrayToVec2Array(float[] points) {
+	private Vec2[] polygonToVec2Array(Polygon polygon) {
 
-		Vec2[] vec2s = new Vec2[points.length/2];
+		physics.Vec2[] vec2s = polygon.getVertices();
+		Vec2[] otherVec2s = new Vec2[vec2s.length];
 
-		for (int i = 0; i < points.length/2; i++) {
+		for (int i = 0; i < vec2s.length; i++)
+			otherVec2s[i] = new Vec2(vec2s[i].getX(), vec2s[i].getY());
 
-			vec2s[i] = new Vec2(points[i*2], points[i*2+1]);
-		}
-
-		return vec2s;
+		return otherVec2s;
 	}
 }

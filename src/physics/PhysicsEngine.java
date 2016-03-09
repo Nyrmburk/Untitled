@@ -12,5 +12,5 @@ public interface PhysicsEngine {
 	String settingOptions(int setting);
 	boolean setSetting(int setting, Object option);
 
-	PhysicsObjectDef getPhysicsObjectDef(PhysicsObject.Type physicsType, float[] vertices);
+	PhysicsObjectDef getPhysicsObjectDef(PhysicsObject.Type physicsType, Polygon polygon);
 }

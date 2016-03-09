@@ -1,15 +1,15 @@
 package activity;
 
-import entity.Entity;
-import graphics.ModelLoader;
+import entity.MaterialEntity;
+import game.Material;
+import game.SimpleModelGenerator;
 import gui.*;
-import main.AssetManager;
 import main.Engine;
-import physics.PhysicsObject;
-import physics.PhysicsObjectDef;
+import physics.*;
 import game.Level;
+import physics.Polygon;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class LoadingActivity extends Activity {
 
@@ -73,13 +73,19 @@ public class LoadingActivity extends Activity {
 			Engine.level = new Level();
 			Engine.renderEngine.setContext(Engine.level.getRenderContext());
 			Engine.level.load();
-
-			ModelLoader model = AssetManager.getModel("monkey.obj");
-			PhysicsObjectDef shape = Engine.level.physicsEngine.getPhysicsObjectDef(PhysicsObject.Type.DYNAMIC, new float[]{0, 0, 0, 1, 1, 1, 1, 0});
-			Entity entity = new Entity();
-			entity.setModel(model);
+			Material material = new Material();
+			material.setModelGenerator(new SimpleModelGenerator());
+			Vec2[] verts = {
+					new Vec2(0, 0),
+					new Vec2(1, 0),
+					new Vec2(1, 1),
+					new Vec2(0, 1)};
+			PhysicsObjectDef shape = Engine.level.physicsEngine.getPhysicsObjectDef(PhysicsObject.Type.DYNAMIC, new Polygon(verts));
+			MaterialEntity entity = new MaterialEntity();
 			entity.setPhysicsObject(shape);
 			entity.setLevel(Engine.level);
+			entity.setMaterial(material);
+			entity.setShape(new Polygon(verts));
 		}
 		loadingText.setText(String.format(loadingMessage, (int) percentComplete));
 	}
