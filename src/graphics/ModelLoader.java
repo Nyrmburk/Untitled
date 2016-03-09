@@ -273,7 +273,7 @@ public class ModelLoader {
 		}
 
 		public void setSize(int size, int stride) {
-			
+
 			this.stride = stride;
 
 			float[] tempArray = new float[size * stride];
@@ -299,9 +299,9 @@ public class ModelLoader {
 
 			setSize(size, stride);
 		}
-		
+
 		public void addAll(Collection<float[]> collection) {
-			
+
 			for (float[] floats : collection)
 				put(floats);
 		}
@@ -390,9 +390,9 @@ public class ModelLoader {
 //			return data.length / stride;
 			return size;
 		}
-		
+
 		public void setSize(int size, int stride) {
-			
+
 			this.stride = stride;
 
 			int[] tempArray = new int[size * stride];
@@ -420,7 +420,7 @@ public class ModelLoader {
 		}
 
 		public void addAll(Collection<int[]> collection) {
-			
+
 			for (int[] ints : collection)
 				put(ints);
 		}
