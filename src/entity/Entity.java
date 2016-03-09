@@ -4,7 +4,7 @@ import graphics.InstanceAttributes;
 import graphics.ModelLoader;
 import physics.PhysicsObject;
 import physics.PhysicsObjectDef;
-import world.Level;
+import game.Level;
 
 /**
  * The binding glue of the different observable components. It binds orientation to the physics and graphics.
@@ -21,12 +21,30 @@ public class Entity {
 
 	private ModelLoader model;
 	private PhysicsObject physicsObject;
+	private PhysicsObjectDef physicsObjectDef;
 	private Level level;
 
-	public Entity(Level level) {
+	public void setLevel(Level level) {
+
+		if (this.level != null) {
+
+			this.level.removeEntity(this);
+
+			if (model != null)
+				this.level.getRenderContext().removeModel(model);
+
+			if (physicsObject != null)
+				this.level.physicsEngine.removePhysicsObject(physicsObject);
+		}
 
 		this.level = level;
 		this.level.addEntity(this);
+
+		if (model != null)
+			setModel(model);
+
+		if (physicsObjectDef != null)
+			setPhysicsObject(physicsObjectDef);
 	}
 
 	public void update(int delta) {
@@ -75,9 +93,12 @@ public class Entity {
 
 	public void setModel(ModelLoader model) {
 
-		if (this.model != null)
-			level.getRenderContext().removeModel(this.model);
-		level.getRenderContext().addModel(model, new InstanceAttributes(location, rotation));
+		if (level != null) {
+			if (this.model != null)
+				level.getRenderContext().removeModel(this.model);
+			level.getRenderContext().addModel(model, new InstanceAttributes(location, rotation));
+		}
+
 		this.model = model;
 	}
 
@@ -87,8 +108,13 @@ public class Entity {
 
 	public void setPhysicsObject(PhysicsObjectDef physicsObjectDef) {
 
-		if (this.physicsObject != null)
-			level.physicsEngine.removePhysicsObject(this.physicsObject);
-		this.physicsObject = level.physicsEngine.createPhysicsObject(physicsObjectDef);
+		if (level != null) {
+			if (this.physicsObject != null)
+				level.physicsEngine.removePhysicsObject(this.physicsObject);
+
+			this.physicsObject = level.physicsEngine.createPhysicsObject(physicsObjectDef);
+		}
+
+		this.physicsObjectDef = physicsObjectDef;
 	}
 }

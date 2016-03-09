@@ -3,12 +3,11 @@ package activity;
 import entity.Entity;
 import graphics.ModelLoader;
 import gui.*;
-import gui.Panel;
 import main.AssetManager;
 import main.Engine;
 import physics.PhysicsObject;
 import physics.PhysicsObjectDef;
-import world.Level;
+import game.Level;
 
 import java.awt.*;
 
@@ -77,9 +76,10 @@ public class LoadingActivity extends Activity {
 
 			ModelLoader model = AssetManager.getModel("monkey.obj");
 			PhysicsObjectDef shape = Engine.level.physicsEngine.getPhysicsObjectDef(PhysicsObject.Type.DYNAMIC, new float[]{0, 0, 0, 1, 1, 1, 1, 0});
-			Entity entity = new Entity(Engine.level);
+			Entity entity = new Entity();
 			entity.setModel(model);
 			entity.setPhysicsObject(shape);
+			entity.setLevel(Engine.level);
 		}
 		loadingText.setText(String.format(loadingMessage, (int) percentComplete));
 	}

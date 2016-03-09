@@ -1,8 +1,5 @@
 package physics;
 
-import org.fit.cssbox.layout.VisualContext;
-
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,6 +21,35 @@ public class Polygon {
 
 	public void setVertices(Vec2[] vertices) {
 		this.vertices = vertices;
+	}
+
+	public Polygon convexHull() {
+
+		List<Vec2> convexPoints = new LinkedList<>();
+
+		Vec2[] vertices = getVertices();
+
+		Vec2 previous = vertices[vertices.length-2];
+		Vec2 current = vertices[vertices.length-1];
+
+		for (int i = 0; i < vertices.length; i++) {
+			Vec2 next = vertices[i];
+
+			if (!isCCW(previous, current, next)) {
+
+				convexPoints.add(current);
+			} else {
+
+				current = next;
+				continue;
+			}
+
+			previous = current;
+			current = next;
+		}
+
+
+		return new Polygon(convexPoints.toArray(new Vec2[0]));
 	}
 
 	public List<Polygon> decompose () {
@@ -53,7 +79,7 @@ public class Polygon {
 			current = next;
 		}
 
-		return (Vec2[]) notches.toArray();
+		return notches.toArray(new Vec2[0]);
 	}
 
 	private static VisibilityPair[] getVisibilityPairs(Polygon polygon) {

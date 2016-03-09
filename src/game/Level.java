@@ -1,9 +1,8 @@
-package world;
+package game;
 
 import entity.Entity;
 import graphics.RenderContext;
 import main.AssetManager;
-import main.Player;
 import physics.JBox2DPhysicsEngine;
 import physics.PhysicsEngine;
 import physics.PhysicsObject;
@@ -12,7 +11,7 @@ import physics.PhysicsObjectDef;
 import java.util.ArrayList;
 import java.util.List;
 
-//The world has a physicsEngine instance?
+//The game has a physicsEngine instance?
 //players list?
 //
 public class Level {
@@ -58,7 +57,8 @@ public class Level {
 	
 	public void load() {
 
-		Entity floor = new Entity(this);
+		Entity floor = new Entity();
+		floor.setLevel(this);
 		floor.setModel(AssetManager.getModel("floor.obj"));
 		float[] floorVertices = {-100, 1, -100, -1, 100, -1, 100, 1};
 //		float[] floorVertices = {-100, 1, 100, 1, 100, -1, -100, -1};
@@ -66,7 +66,8 @@ public class Level {
 		floor.setPhysicsObject(objectDef);
 		floor.setLocation(new float[]{0, -5});
 
-		Player player = new Player(this);
+		Player player = new Player();
+		player.setLevel(this);
 		player.setModel(AssetManager.getModel("Player.obj"));
 		float[] playerVertices = {-0.5f, 0, 0.5f, 0, 0.5f, 1.8f, -0.5f, 1.8f};
 //		float[] playerVertices = {-0.5f, 0, -0.5f, 1.8f, 0.5f, 1.8f, 0.5f, 0};

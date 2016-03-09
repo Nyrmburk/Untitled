@@ -1,20 +1,16 @@
-package main;
+package game;
 
 
 import entity.Entity;
 import input.*;
 import physics.PhysicsObject;
-import world.Level;
+import game.Level;
 
 public class Player extends Entity {
 
 	private float speed = 6;
 	private float acceleration = 6f;
 	private float jumpheight = 1;
-
-	public Player(Level level) {
-		super(level);
-	}
 
 	private Input jump = new Button("jump") {
 

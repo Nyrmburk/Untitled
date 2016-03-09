@@ -84,7 +84,7 @@ public class Camera {
 		GL11.glLoadIdentity();
 		GL11.glFrustum(right, left, top, bottom, near, far);
 
-		// Displace the world to right
+		// Displace the game to right
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 //		GL11.glLoadIdentity();
 		GL11.glTranslatef(eyeSeparation / 2, 0.0f, 0.0f);
@@ -111,7 +111,7 @@ public class Camera {
 		GL11.glLoadIdentity();
 		GL11.glFrustum(right, left, top, bottom, near, far);
 
-		// Displace the world to left
+		// Displace the game to left
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 //		GL11.glLoadIdentity();
 		GL11.glTranslatef(-eyeSeparation / 2, 0.0f, 0.0f);

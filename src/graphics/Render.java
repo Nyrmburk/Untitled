@@ -78,7 +78,7 @@ public class Render {
 		
 	}
 	
-//	public static void drawSelectionGrid(World world, Coord startCoord,
+//	public static void drawSelectionGrid(World game, Coord startCoord,
 //			Coord endCoord) {
 //		
 //		Coord lowest = Coord.lowestCoord(startCoord, endCoord);
@@ -139,12 +139,12 @@ public class Render {
 //		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
 //	}
 	
-//	public static void drawLocalGrid(World world, int centerX, int centerY,
+//	public static void drawLocalGrid(World game, int centerX, int centerY,
 //			int radius) {
 //		
 //		final float MID = 0.5f;
 //		
-//		byte[][] worldHeight = world.getWorldHeight();
+//		byte[][] worldHeight = game.getWorldHeight();
 //		
 //		GL11.glPushMatrix();
 //		GL11.glDisable(GL11.GL_LIGHTING);
@@ -159,8 +159,8 @@ public class Render {
 //					* ((float) x - MID));
 //			
 //			for (int i = -y + 1; i <= y; i++) {
-//				if (x + centerX < world.getX() && x + centerX >= 0
-//						&& i + centerY < world.getY() && i + centerY >= 0) {
+//				if (x + centerX < game.getX() && x + centerX >= 0
+//						&& i + centerY < game.getY() && i + centerY >= 0) {
 //					
 //					GL11.glVertex3f(x + centerX - MID, i + centerY - MID,
 //							worldHeight[x + centerX][i + centerY]);
@@ -177,8 +177,8 @@ public class Render {
 //					* ((float) y - MID));
 //			
 //			for (int i = -x + 1; i <= x; i++) {
-//				if (y + centerY < world.getY() && y + centerY >= 0
-//						&& i + centerX < world.getX() && i + centerX >= 0) {
+//				if (y + centerY < game.getY() && y + centerY >= 0
+//						&& i + centerX < game.getX() && i + centerX >= 0) {
 //					
 //					GL11.glVertex3f(i + centerX - MID, y + centerY - MID,
 //							worldHeight[i + centerX][y + centerY]);

@@ -1,20 +1,14 @@
 package main;
 
-import activity.CSSActivity;
 import activity.MainMenuActivity;
 import graphics.*;
-import gui.GUIAppearance;
 import gui.css.CSSCanvas;
-import gui.css.CSSComposite;
-import gui.css.CSSDocument;
 import input.*;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -27,7 +21,7 @@ import org.lwjgl.opengl.GL11;
 
 import activity.Activity;
 import physics.Vec2;
-import world.Level;
+import game.Level;
 
 public class Engine {
 
@@ -228,7 +222,7 @@ public class Engine {
 	}
 
 	/**
-	 * Load the world
+	 * Load the game
 	 */
 	private void initWorld() {
 
@@ -241,20 +235,16 @@ public class Engine {
 		new NinePatch(image);
 
 		Vec2[] poly = {
-				new Vec2(426.0f, 186.0f),
-				new Vec2(434.0f, 333.0f),
-				new Vec2(310.0f, 362.0f),
-				new Vec2(315.0f, 225.0f),
-				new Vec2(359.0f, 152.0f),
-				new Vec2(294.0f, 116.0f),
-				new Vec2(127.0f, 134.0f),
-				new Vec2(99.0f, 333.0f),
-				new Vec2(39.0f, 322.0f),
-				new Vec2(23.0f, 138.0f),
-				new Vec2(64.0f, 52.0f),
-				new Vec2(382.0f, 52.0f),
+				new Vec2(115.0f, 131.0f),
+				new Vec2(131.0f, 232.0f),
+				new Vec2(262.0f, 259.0f),
+				new Vec2(399.0f, 203.0f),
+				new Vec2(257.0f, 183.0f),
+				new Vec2(257.0f, 123.0f),
+				new Vec2(363.0f, 81.0f),
+				new Vec2(194.0f, 59.0f),
 		};
-//		new physics.Polygon(poly).decompose();
+		new physics.Polygon(poly).convexHull();
 
 //		System.out.println("start");
 //		org.fit.cssbox.demo.TextBoxes.main(new String[]{"file:///C:\\Users\\Nyrmburk\\Documents\\GitHub\\untitled\\dev\\Motherfucking Website.html"});
@@ -390,7 +380,7 @@ public class Engine {
 	}
 
 	/**
-	 * Calculate all the goings-on in the world
+	 * Calculate all the goings-on in the game
 	 *
 	 * @param delta
 	 *            The amount of time since the last frame

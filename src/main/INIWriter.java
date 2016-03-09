@@ -9,6 +9,8 @@ import java.util.Map;
  */
 public class INIWriter {
 
+	//TODO remove and replace with java.utils.Properties
+
 	public static void write(Map<?, ?> map, File file) {
 
 		BufferedWriter writer = null;
