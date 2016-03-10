@@ -406,6 +406,8 @@ public class Engine {
 		if (level != null)
 			level.update(delta);
 
+		ResourceManager.update(delta);
+
 		// calculate fps and stuff
 		updateFPS();
 	}

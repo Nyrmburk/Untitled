@@ -1,9 +1,7 @@
 package main;
 
-import org.xml.sax.SAXException;
-
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 /**
  * Created by Nyrmburk on 2/22/2016.
@@ -14,7 +12,7 @@ import java.io.IOException;
  */
 public abstract class Resource {
 
-	int references = 0;
+	private int references = 0;
 
 	public abstract String getName();
 
@@ -32,7 +30,6 @@ public abstract class Resource {
 	public final void release() {
 
 		references--;
-		onRelease();
 	}
 
 	protected abstract void onRelease();
@@ -42,6 +39,6 @@ public abstract class Resource {
 		return references;
 	}
 
-	public abstract void save(File file);
-	public abstract void load(File file) throws IOException;
+	public abstract void save(Path path);
+	public abstract void load(Path Path) throws IOException;
 }

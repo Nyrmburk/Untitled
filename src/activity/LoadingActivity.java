@@ -10,6 +10,7 @@ import game.Level;
 import physics.Polygon;
 
 import java.awt.Color;
+import java.io.IOException;
 
 public class LoadingActivity extends Activity {
 
@@ -72,7 +73,11 @@ public class LoadingActivity extends Activity {
 
 			Engine.level = new Level();
 			Engine.renderEngine.setContext(Engine.level.getRenderContext());
-			Engine.level.load();
+			try {
+				Engine.level.load(null);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			Material material = new Material();
 			material.setModelGenerator(new SimpleModelGenerator());
 			Vec2[] verts = {

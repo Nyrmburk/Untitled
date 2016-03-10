@@ -5,17 +5,19 @@ import graphics.ModelLoader.IntList;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import main.Resource;
 import main.Vector;
 
 import org.lwjgl.BufferUtils;
 
-public class ModelLoader {
+public class ModelLoader extends Resource {
 
 	public FloatList vertices = new FloatList();
 	public FloatList normals = new FloatList();
@@ -187,6 +189,32 @@ public class ModelLoader {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	@Override
+	public String getName() {
+		return null;
+	}
+
+	@Override
+	protected void onRegister() {
+
+	}
+
+	@Override
+	protected void onRelease() {
+
+	}
+
+	@Override
+	public void save(Path path) {
+
+	}
+
+	@Override
+	public void load(Path path) throws IOException {
+
+		load(path.toFile());
 	}
 
 	public class FloatList {

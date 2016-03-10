@@ -9,6 +9,7 @@ import org.xml.sax.SAXException;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.file.Path;
 
 /**
  * Created by Nyrmburk on 2/24/2016.
@@ -32,11 +33,11 @@ public class CSSDocument extends Resource {
 	}
 
 	@Override
-	public void save(File file) {
+	public void save(Path path) {
 	}
 
 	@Override
-	public void load(File file) throws IOException {
+	public void load(Path Path) throws IOException {
 
 		DocumentSource docSource = new DocumentSource(null){
 
@@ -56,7 +57,7 @@ public class CSSDocument extends Resource {
 			@Override
 			public InputStream getInputStream() throws IOException {
 
-				reader = new BufferedInputStream(new FileInputStream(file));
+				reader = new BufferedInputStream(new FileInputStream(Path.toFile()));
 				return reader;
 			}
 
