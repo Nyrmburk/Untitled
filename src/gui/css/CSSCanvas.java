@@ -3,13 +3,12 @@ package gui.css;
 import cz.vutbr.web.css.CSSProperty;
 import cz.vutbr.web.css.MediaSpec;
 import graphics.GraphicsFont;
-import graphics.TextureInterface;
+import graphics.Texture;
 import main.Engine;
 import org.fit.cssbox.css.CSSNorm;
 import org.fit.cssbox.css.DOMAnalyzer;
 import org.fit.cssbox.layout.*;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import script.Script;
@@ -32,7 +31,7 @@ public class CSSCanvas {
 	private CSSComposite composite;
 
 	private Map<Font, GraphicsFont> fonts = new HashMap<Font, GraphicsFont>();
-	private Map<BufferedImage, TextureInterface> textures = new HashMap<BufferedImage, TextureInterface>();
+	private Map<BufferedImage, Texture> textures = new HashMap<BufferedImage, Texture>();
 	private Map<NamedNodeMap, Script> scripts = new HashMap<NamedNodeMap, Script>();
 
 	Graphics2D g;
@@ -132,10 +131,11 @@ public class CSSCanvas {
 					for (BackgroundImage bgImage : el.getBackgroundImages()) {
 
 						BufferedImage image = bgImage.getBufferedImage();
-						TextureInterface texture = textures.get(image);
+						Texture texture = textures.get(image);
 
 						if (texture == null) {
-							texture = Engine.renderEngine.getTextureFromImage(image);
+							texture = new Texture();
+							texture.setTexture(image);
 							textures.put(image, texture);
 						}
 

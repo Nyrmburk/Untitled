@@ -1,12 +1,12 @@
 package gui;
 
-import graphics.TextureInterface;
+import graphics.Texture;
 
 import java.awt.*;
 
 public class Panel extends Container {
 	
-	private TextureInterface image;
+	private Texture image;
 	
 	public Panel() {
 		super();
@@ -16,14 +16,14 @@ public class Panel extends Container {
 		super(layout);
 	}
 	
-	public void setImage(TextureInterface image) {
+	public void setImage(Texture image) {
 
 		this.setPreferredSize(new Dimension(image.getWidth(), image.getHeight()));
 		
 		this.image = image;
 	}
 	
-	public TextureInterface getImage() {
+	public Texture getImage() {
 		
 		return image;
 	}

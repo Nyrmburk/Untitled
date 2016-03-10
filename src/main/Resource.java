@@ -13,32 +13,54 @@ import java.nio.file.Path;
 public abstract class Resource {
 
 	private int references = 0;
+	private RegisterListener registerListener;
+	private ReleaseListener releaseListener;
 
 	public abstract String getName();
 
 	public final void register() {
 
 		references++;
-		onRegister();
-	}
 
-	/**
-	 * onRegister is called by the main thread (useful for graphics)
-	 */
-	protected abstract void onRegister();
+		if (registerListener != null)
+			registerListener.onRegister();
+	}
 
 	public final void release() {
 
 		references--;
+		if (references == -1 && releaseListener != null)
+			releaseListener.onRelease();
 	}
-
-	protected abstract void onRelease();
 
 	public final int getReferenceCount() {
 
 		return references;
 	}
 
-	public abstract void save(Path path);
-	public abstract void load(Path Path) throws IOException;
+	public abstract void save(Path path) throws IOException;
+	public abstract void load(Path path) throws IOException;
+
+	public void setRegisterListener(RegisterListener listener) {
+
+		this.registerListener = listener;
+	}
+
+	public void setReleaseListener(ReleaseListener listener) {
+
+		this.releaseListener = listener;
+	}
+
+	public interface RegisterListener {
+
+		/**
+		 * onRegister is called by the main thread (useful for graphics)
+		 */
+		void onRegister();
+	}
+
+	public interface ReleaseListener {
+
+		void onRelease();
+	}
 }

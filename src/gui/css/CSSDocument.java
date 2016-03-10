@@ -25,19 +25,11 @@ public class CSSDocument extends Resource {
 	}
 
 	@Override
-	protected void onRegister() {
-	}
-
-	@Override
-	protected void onRelease() {
-	}
-
-	@Override
 	public void save(Path path) {
 	}
 
 	@Override
-	public void load(Path Path) throws IOException {
+	public void load(Path path) throws IOException {
 
 		DocumentSource docSource = new DocumentSource(null){
 
@@ -57,7 +49,7 @@ public class CSSDocument extends Resource {
 			@Override
 			public InputStream getInputStream() throws IOException {
 
-				reader = new BufferedInputStream(new FileInputStream(Path.toFile()));
+				reader = new BufferedInputStream(new FileInputStream(path.toFile()));
 				return reader;
 			}
 

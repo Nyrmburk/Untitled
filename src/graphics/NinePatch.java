@@ -11,7 +11,7 @@ public class NinePatch {
 	Rectangle stretch;
 	Rectangle padding;
 
-	TextureInterface texture;
+	Texture texture;
 
 	private static final int BLACK = 0xFF000000;
 

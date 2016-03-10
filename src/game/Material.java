@@ -1,7 +1,7 @@
 package game;
 
 import graphics.ModelLoader;
-import graphics.TextureInterface;
+import graphics.Texture;
 import physics.Polygon;
 
 /**
@@ -9,14 +9,14 @@ import physics.Polygon;
  */
 public class Material {
 
-	private TextureInterface texture;
+	private Texture texture;
 	private MaterialModelGenerator modelGenerator;
 
-	public TextureInterface getTexture() {
+	public Texture getTexture() {
 		return texture;
 	}
 
-	public void setTexture(TextureInterface texture) {
+	public void setTexture(Texture texture) {
 		this.texture = texture;
 	}
 

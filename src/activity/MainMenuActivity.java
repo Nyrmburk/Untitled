@@ -3,15 +3,11 @@ package activity;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
 
-import javax.imageio.ImageIO;
-
-import graphics.RenderContext;
+import graphics.Texture;
 import gui.*;
-import main.AssetManager;
 import main.Engine;
+import main.ResourceManager;
 
 public class MainMenuActivity extends Activity {
 
@@ -23,7 +19,11 @@ public class MainMenuActivity extends Activity {
 		view.setBackgroundColor(Color.WHITE);
 		
 		Panel image = new Panel();
-		image.setImage(AssetManager.getTexture("untitled.png"));
+		ResourceManager.getResource(
+				"untitled.png",
+				loadedResource -> image.setImage((Texture) loadedResource),
+				Texture.class);
+//		image.setImage(AssetManager.getTexture("untitled.png"));
 		view.addChild(image);
 		
 		Panel aligner = new Panel();

@@ -1,8 +1,6 @@
 package input;
 
-import main.AssetManager;
 import main.INIWriter;
-import main.Resource;
 
 import java.io.File;
 import java.util.HashMap;
@@ -14,7 +12,7 @@ import java.util.Map;
 public class Binding {
 
 	// TODO refactor that const into here
-	private static final File path = new File(AssetManager.INPUT_ROOT);
+	private static final File path = new File("res\\input");
 
 	private static Map<String, Object> bindings = new HashMap<String, Object>();
 	private static Map<String, InputInterface> interfaces = new HashMap<String, InputInterface>();

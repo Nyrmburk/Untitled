@@ -1,7 +1,7 @@
 package input;
 
-import main.AssetManager;
 import main.INIWriter;
+import main.ResourceManager;
 
 import java.io.File;
 import java.util.*;
@@ -64,12 +64,14 @@ public abstract class InputInterface {
 			map.put(entry.getValue().getName(), getBindingName(entry.getKey()));
 		}
 
-		INIWriter.write(map, new File(AssetManager.INPUT_ROOT + getName()));
+		//TODO replace with Properties and stupid magic strings
+		INIWriter.write(map, new File("res\\input\\" + getName()));
 	}
 
 	public void load() {
 
-		Map<String, String> map = INIWriter.read(new File(AssetManager.INPUT_ROOT + getName()));
+		//TODO replace with Properties and stupid magic strings
+		Map<String, String> map = INIWriter.read(new File("res\\input\\" + getName()));
 
 		for (Map.Entry<String, String> entry : map.entrySet()) {
 

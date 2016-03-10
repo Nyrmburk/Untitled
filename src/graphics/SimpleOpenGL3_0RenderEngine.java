@@ -227,15 +227,6 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 	}
 
 	@Override
-	public TextureInterface getTextureFromImage(BufferedImage image) {
-
-		if (image == null)
-			return null;
-
-		return new OpenGLTexture(image);
-	}
-
-	@Override
 	protected void addModel(InstancedModel model) {
 
 		renderAttributes.add(new RenderAttributes(model));
@@ -277,7 +268,7 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 			setColor(box.color);
 
 		if (box.texture != null) {
-			drawTexture(box, (OpenGLTexture) box.texture);
+			drawTexture(box, getOpenGLTextureData(box.texture));
 		} else if (box.color != null) {
 
 			drawRect(box);
@@ -359,7 +350,7 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 			if (!composite.getBounds().intersects(image))
 				continue;
 
-			OpenGLTexture texture = (OpenGLTexture) image.getTexture(0);
+			OpenGLTextureData texture = getOpenGLTextureData(image.getTexture(0));
 			Rectangle bounds = image.getBounds();
 
 			drawTexture(bounds, texture);
@@ -376,7 +367,7 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 		GL11.glEnd();
 	}
 
-	private void drawTexture(Rectangle bounds, OpenGLTexture texture) {
+	private void drawTexture(Rectangle bounds, OpenGLTextureData texture) {
 
 		GL11.glEnable(GL11.GL_BLEND);
 		texture.bind();
@@ -398,7 +389,7 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 	private void drawString(int x, int y, GraphicsFont font, String text) {
 
 		FontMetrics metrics = font.fontMetrics;
-		OpenGLTexture texture = (OpenGLTexture) font.atlas;
+		OpenGLTextureData texture = getOpenGLTextureData(font.atlas);
 		texture.bind();
 
 		Rectangle placement;
@@ -474,7 +465,24 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 				((float) color.getAlpha())/255);
 	}
 
-	private class OpenGLTexture implements TextureInterface {
+	private OpenGLTextureData getOpenGLTextureData(Texture texture) {
+
+		OpenGLTextureData data;
+
+		if (texture.getRenderEngine() == this) {
+
+			data =  (OpenGLTextureData) texture.getRenderEngineData();
+		} else {
+
+			data = new OpenGLTextureData(texture.getTexture());
+			texture.setRenderEngine(this, data);
+			texture.setReleaseListener(data::release);//fancy lambda expression
+		}
+
+		return data;
+	}
+
+	private static class OpenGLTextureData {
 
 		private int id = 0;
 
@@ -484,7 +492,7 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 		private int actualWidth = 0;
 		private int actualHeight = 0;
 
-		OpenGLTexture(BufferedImage texture) {
+		OpenGLTextureData(BufferedImage texture) {
 
 			originalWidth = texture.getWidth();
 			originalHeight = texture.getHeight();
@@ -493,7 +501,6 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 			actualHeight = getMinimumPowerOfTwo(originalHeight);
 
 			ByteBuffer buffer = getNativeData(actualWidth, actualHeight, texture);
-//			ByteBuffer buffer = null;
 
 			int type = texture.getColorModel().hasAlpha() ? GL11.GL_RGBA : GL11.GL_RGB;
 
@@ -512,16 +519,6 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
 		}
 
-		public int getWidth() {
-
-			return originalWidth;
-		}
-
-		public int getHeight() {
-
-			return originalHeight;
-		}
-
 		public float getWidthRatio() {
 
 			return ((float) originalWidth) / actualWidth;
@@ -534,13 +531,13 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 
 		public float xRatio(int x) {
 
-			float coord = ((float) x) / getWidth() * getWidthRatio();
+			float coord = ((float) x) / originalWidth * getWidthRatio();
 			return coord;
 		}
 
 		public float yRatio(int y) {
 
-			return ((float) y) / getHeight() * getHeightRatio();
+			return ((float) y) / originalHeight * getHeightRatio();
 		}
 
 		private int getMinimumPowerOfTwo(int x) {
@@ -562,7 +559,6 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 			int width = texture.getWidth();
 
 			ByteBuffer texBuffer = BufferUtils.createByteBuffer(actualWidth * actualHeight * bytesPerPixel);
-
 
 //			if (texture.getRaster() instanceof ByteInterleavedRaster) {
 //
@@ -622,7 +618,6 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 			return texBuffer;
 		}
 
-		@Override
 		public void release() {
 
 			GL11.glDeleteTextures(id);

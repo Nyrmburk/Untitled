@@ -1,6 +1,6 @@
 package gui.css;
 
-import graphics.TextureInterface;
+import graphics.Texture;
 
 import java.awt.*;
 
@@ -9,7 +9,7 @@ import java.awt.*;
  */
 public class CSSImageBox extends CSSBox {
 
-	private TextureInterface[] textures;
+	private Texture[] textures;
 	private int[] delays;//milliseconds before updating
 	private int frameIndex = 0;
 	private boolean loop;//loop the though the images
@@ -20,14 +20,14 @@ public class CSSImageBox extends CSSBox {
 		transparent = true;
 	}
 
-	public CSSImageBox(Rectangle bounds, TextureInterface... texture) {
+	public CSSImageBox(Rectangle bounds, Texture... texture) {
 
 		setBounds(bounds);
 		this.textures = texture;
 		delays = null;
 	}
 
-	public CSSImageBox(Rectangle bounds, TextureInterface[] textures, int[] delays) {
+	public CSSImageBox(Rectangle bounds, Texture[] textures, int[] delays) {
 
 		setBounds(bounds);
 		this.textures = textures;
@@ -40,7 +40,7 @@ public class CSSImageBox extends CSSBox {
 	 * @param delta    The amount of time that has passed since the last call
 	 * @return	current frame
 	 */
-	public TextureInterface getTexture(int delta) {
+	public Texture getTexture(int delta) {
 
 		if (time > frameTime) {
 			frameTime += delays[frameIndex];

@@ -3,9 +3,8 @@ package gui;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 
-import graphics.TextureInterface;
+import graphics.Texture;
 
 public class Button extends GUIElement implements PointerListener {
 
@@ -31,7 +30,7 @@ public class Button extends GUIElement implements PointerListener {
 	private int currentColorIdentifier = UNFOCUS_COLOR;
 
 	TextBox textBox;
-	TextureInterface texture;
+	Texture texture;
 
 	public void setColor(int identifier, Color color) {
 
@@ -72,7 +71,7 @@ public class Button extends GUIElement implements PointerListener {
 		return textBox != null && textBox.getText() != null && !textBox.getText().isEmpty();
 	}
 
-	public void setImage(TextureInterface texture) {
+	public void setImage(Texture texture) {
 
 		if (this.texture != null)
 			this.texture.release();

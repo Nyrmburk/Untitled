@@ -52,8 +52,6 @@ public abstract class RenderEngine {
 	
 	public abstract void renderUI(Container view);
 	
-	public abstract TextureInterface getTextureFromImage(BufferedImage image);
-	
 	protected abstract void addModel(InstancedModel model);
 	protected abstract void removeModel(InstancedModel model);
 	

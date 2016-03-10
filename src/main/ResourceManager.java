@@ -83,7 +83,7 @@ public class ResourceManager {
 
 			if (time > staleTime) {
 
-				stale.getKey().onRelease();
+				stale.getKey().release();
 				itTime.remove();
 			} else {
 				staleResources.put(stale.getKey(), time);

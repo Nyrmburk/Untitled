@@ -106,7 +106,7 @@ public class SoftwareRenderEngine extends RenderEngine {
 //		BufferedImage image;
 //
 //		Iterator<Rectangle> quads = renderContext.quads.iterator();
-//		Iterator<TextureInterface> textures = renderContext.textures.iterator();
+//		Iterator<Texture> textures = renderContext.textures.iterator();
 //
 //		while (textures.hasNext()) {
 //
@@ -114,12 +114,6 @@ public class SoftwareRenderEngine extends RenderEngine {
 //			image = ((SoftwareTexture) textures.next()).texture;
 //			graphics.drawImage(image, bounds.x, bounds.y, bounds.width, bounds.height, null);
 //		}
-	}
-
-	@Override
-	public TextureInterface getTextureFromImage(BufferedImage image) {
-
-		return new SoftwareTexture(image);
 	}
 
 	@Override
@@ -167,33 +161,5 @@ public class SoftwareRenderEngine extends RenderEngine {
 			renderDevice = Runtime.getRuntime().availableProcessors() + "x " + renderDevice;
 
 		return renderDevice;
-	}
-
-	private class SoftwareTexture implements TextureInterface {
-
-		public BufferedImage texture;
-
-		SoftwareTexture(BufferedImage texture) {
-
-			this.texture = texture;
-		}
-
-		@Override
-		public int getWidth() {
-
-			return texture.getWidth();
-		}
-
-		@Override
-		public int getHeight() {
-
-			return texture.getHeight();
-		}
-
-		@Override
-		public void release() {
-
-			texture = null;
-		}
 	}
 }

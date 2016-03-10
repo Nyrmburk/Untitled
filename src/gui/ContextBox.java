@@ -1,7 +1,7 @@
 package gui;
 
 import graphics.GraphicsFont;
-import graphics.TextureInterface;
+import graphics.Texture;
 
 import java.awt.*;
 
@@ -11,7 +11,7 @@ import java.awt.*;
 public class ContextBox extends Rectangle {
 
 		public Color color;
-		public TextureInterface texture;
+		public Texture texture;
 //		public NinePatch ninepatch
 		public Text[] texts;
 		public ContextBox[] subBoxes;

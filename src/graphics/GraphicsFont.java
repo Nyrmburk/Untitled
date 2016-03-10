@@ -2,13 +2,8 @@ package graphics;
 
 import main.Engine;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
-import java.io.File;
-import java.io.IOException;
-import java.nio.Buffer;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -22,7 +17,7 @@ public class GraphicsFont {
 	/**
 	 * The texture that holds the characters
 	 */
-	public TextureInterface atlas;
+	public Texture atlas;
 
 	/**
 	 * FontMetrics for getting the advance of the characters
@@ -96,7 +91,8 @@ public class GraphicsFont {
 			bounds[rect.c].setBounds(rect);
 		}
 
-		atlas = Engine.renderEngine.getTextureFromImage(image);
+		atlas = new Texture();
+		atlas.setTexture(image);
 
 //		try {
 //			ImageIO.write(image, "png", new File(font.toString() + ".png"));

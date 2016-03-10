@@ -132,6 +132,7 @@ public class Engine {
 	 */
 	public static void close() {
 
+		System.out.println();
 		System.out.println("shutting down");
 
 		System.out.print("deleting shaders... ");
@@ -166,7 +167,7 @@ public class Engine {
 		initDisplay();
 		printSystem();
 		graphics.Render.initGL();
-		AssetManager.loadAll();
+//		AssetManager.loadAll();
 		initWorld();
 	}
 

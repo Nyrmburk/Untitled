@@ -4,7 +4,6 @@ import entity.Entity;
 import entity.MaterialEntity;
 import graphics.ModelLoader;
 import graphics.RenderContext;
-import main.AssetManager;
 import main.Resource;
 import main.ResourceManager;
 import physics.*;
@@ -65,22 +64,12 @@ public class Level extends Resource {
 	}
 
 	@Override
-	protected void onRegister() {
-
-	}
-
-	@Override
-	protected void onRelease() {
-
-	}
-
-	@Override
 	public void save(Path path) {
 
 	}
 
 	@Override
-	public void load(Path Path) throws IOException {
+	public void load(Path path) throws IOException {
 
 		Material material = new Material();
 		material.setModelGenerator(new SimpleModelGenerator());
@@ -100,38 +89,22 @@ public class Level extends Resource {
 		floor.setPhysicsObject(objectDef);
 		floor.setLocation(new float[]{0, -5});
 
-		Level level = this;
+		Player player = new Player();
+		player.setLevel(this);
+		Vec2[] playerVertices = {
+				new Vec2(-0.35f, 0),
+				new Vec2(0.35f, 0),
+				new Vec2(0.35f, 1.8f),
+				new Vec2(-0.35f, 1.8f)};
+		shape = new Polygon(playerVertices);
+		objectDef = this.physicsEngine.getPhysicsObjectDef(PhysicsObject.Type.DYNAMIC, shape);
+		player.setPhysicsObject(objectDef);
+		player.setLocation(new float[]{-3, 0});
 
-		ResourceManager.getResource("Player.obj", new ResourceManager.AsyncLoad() {
-			@Override
-			public void onLoad(Resource loadedResource) {
-
-				Player player = new Player();
-				player.setLevel(level);
-				player.setModel((ModelLoader) loadedResource);
-				Vec2[] playerVertices = {
-						new Vec2(-0.35f, 0),
-						new Vec2(0.35f, 0),
-						new Vec2(0.35f, 1.8f),
-						new Vec2(-0.35f, 1.8f)};
-				Polygon shape = new Polygon(playerVertices);
-				PhysicsObjectDef objectDef = level.physicsEngine.getPhysicsObjectDef(PhysicsObject.Type.DYNAMIC, shape);
-				player.setPhysicsObject(objectDef);
-				player.setLocation(new float[]{-3, 0});
-			}
-		}, ModelLoader.class);
-
-//		Player player = new Player();
-//		player.setLevel(this);
-//		player.setModel(AssetManager.getModel("Player.obj"));
-//		Vec2[] playerVertices = {
-//				new Vec2(-0.35f, 0),
-//				new Vec2(0.35f, 0),
-//				new Vec2(0.35f, 1.8f),
-//				new Vec2(-0.35f, 1.8f)};
-//		shape = new Polygon(playerVertices);
-//		objectDef = this.physicsEngine.getPhysicsObjectDef(PhysicsObject.Type.DYNAMIC, shape);
-//		player.setPhysicsObject(objectDef);
-//		player.setLocation(new float[]{-3, 0});
+		//lambda expressions make this pretty
+		ResourceManager.getResource(
+				"Player.obj",
+				loadedResource -> player.setModel((ModelLoader) loadedResource),
+				ModelLoader.class);
 	}
 }

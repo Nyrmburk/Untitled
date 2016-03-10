@@ -1,18 +1,6 @@
 package gui;
 
-import java.awt.event.ActionEvent;
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-
-import javax.xml.parsers.*;
-
-import main.Settings;
-
-import org.xml.sax.*;
 import org.xml.sax.helpers.*;
-
-import main.AssetManager;
 
 public class GUIParser {
 	

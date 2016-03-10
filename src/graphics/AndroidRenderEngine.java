@@ -5,7 +5,6 @@ import java.awt.image.BufferedImage;
 import entity.Camera;
 import graphics.RenderContext.InstancedModel;
 import gui.Container;
-import gui.GUIAppearance;
 
 public class AndroidRenderEngine extends RenderEngine {
 
@@ -48,12 +47,6 @@ public class AndroidRenderEngine extends RenderEngine {
 	public void renderUI(Container renderContext) {
 		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public TextureInterface getTextureFromImage(BufferedImage image) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 	
 	@Override

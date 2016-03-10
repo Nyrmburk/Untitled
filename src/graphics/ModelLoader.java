@@ -35,12 +35,31 @@ public class ModelLoader extends Resource {
 	public FloatList group;
 
 	private int id;
+	String name;
 
 	public ModelLoader() {
 	}
 
 	public ModelLoader(File file) {
 		load(file);
+	}
+
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public void save(Path path) {
+
+	}
+
+	@Override
+	public void load(Path path) throws IOException {
+
+		load(path.toFile());
+		name = path.getFileName().toString();
 	}
 
 	public void load(File file) {
@@ -189,32 +208,6 @@ public class ModelLoader extends Resource {
 
 	public void setId(int id) {
 		this.id = id;
-	}
-
-	@Override
-	public String getName() {
-		return null;
-	}
-
-	@Override
-	protected void onRegister() {
-
-	}
-
-	@Override
-	protected void onRelease() {
-
-	}
-
-	@Override
-	public void save(Path path) {
-
-	}
-
-	@Override
-	public void load(Path path) throws IOException {
-
-		load(path.toFile());
 	}
 
 	public class FloatList {
