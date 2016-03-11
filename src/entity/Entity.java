@@ -49,7 +49,8 @@ public class Entity {
 
 	public void update(int delta) {
 
-		setLocation(getPhysicsObject().getPosition());
+		if (getPhysicsObject() != null)
+			setLocation(getPhysicsObject().getPosition());
 	}
 
 	public boolean isActive() {

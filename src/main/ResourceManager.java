@@ -3,22 +3,13 @@ package main;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 
 /**
  * Created by Nyrmburk on 3/9/2016.
  */
 public class ResourceManager {
-
-	/* TODO find a way to consolidate requests.
-	* Currently, if there is a lot of requests for the same object,
-	* each request will load the resource. This is bad because the
-	* resource should only be loaded once and all the calls for that
-	* resource should be deferred until it is loaded.
-	*/
 
 	private static final Path RESOURCE_PATH = Paths.get("res");
 
@@ -31,6 +22,7 @@ public class ResourceManager {
 	private static final int THREADS = Runtime.getRuntime().availableProcessors();
 	private static ExecutorService executor = Executors.newFixedThreadPool(THREADS);
 	private static BlockingQueue<UnloadedResource> unloaded = new LinkedBlockingQueue<>();
+	private static ConcurrentHashMap<String, List<AsyncLoad>> currentRequests = new ConcurrentHashMap<>();
 	private static ConcurrentLinkedQueue<LoadedResource> loaded = new ConcurrentLinkedQueue<>();
 
 	static {
@@ -106,7 +98,13 @@ public class ResourceManager {
 		while (!loaded.isEmpty()) {
 			LoadedResource resource = loaded.poll();
 			resources.put(resource.name, resource.resource);
-			resource.async.onLoad(resource.resource);
+
+			List<AsyncLoad> loadTasks = currentRequests.get(resource.name);
+
+			for (AsyncLoad async : loadTasks)
+				async.onLoad(resource.resource);
+
+			currentRequests.remove(resource.name);
 		}
 	}
 
@@ -128,6 +126,17 @@ public class ResourceManager {
 
 				if (unloaded == null)
 					continue;
+
+				List<AsyncLoad> loadTasks = currentRequests.get(unloaded.name);
+
+				if (loadTasks == null) {
+					loadTasks = new LinkedList<AsyncLoad>();
+					currentRequests.put(unloaded.name, loadTasks);
+					loadTasks.add(unloaded.async);
+				} else {
+					loadTasks.add(unloaded.async);
+					continue;
+				}
 
 				Path path = resourcePaths.get(unloaded.name);
 				Resource resource = null;
@@ -151,7 +160,7 @@ public class ResourceManager {
 
 				// pass the resource onto the main thread and have the
 				// main thread call the async onLoad function
-				loaded.add(new LoadedResource(unloaded.name, unloaded.async, resource));
+				loaded.add(new LoadedResource(unloaded.name, resource));
 			}
 		}
 	}
@@ -174,13 +183,11 @@ public class ResourceManager {
 
 		public String name;
 		public Resource resource;
-		public AsyncLoad async;
 
-		public LoadedResource(String name, AsyncLoad async, Resource resource) {
+		public LoadedResource(String name, Resource resource) {
 
 			this.name = name;
 			this.resource = resource;
-			this.async = async;
 		}
 	}
 
