@@ -264,8 +264,15 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 		if (box == null)
 			return;
 
-		if (box.color != null)
+		if (box.color != null) {
 			setColor(box.color);
+
+			if (box.color.getAlpha() != 255) {
+				GL11.glEnable(GL11.GL_BLEND);
+			} else {
+				GL11.glDisable(GL11.GL_BLEND);
+			}
+		}
 
 		if (box.texture != null) {
 			drawTexture(box, getOpenGLTextureData(box.texture));

@@ -7,6 +7,8 @@ import gui.Panel;
 import gui.View;
 import main.Engine;
 
+import java.awt.*;
+
 public class CreateActivity extends Activity {
 
 	private Entity entity;
@@ -16,48 +18,39 @@ public class CreateActivity extends Activity {
 
 		View view = new View(Engine.renderEngine);
 		view.setlayout(new GUIBoxLayout());
+
+		Panel panel = new Panel();
+		panel.setSize(256, 1080);
+		panel.setBackgroundColor(new Color(31, 31, 31));
+		view.addChild(panel, 0);
+
 		setView(view);
 
 		LoadingActivity loading = new LoadingActivity();
-//		loading.loadElements(something);
 		createActivity(loading);
 	}
 
 	@Override
 	protected void onStart() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	protected void onResume() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	protected void onPause() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	protected void onStop() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	protected void onDestroy() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void onUpdate(int delta) {
-		// TODO Auto-generated method stub
-//		float[] location = entity.getLocation();
-//		location[0] += 0.02f;
-//		entity.setLocation(location);
 	}
 }

@@ -2,9 +2,12 @@ package activity;
 
 import entity.MaterialEntity;
 import game.Material;
+import game.Player;
 import game.SimpleModelGenerator;
+import graphics.ModelLoader;
 import gui.*;
 import main.Engine;
+import main.ResourceManager;
 import physics.*;
 import game.Level;
 import physics.Polygon;
@@ -66,7 +69,7 @@ public class LoadingActivity extends Activity {
 	public void onUpdate(int delta) {
 		// TODO Auto-generated method stub
 		percentComplete += ((float) delta) / 5;
-		if (percentComplete > 100) {
+//		if (percentComplete > 100) {
 
 			percentComplete = 100;
 			Activity.stopCurrentActivity();
@@ -91,7 +94,25 @@ public class LoadingActivity extends Activity {
 			entity.setLevel(Engine.level);
 			entity.setMaterial(material);
 			entity.setShape(new Polygon(verts));
-		}
+
+			Player player = new Player();
+			player.setLevel(Engine.level);
+			Vec2[] playerVertices = {
+					new Vec2(-0.35f, 0),
+					new Vec2(0.35f, 0),
+					new Vec2(0.35f, 1.8f),
+					new Vec2(-0.35f, 1.8f)};
+			Polygon meh = new Polygon(playerVertices);
+			PhysicsObjectDef objectDef = Engine.level.physicsEngine.getPhysicsObjectDef(PhysicsObject.Type.DYNAMIC, meh);
+			player.setPhysicsObject(objectDef);
+			player.setLocation(new float[]{-3, 0});
+
+			//lambda expressions make this pretty
+			ResourceManager.getResource(
+					"Player.obj",
+					loadedResource -> player.setModel((ModelLoader) loadedResource),
+					ModelLoader.class);
+//		}
 		loadingText.setText(String.format(loadingMessage, (int) percentComplete));
 	}
 }

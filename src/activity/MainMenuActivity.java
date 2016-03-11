@@ -23,7 +23,6 @@ public class MainMenuActivity extends Activity {
 				"untitled.png",
 				loadedResource -> image.setImage((Texture) loadedResource),
 				Texture.class);
-//		image.setImage(AssetManager.getTexture("untitled.png"));
 		view.addChild(image);
 		
 		Panel aligner = new Panel();
@@ -61,6 +60,14 @@ public class MainMenuActivity extends Activity {
 
 		Button quit = new Button();
 		quit.setText("Quit");
+		quit.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				if (e.getActionCommand().equals(Button.CLICKED))
+					Engine.close();
+			}
+		});
 		aligner.addChild(quit, 0);
 		
 		setView(view);

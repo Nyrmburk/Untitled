@@ -289,6 +289,16 @@ public abstract class GUIElement {
 		this.prefSize = prefSize;
 	}
 
+	public Dimension getMinimumSize() {
+
+		return minSize;
+	}
+
+	public Dimension getMaximumSize() {
+
+		return maxSize;
+	}
+
 	public void setBounds(Rectangle rect) {
 
 		setBounds(rect.x, rect.y, rect.width, rect.height);

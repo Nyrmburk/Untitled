@@ -13,6 +13,13 @@ import java.util.concurrent.*;
  */
 public class ResourceManager {
 
+	/* TODO find a way to consolidate requests.
+	* Currently, if there is a lot of requests for the same object,
+	* each request will load the resource. This is bad because the
+	* resource should only be loaded once and all the calls for that
+	* resource should be deferred until it is loaded.
+	*/
+
 	private static final Path RESOURCE_PATH = Paths.get("res");
 
 	private static HashMap<String, Resource> resources = new HashMap<>();
@@ -54,7 +61,7 @@ public class ResourceManager {
 
 	public static void update(int delta) {
 
-		updateStaleResources(delta);
+//		updateStaleResources(delta);
 		finishAsyncLoads();
 	}
 
@@ -63,15 +70,17 @@ public class ResourceManager {
 		// check for stale resources
 		for (Resource resource : resources.values()) {
 
-			if (resource.getReferenceCount() == 0)
-				staleResources.put(resource, 0);
+			if (resource.getReferenceCount() == 0) {
+				if (!staleResources.containsKey(resource))
+					staleResources.put(resource, 0);
+			}
 		}
 
 		// if a stale resource is no longer stale, remove it from the stale resources
 		Iterator<Resource> itNotStale = staleResources.keySet().iterator();
 		while (itNotStale.hasNext()) {
 
-			if (itNotStale.next().getReferenceCount() != 0)
+			if (itNotStale.next().getReferenceCount() > 0)
 				itNotStale.remove();
 		}
 
@@ -83,6 +92,7 @@ public class ResourceManager {
 
 			if (time > staleTime) {
 
+				System.out.println("unloading " + stale.getKey().getName());
 				stale.getKey().release();
 				itTime.remove();
 			} else {
@@ -95,6 +105,7 @@ public class ResourceManager {
 
 		while (!loaded.isEmpty()) {
 			LoadedResource resource = loaded.poll();
+			resources.put(resource.name, resource.resource);
 			resource.async.onLoad(resource.resource);
 		}
 	}
@@ -136,11 +147,11 @@ public class ResourceManager {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				System.out.println(resource.getName() + ": " + (System.currentTimeMillis() - time) + " milliseconds");
+				System.out.println("loaded " + resource.getName() + ": " + (System.currentTimeMillis() - time) + " ms");
 
 				// pass the resource onto the main thread and have the
 				// main thread call the async onLoad function
-				loaded.add(new LoadedResource(resource, unloaded.async));
+				loaded.add(new LoadedResource(unloaded.name, unloaded.async, resource));
 			}
 		}
 	}
@@ -161,11 +172,13 @@ public class ResourceManager {
 
 	private static class LoadedResource {
 
+		public String name;
 		public Resource resource;
 		public AsyncLoad async;
 
-		public LoadedResource(Resource resource, AsyncLoad async) {
+		public LoadedResource(String name, AsyncLoad async, Resource resource) {
 
+			this.name = name;
 			this.resource = resource;
 			this.async = async;
 		}

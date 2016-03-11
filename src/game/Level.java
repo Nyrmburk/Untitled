@@ -75,7 +75,6 @@ public class Level extends Resource {
 		material.setModelGenerator(new SimpleModelGenerator());
 		MaterialEntity floor = new MaterialEntity();
 		floor.setLevel(this);
-//		floor.setModel(AssetManager.getModel("floor.obj"));
 		Vec2[] floorVertices = {
 				new Vec2(-100, 1),
 				new Vec2(-100, -1),
@@ -88,23 +87,5 @@ public class Level extends Resource {
 		objectDef.setDensity(1);
 		floor.setPhysicsObject(objectDef);
 		floor.setLocation(new float[]{0, -5});
-
-		Player player = new Player();
-		player.setLevel(this);
-		Vec2[] playerVertices = {
-				new Vec2(-0.35f, 0),
-				new Vec2(0.35f, 0),
-				new Vec2(0.35f, 1.8f),
-				new Vec2(-0.35f, 1.8f)};
-		shape = new Polygon(playerVertices);
-		objectDef = this.physicsEngine.getPhysicsObjectDef(PhysicsObject.Type.DYNAMIC, shape);
-		player.setPhysicsObject(objectDef);
-		player.setLocation(new float[]{-3, 0});
-
-		//lambda expressions make this pretty
-		ResourceManager.getResource(
-				"Player.obj",
-				loadedResource -> player.setModel((ModelLoader) loadedResource),
-				ModelLoader.class);
 	}
 }
