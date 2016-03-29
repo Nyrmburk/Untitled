@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="res"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/jars/lwjgl_util.jar">
 		<attributes>
@@ -26,5 +27,13 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/unbescape-1.1.1.RELEASE"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/xml-apis-1.4.01"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/cssbox-4.10"/>
+	<classpathentry kind="lib" path="lib/jars/antlr-runtime-3.5.2.jar"/>
+	<classpathentry kind="lib" path="lib/jars/cssbox-4.10.jar"/>
+	<classpathentry kind="lib" path="lib/jars/jstyleparser-1.21.jar"/>
+	<classpathentry kind="lib" path="lib/jars/nekohtml-1.9.22.jar"/>
+	<classpathentry kind="lib" path="lib/jars/slf4j-api-1.7.12.jar"/>
+	<classpathentry kind="lib" path="lib/jars/unbescape-1.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/jars/xercesImpl-2.11.0.jar"/>
+	<classpathentry kind="lib" path="lib/jars/xml-apis-1.4.01.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
