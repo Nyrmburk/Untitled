@@ -317,10 +317,10 @@ class GUIContentHandler extends DefaultHandler {
 //			Container parent = (Container) tempElements.get(linkParent.get(child));
 //			if (parent == null) continue;
 //
-//			Object constraint = linkConstraint.get(child);
+//			Object Constraint = linkConstraint.get(child);
 //
-//			if (constraint != null)
-//				parent.addChild(child, constraint);
+//			if (Constraint != null)
+//				parent.addChild(child, Constraint);
 //			else parent.addChild(child);
 //
 //			elements.remove(child.getName());

@@ -1,10 +1,8 @@
 package activity;
 
 import entity.Entity;
-import gui.GUIBoxLayout;
-import gui.GUIElement;
+import gui.*;
 import gui.Panel;
-import gui.View;
 import main.Engine;
 
 import java.awt.*;
@@ -17,12 +15,19 @@ public class CreateActivity extends Activity {
 	protected void onCreate() {
 
 		View view = new View(Engine.renderEngine);
-		view.setlayout(new GUIBoxLayout());
+		view.setlayout(new GUIProportionLayout());
 
 		Panel panel = new Panel();
-		panel.setSize(256, 1080);
 		panel.setBackgroundColor(new Color(31, 31, 31, 220));
-		view.addChild(panel, 0);
+		view.getLayout().setConstraint(panel, new GUIProportionLayout.Anchor(
+				view, GUIProportionLayout.Constraint.LEFT,
+				GUIProportionLayout.Constraint.RIGHT, 0.25f,
+				view, GUIProportionLayout.Constraint.RIGHT));
+		view.getLayout().setConstraint(panel, new GUIProportionLayout.Anchor(
+				view, GUIProportionLayout.Constraint.TOP,
+				GUIProportionLayout.Constraint.BOTTOM, 1f,
+				view, GUIProportionLayout.Constraint.BOTTOM));
+		view.addChild(panel);
 
 		setView(view);
 
