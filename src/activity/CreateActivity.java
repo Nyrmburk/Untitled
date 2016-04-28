@@ -21,7 +21,7 @@ public class CreateActivity extends Activity {
 
 		Panel panel = new Panel();
 		panel.setSize(256, 1080);
-		panel.setBackgroundColor(new Color(31, 31, 31));
+		panel.setBackgroundColor(new Color(31, 31, 31, 220));
 		view.addChild(panel, 0);
 
 		setView(view);
