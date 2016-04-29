@@ -2,6 +2,7 @@ package activity;
 
 import entity.Entity;
 import gui.*;
+import gui.Button;
 import gui.Panel;
 import main.Engine;
 
@@ -17,8 +18,8 @@ public class CreateActivity extends Activity {
 		View view = new View(Engine.renderEngine);
 		view.setlayout(new GUIProportionLayout());
 
-		Panel panel = new Panel();
-		panel.setBackgroundColor(new Color(31, 31, 31, 220));
+		Panel panel = new Panel(new GUIBoxLayout());
+		panel.setBackgroundColor(new Color(220, 220, 220, 200));
 		view.getLayout().setConstraint(panel, new GUIProportionLayout.Anchor(
 				view, GUIProportionLayout.Constraint.LEFT,
 				GUIProportionLayout.Constraint.RIGHT, 0.25f,
@@ -28,6 +29,18 @@ public class CreateActivity extends Activity {
 				GUIProportionLayout.Constraint.BOTTOM, 1f,
 				view, GUIProportionLayout.Constraint.BOTTOM));
 		view.addChild(panel);
+
+		Button select = new Button();
+		select.setText("Select");
+		panel.addChild(select, 0);
+
+		Button Bezier = new Button();
+		Bezier.setText("Bezier");
+		panel.addChild(Bezier, 0);
+
+		Button Vertex = new Button();
+		Vertex.setText("Vertex");
+		panel.addChild(Vertex, 0);
 
 		setView(view);
 

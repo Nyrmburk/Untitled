@@ -66,6 +66,7 @@ public class GUIProportionLayout extends GUILayoutManager {
 				}
 			}
 			child.setBounds(rect);
+			child.setPreferredSize(rect.getSize());
 		}
 	}
 
