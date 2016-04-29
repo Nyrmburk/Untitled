@@ -41,8 +41,9 @@ public class GUIProportionLayout extends GUILayoutManager {
 		for (GUIElement child : parent.children) {
 
 			List<Anchor> anchorList = constraints.get(child);
-
-			Rectangle rect = new Rectangle(child.getBounds());
+			if (anchorList == null)
+				continue;
+			Rectangle rect = new Rectangle(child.getPreferredSize());
 
 			for (Anchor anchor : anchorList) {
 

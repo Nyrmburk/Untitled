@@ -1,6 +1,6 @@
 package activity;
 
-import entity.Entity;
+import draftform.Draftform;
 import gui.*;
 import gui.Button;
 import gui.Panel;
@@ -10,7 +10,7 @@ import java.awt.*;
 
 public class CreateActivity extends Activity {
 
-	private Entity entity;
+	Draftform draftform;
 
 	@Override
 	protected void onCreate() {

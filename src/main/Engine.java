@@ -2,7 +2,6 @@ package main;
 
 import activity.MainMenuActivity;
 import graphics.*;
-import gui.css.CSSCanvas;
 import input.*;
 
 import java.awt.image.BufferedImage;
@@ -309,7 +308,6 @@ public class Engine {
 //		canvas.setBounds(new Dimension(100, 100));
 	}
 
-	private CSSCanvas canvas;
 	public void renderUI() {
 
 		Camera.UI();
