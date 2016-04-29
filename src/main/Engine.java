@@ -229,7 +229,7 @@ public class Engine {
 
 		BufferedImage image = null;
 		try {
-			image = ImageIO.read(new File("C:\\Users\\Nyrmburk\\Documents\\GitHub\\untitled\\dev\\plain.9.png"));
+			image = ImageIO.read(new File("dev\\plain.9.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
