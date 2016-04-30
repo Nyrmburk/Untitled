@@ -5,12 +5,17 @@ import gui.*;
 import gui.Button;
 import gui.Panel;
 import main.Engine;
+import tools.*;
+import tools.Toolkit;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class CreateActivity extends Activity {
 
 	Draftform draftform;
+	tools.Toolkit toolkit = new Toolkit(draftform);
 
 	@Override
 	protected void onCreate() {
@@ -22,7 +27,7 @@ public class CreateActivity extends Activity {
 		panel.setBackgroundColor(new Color(220, 220, 220, 200));
 		view.getLayout().setConstraint(panel, new GUIProportionLayout.Anchor(
 				view, GUIProportionLayout.Constraint.LEFT,
-				GUIProportionLayout.Constraint.RIGHT, 0.25f,
+				GUIProportionLayout.Constraint.RIGHT, 0.2f,
 				view, GUIProportionLayout.Constraint.RIGHT));
 		view.getLayout().setConstraint(panel, new GUIProportionLayout.Anchor(
 				view, GUIProportionLayout.Constraint.TOP,
@@ -32,15 +37,42 @@ public class CreateActivity extends Activity {
 
 		Button select = new Button();
 		select.setText("Select");
+		select.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (e.getActionCommand().equals(Button.CLICKED)) {
+					toolkit.setTool(new SelectTool());
+					System.out.println("Select");
+				}
+			}
+		});
 		panel.addChild(select, 0);
 
-		Button Bezier = new Button();
-		Bezier.setText("Bezier");
-		panel.addChild(Bezier, 0);
+		Button pen = new Button();
+		pen.setText("Pen");
+		pen.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (e.getActionCommand().equals(Button.CLICKED)) {
+					toolkit.setTool(new PenTool());
+					System.out.println("Pen");
+				}
+			}
+		});
+		panel.addChild(pen, 0);
 
-		Button Vertex = new Button();
-		Vertex.setText("Vertex");
-		panel.addChild(Vertex, 0);
+		Button vertex = new Button();
+		vertex.setText("Vertex");
+		vertex.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (e.getActionCommand().equals(Button.CLICKED)) {
+					toolkit.setTool(new VertexTool());
+					System.out.println("Vertex");
+				}
+			}
+		});
+		panel.addChild(vertex, 0);
 
 		setView(view);
 
