@@ -3,9 +3,21 @@ package gui;
 /**
  * Created by Nyrmburk on 4/30/2016.
  */
-public interface ActionListener {
+public abstract class ActionListener {
 
-	void update(int delta);
+	private GUIElement parent;
 
-	void actionPerformed();
+	public abstract void update(int delta);
+
+	public abstract void actionPerformed();
+
+	protected GUIElement getParent() {
+
+		return parent;
+	}
+
+	protected void setParent(GUIElement parent) {
+
+		this.parent = parent;
+	}
 }

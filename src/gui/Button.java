@@ -1,18 +1,10 @@
 package gui;
 
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import graphics.Texture;
 
-public class Button extends GUIElement implements PointerListener {
-
-	public static final String PRESSED = "pressed";
-	public static final String RELEASED = "released";
-	public static final String CLICKED = "clicked";
-	public static final String ENTERED = "entered";
-	public static final String EXITED = "exited";
+public class Button extends GUIElement {
 
 	public static final int FOCUS_COLOR = 0;
 	public static final int UNFOCUS_COLOR = 1;
@@ -29,8 +21,36 @@ public class Button extends GUIElement implements PointerListener {
 
 	private int currentColorIdentifier = UNFOCUS_COLOR;
 
-	TextBox textBox;
-	Texture texture;
+	private TextBox textBox;
+	private Texture texture;
+
+	{
+		addActionListener(new PointerListener() {
+
+			@Override
+			public void actionPerformed() {
+				switch (getCurrentState()) {
+
+					case ENTER:
+						setBackgroundColor(focusColor);
+						currentColorIdentifier = FOCUS_COLOR;
+						break;
+					case EXIT:
+						setBackgroundColor(unfocusColor);
+						currentColorIdentifier = UNFOCUS_COLOR;
+						break;
+					case PRESS:
+						setBackgroundColor(focusColor);
+						currentColorIdentifier = FOCUS_COLOR;
+						break;
+					case RELEASE:
+						setBackgroundColor(focusColor);
+						currentColorIdentifier = FOCUS_COLOR;
+						break;
+				}
+			}
+		});
+	}
 
 	public void setColor(int identifier, Color color) {
 
@@ -83,64 +103,6 @@ public class Button extends GUIElement implements PointerListener {
 	public boolean hasImage() {
 		
 		return texture != null;
-	}
-
-	public void onPress() {
-
-		setBackgroundColor(selectedColor);
-		currentColorIdentifier = SELECTED_COLOR;
-
-		for (ActionListener listener : listeners)
-			if (listener != null)
-				listener.actionPerformed(new ActionEvent(this,
-						ActionEvent.ACTION_PERFORMED, PRESSED));
-		lastPressed = true;
-	}
-
-	public void onRelease() {
-
-		setBackgroundColor(focusColor);
-		currentColorIdentifier = FOCUS_COLOR;
-
-		for (ActionListener listener : listeners)
-			if (listener != null)
-				listener.actionPerformed(new ActionEvent(this,
-						ActionEvent.ACTION_PERFORMED, RELEASED));
-
-		if (lastPressed)
-			onClick();
-		lastPressed = false;
-	}
-
-	public void onClick() {
-
-		for (ActionListener listener : listeners)
-			if (listener != null)
-				listener.actionPerformed(new ActionEvent(this,
-						ActionEvent.ACTION_PERFORMED, CLICKED));
-	}
-
-	public void onEnter() {
-
-		setBackgroundColor(focusColor);
-		currentColorIdentifier = FOCUS_COLOR;
-
-		for (ActionListener listener : listeners)
-			if (listener != null)
-				listener.actionPerformed(new ActionEvent(this,
-						ActionEvent.ACTION_PERFORMED, ENTERED));
-	}
-
-	public void onExit() {
-
-		setBackgroundColor(unfocusColor);
-		currentColorIdentifier = UNFOCUS_COLOR;
-
-		for (ActionListener listener : listeners)
-			if (listener != null)
-				listener.actionPerformed(new ActionEvent(this,
-						ActionEvent.ACTION_PERFORMED, EXITED));
-		lastPressed = false;
 	}
 
 	@Override

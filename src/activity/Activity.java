@@ -24,73 +24,6 @@ public abstract class Activity {
 	protected abstract void onStop();
 	protected abstract void onDestroy();
 	
-	private static PointerListener previousListener;
-	private static PointerListener currentListener;
-
-	private InputContext inputContext;
-	private static final String ACTIVITY_INPUT = "pointer_input";
-	private static MultiInput pointerInput = new MultiInput(ACTIVITY_INPUT) {
-
-		{
-			this.setInputs(new SimpleInput("x_axis"), new SimpleInput("y_axis"));
-		}
-
-		@Override
-		public void onUpdate(Input[] inputs, int delta) {
-
-			int x = (int) inputs[0].getValue();
-			int y = (int) inputs[1].getValue();
-
-			Point pointer = new Point(x, y);
-
-			Activity currentActivity = Activity.currentActivity();
-			GUIElement element = currentActivity.getView().getMouseOver(pointer);
-
-			if (previousListener != null && previousListener != element) {
-
-				previousListener.onExit();
-				previousListener = null;
-			}
-
-			if (element != null && element instanceof PointerListener) {
-				// System.out.println(element);
-				currentListener = (PointerListener) element;
-
-				if (previousListener != currentListener) {
-
-					currentListener.onEnter();
-					previousListener = currentListener;
-				}
-			} else {
-
-				currentListener = null;
-			}
-		}
-	};
-	private static Button pointerButton = new Button("primary") {
-
-		{
-//			Engine.pointer.addInput(this, );
-			Binding.delegate(this);
-		}
-
-		@Override
-		public void onPress() {
-			if (currentListener != null)
-				currentListener.onPress();
-		}
-
-		@Override
-		public void onRelease() {
-			if (currentListener != null)
-				currentListener.onRelease();
-		}
-
-		@Override
-		public void onHold(int delta) {
-		}
-	};
-	
 	public abstract void onUpdate(int delta);
 	
 	public static void update(int delta) {
@@ -133,11 +66,6 @@ public abstract class Activity {
 		}
 		
 		stack.push(activity);
-
-		activity.inputContext = new InputContext();
-		activity.inputContext.setAsCurrentContext();
-		activity.inputContext.inputs.add(pointerInput);
-		activity.inputContext.inputs.add(pointerButton);
 
 		activity.onCreate();
 		startActivity(activity);

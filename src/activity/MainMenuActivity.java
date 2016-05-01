@@ -1,8 +1,6 @@
 package activity;
 
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import graphics.Texture;
 import gui.*;
@@ -35,12 +33,10 @@ public class MainMenuActivity extends Activity {
 
 		Button create = new Button();
 		create.setText("Create");
-		create.addActionListener(new ActionListener() {
-
+		create.addActionListener(new PointerListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-
-				if (e.getActionCommand().equals(Button.CLICKED))
+			public void actionPerformed() {
+				if (this.getCurrentState() == State.CLICK)
 					create();
 			}
 		});
@@ -48,11 +44,10 @@ public class MainMenuActivity extends Activity {
 
 		Button options = new Button();
 		options.setText("Options");
-		options.addActionListener(new ActionListener() {
+		options.addActionListener(new PointerListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-
-				if (e.getActionCommand().equals(Button.CLICKED))
+			public void actionPerformed() {
+				if (this.getCurrentState() == State.CLICK)
 					createActivity(new BindingActivity());
 			}
 		});
@@ -60,11 +55,10 @@ public class MainMenuActivity extends Activity {
 
 		Button quit = new Button();
 		quit.setText("Quit");
-		quit.addActionListener(new ActionListener() {
+		quit.addActionListener(new PointerListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-
-				if (e.getActionCommand().equals(Button.CLICKED))
+			public void actionPerformed() {
+				if (this.getCurrentState() == State.CLICK)
 					Engine.close();
 			}
 		});

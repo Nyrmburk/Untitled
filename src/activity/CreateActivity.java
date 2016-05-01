@@ -9,8 +9,6 @@ import tools.*;
 import tools.Toolkit;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class CreateActivity extends Activity {
 
@@ -22,6 +20,13 @@ public class CreateActivity extends Activity {
 
 		View view = new View(Engine.renderEngine);
 		view.setlayout(new GUIProportionLayout());
+		view.addActionListener(new PointerListener() {
+			@Override
+			public void actionPerformed() {
+				if (getCurrentState() == State.CLICK)
+					System.out.println(getPointerLocation());
+			}
+		});
 
 		Panel panel = new Panel(new GUIBoxLayout());
 		panel.setBackgroundColor(new Color(220, 220, 220, 200));
@@ -37,10 +42,10 @@ public class CreateActivity extends Activity {
 
 		Button select = new Button();
 		select.setText("Select");
-		select.addActionListener(new ActionListener() {
+		select.addActionListener(new PointerListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (e.getActionCommand().equals(Button.CLICKED)) {
+			public void actionPerformed() {
+				if (this.getCurrentState() == State.CLICK) {
 					toolkit.setTool(new SelectTool());
 					System.out.println("Select");
 				}
@@ -50,10 +55,10 @@ public class CreateActivity extends Activity {
 
 		Button pen = new Button();
 		pen.setText("Pen");
-		pen.addActionListener(new ActionListener() {
+		pen.addActionListener(new PointerListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (e.getActionCommand().equals(Button.CLICKED)) {
+			public void actionPerformed() {
+				if (this.getCurrentState() == State.CLICK) {
 					toolkit.setTool(new PenTool());
 					System.out.println("Pen");
 				}
@@ -63,10 +68,10 @@ public class CreateActivity extends Activity {
 
 		Button vertex = new Button();
 		vertex.setText("Vertex");
-		vertex.addActionListener(new ActionListener() {
+		vertex.addActionListener(new PointerListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (e.getActionCommand().equals(Button.CLICKED)) {
+			public void actionPerformed() {
+				if (this.getCurrentState() == State.CLICK) {
 					toolkit.setTool(new VertexTool());
 					System.out.println("Vertex");
 				}

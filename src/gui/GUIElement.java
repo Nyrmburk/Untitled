@@ -1,7 +1,6 @@
 package gui;
 
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 // TODO make the validity system work better and add documentation.
@@ -69,11 +68,12 @@ public abstract class GUIElement {
 		width = 0;
 		height = 0;
 		insets = new Insets(0, 0, 0, 0);
-		listeners = new ArrayList<ActionListener>();
+		listeners = new ArrayList<>();
 	}
 
 	public void addActionListener(ActionListener actionListener) {
 
+		actionListener.setParent(this);
 		this.listeners.add(actionListener);
 	}
 

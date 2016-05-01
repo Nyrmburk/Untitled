@@ -4,6 +4,7 @@ import activity.MainMenuActivity;
 import graphics.*;
 import input.*;
 
+import java.awt.im.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import input.InputContext;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Mouse;
