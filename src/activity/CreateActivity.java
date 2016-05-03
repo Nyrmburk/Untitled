@@ -1,6 +1,7 @@
 package activity;
 
 import draftform.Draftform;
+import draftform.Vec2;
 import gui.*;
 import gui.Button;
 import gui.Panel;
@@ -12,7 +13,7 @@ import java.awt.*;
 
 public class CreateActivity extends Activity {
 
-	Draftform draftform;
+	Draftform draftform = new Draftform();
 	tools.Toolkit toolkit = new Toolkit(draftform);
 
 	@Override
@@ -23,8 +24,19 @@ public class CreateActivity extends Activity {
 		view.addActionListener(new PointerListener() {
 			@Override
 			public void actionPerformed() {
-				if (getCurrentState() == State.CLICK)
-					System.out.println(getPointerLocation());
+
+				Point point = getPointerLocation();
+				Vec2 vec = new Vec2(point.x, point.y);
+
+//				System.out.println(getCurrentState());
+				if (getCurrentState() == State.PRESS)
+					toolkit.start(vec);
+				if (getCurrentState() == State.DRAG)
+					toolkit.modify(vec);
+				if (getCurrentState() == State.RELEASE)
+					toolkit.end();
+
+//				System.out.println(vec);
 			}
 		});
 

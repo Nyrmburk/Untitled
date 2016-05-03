@@ -28,12 +28,17 @@ public abstract class PointerListener extends ActionListener {
 	private static List<PointerListener> pointerListeners = new LinkedList<>();
 	private static LinkedList<PointerListener> activeListeners = new LinkedList<>();
 	private static LinkedList<PointerListener> previousListeners = new LinkedList<>();
+	private static LinkedList<PointerListener> dragListeners = new LinkedList<>();
+
 
 	private static final String ACTIVITY_INPUT = "pointer_input";
 
 	private static GUIElement previousElement;
 	private static GUIElement currentElement;
 
+	private static GUIElement dragElement;
+
+	private static Point previousPointerLocation;
 	private static Point pointerLocation;
 
 	private State currentState;
@@ -61,6 +66,7 @@ public abstract class PointerListener extends ActionListener {
 			int x = (int) inputs[0].getValue();
 			int y = (int) inputs[1].getValue();
 
+			previousPointerLocation = pointerLocation;
 			pointerLocation = new Point(x, y);
 
 			Activity currentActivity = Activity.currentActivity();
@@ -95,6 +101,22 @@ public abstract class PointerListener extends ActionListener {
 					}
 					previousElement = currentElement;
 				}
+
+				if (!previousPointerLocation.equals(pointerLocation)) {
+
+					for (PointerListener listener : activeListeners) {
+						listener.setCurrentState(State.MOVE);
+						listener.actionPerformed();
+					}
+
+					if (dragElement != null) {
+
+						for (PointerListener listener : dragListeners) {
+							listener.setCurrentState(State.DRAG);
+							listener.actionPerformed();
+						}
+					}
+				}
 			}
 		}
 	};
@@ -111,6 +133,10 @@ public abstract class PointerListener extends ActionListener {
 		@Override
 		public void onPress() {
 			if (currentElement != null) {
+
+				dragElement = currentElement;
+				dragListeners.addAll(activeListeners);
+
 				for (PointerListener listener : activeListeners) {
 					listener.setCurrentState(State.PRESS);
 					listener.actionPerformed();
@@ -121,6 +147,7 @@ public abstract class PointerListener extends ActionListener {
 
 		@Override
 		public void onRelease() {
+
 			if (currentElement != null) {
 				for (PointerListener listener : activeListeners) {
 					listener.setCurrentState(State.RELEASE);
@@ -133,6 +160,9 @@ public abstract class PointerListener extends ActionListener {
 					listener.actionPerformed();
 				}
 			}
+
+			dragElement = null;
+			dragListeners.clear();
 		}
 
 		@Override
