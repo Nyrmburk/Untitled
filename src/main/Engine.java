@@ -2,9 +2,11 @@ package main;
 
 import activity.MainMenuActivity;
 import graphics.*;
+import graphics.OpenGL.GLErrorHelper;
+import graphics.OpenGL.ShaderProgram;
+import graphics.OpenGL.SimpleOpenGL3_0RenderEngine;
 import input.*;
 
-import java.awt.im.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;

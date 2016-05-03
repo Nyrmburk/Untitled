@@ -1,4 +1,4 @@
-package graphics;
+package graphics.OpenGL;
 
 import java.io.BufferedReader;
 import java.io.File;

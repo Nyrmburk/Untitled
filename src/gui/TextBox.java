@@ -50,10 +50,10 @@ public class TextBox extends GUIElement {
 	@Override
 	protected void layout() {
 		if (doesWordwrap()) {
-			lines = formatLines(getText(), getFont().fontMetrics, getWidth());
+			lines = formatLines(getText(), getFont().getFontMetrics(), getWidth());
 		} else {
 
-			setSize(getFont().fontMetrics.stringWidth(text), getFont().fontMetrics.getHeight());
+			setSize(getFont().getFontMetrics().stringWidth(text), getFont().getFontMetrics().getHeight());
 		}
 	}
 
@@ -118,7 +118,7 @@ public class TextBox extends GUIElement {
 				box.texts[i].text = lines[i];
 				box.texts[i].color = getForegroundColor();
 				box.texts[i].font = font;
-				y += font.fontMetrics.getHeight();
+				y += font.getFontMetrics().getHeight();
 			}
 		} else {
 

@@ -87,10 +87,10 @@ public class RenderContext {
 		this.engine = engine;
 	}
 
-	protected class InstancedModel {
+	public class InstancedModel {
 
-		ModelLoader model;
-		TreeMap<Integer, InstanceAttributes> attributes;
+		public ModelLoader model;
+		public TreeMap<Integer, InstanceAttributes> attributes;
 
 		InstancedModel(ModelLoader model) {
 

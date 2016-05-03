@@ -1,7 +1,5 @@
 package graphics;
 
-import main.Engine;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.SortedSet;
@@ -12,36 +10,27 @@ import java.util.TreeSet;
  */
 public class GraphicsFont {
 
-	public static final int CHARS = 256;
+	private static final int CHARS = 256;
 
-	/**
-	 * The texture that holds the characters
-	 */
-	public Texture atlas;
+	private Texture atlas;
 
-	/**
-	 * FontMetrics for getting the advance of the characters
-	 */
-	public FontMetrics fontMetrics;
+	private FontMetrics fontMetrics;
 
-	public Font font;
+	private Font font;
 
-	/**
-	 * pixel bounds of each character
-	 */
-	Rectangle[] bounds = new Rectangle[CHARS];
+	private Rectangle[] bounds = new Rectangle[CHARS];
 
 	private static final int OFFSET = 2;
 
 	public GraphicsFont(Font font) {
 
-		this.font = font;
+		this.setFont(font);
 
 		//create a Graphics2D to get the character sizes
 		Graphics2D fontGraphics = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB).createGraphics();
 		fontGraphics.setFont(font);
 		fontGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-		fontMetrics = fontGraphics.getFontMetrics();
+		setFontMetrics(fontGraphics.getFontMetrics());
 
 		// create an array of all the characters from 0 - 255
 		char[] chars = new char[CHARS];
@@ -57,9 +46,9 @@ public class GraphicsFont {
 			if (Character.isWhitespace(i) || !font.canDisplay(i))
 				continue;
 
-			bounds[i] = new Rectangle(0, 0, fontMetrics.charWidth(i), fontMetrics.getHeight() + OFFSET);
-			bounds[i].width += OFFSET;//fix an issue with chars overlapping
-			sortedRects.add(new CharRect(i, bounds[i]));
+			getBounds()[i] = new Rectangle(0, 0, getFontMetrics().charWidth(i), getFontMetrics().getHeight() + OFFSET);
+			getBounds()[i].width += OFFSET;//fix an issue with chars overlapping
+			sortedRects.add(new CharRect(i, getBounds()[i]));
 		}
 
 		//Pack the character bounds into the smallest multiple of 2 rectangle
@@ -85,14 +74,14 @@ public class GraphicsFont {
 			gr.setColor(Color.WHITE);
 			if (rect.c == 'j')
 				rect.x++;
-			gr.drawChars(new char[]{rect.c}, 0, 1, rect.x + 1, rect.y + fontMetrics.getAscent());
+			gr.drawChars(new char[]{rect.c}, 0, 1, rect.x + 1, rect.y + getFontMetrics().getAscent());
 			rect.width -= OFFSET - 1;
 			rect.height -= OFFSET - 1;
-			bounds[rect.c].setBounds(rect);
+			getBounds()[rect.c].setBounds(rect);
 		}
 
-		atlas = new Texture();
-		atlas.setTexture(image);
+		setAtlas(new Texture());
+		getAtlas().setTexture(image);
 
 //		try {
 //			ImageIO.write(image, "png", new File(font.toString() + ".png"));
@@ -101,6 +90,47 @@ public class GraphicsFont {
 //			e.printStackTrace();
 //			System.out.println("failed");
 //		}
+	}
+
+	/**
+	 * The texture that holds the characters
+	 */
+	public Texture getAtlas() {
+		return atlas;
+	}
+
+	public void setAtlas(Texture atlas) {
+		this.atlas = atlas;
+	}
+
+	/**
+	 * FontMetrics for getting the advance of the characters
+	 */
+	public FontMetrics getFontMetrics() {
+		return fontMetrics;
+	}
+
+	public void setFontMetrics(FontMetrics fontMetrics) {
+		this.fontMetrics = fontMetrics;
+	}
+
+	public Font getFont() {
+		return font;
+	}
+
+	public void setFont(Font font) {
+		this.font = font;
+	}
+
+	/**
+	 * pixel bounds of each character
+	 */
+	public Rectangle[] getBounds() {
+		return bounds;
+	}
+
+	public void setBounds(Rectangle[] bounds) {
+		this.bounds = bounds;
 	}
 
 	private class Packer {

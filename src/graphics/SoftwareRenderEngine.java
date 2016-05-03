@@ -130,7 +130,7 @@ public class SoftwareRenderEngine extends RenderEngine {
 
 	public void drawString(int x, int y, GraphicsFont font, String text) {
 
-		graphics.setFont(font.font);
+		graphics.setFont(font.getFont());
 		graphics.drawString(text, x, y);
 	}
 	

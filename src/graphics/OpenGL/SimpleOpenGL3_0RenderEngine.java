@@ -1,4 +1,4 @@
-package graphics;
+package graphics.OpenGL;
 
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -12,6 +12,7 @@ import java.util.HashSet;
 
 import javax.swing.JFrame;
 
+import graphics.*;
 import gui.Container;
 import gui.ContextBox;
 import gui.GUIElement;
@@ -330,13 +331,15 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 
 	private void drawString(int x, int y, GraphicsFont font, String text) {
 
-		FontMetrics metrics = font.fontMetrics;
-		OpenGLTextureData texture = getOpenGLTextureData(font.atlas);
+		FontMetrics metrics = font.getFontMetrics();
+		OpenGLTextureData texture = getOpenGLTextureData(font.getAtlas());
 		texture.bind();
 
 		Rectangle placement;
 		int advance = x;
 		int height = y;
+
+		Rectangle[] allBounds = font.getBounds();
 
 		GL11.glEnable(GL11.GL_BLEND);
 		for (int i = 0; i < text.length(); i++) {
@@ -346,7 +349,7 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 			if (c > 255)
 				c = ' ';
 
-			Rectangle bounds = font.bounds[c];
+			Rectangle bounds = allBounds[c];
 
 			if (bounds != null) {
 
