@@ -2,7 +2,7 @@ package game;
 
 import graphics.ModelLoader;
 import physics.Polygon;
-import physics.Vec2;
+import main.Vec2;
 
 /**
  * Created by Nyrmburk on 3/9/2016.

@@ -2,10 +2,9 @@ package game;
 
 import entity.Entity;
 import entity.MaterialEntity;
-import graphics.ModelLoader;
 import graphics.RenderContext;
 import main.Resource;
-import main.ResourceManager;
+import main.Vec2;
 import physics.*;
 
 import java.io.IOException;

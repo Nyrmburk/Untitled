@@ -1,4 +1,4 @@
-package graphics.OpenGL;
+package graphics.opengl;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;

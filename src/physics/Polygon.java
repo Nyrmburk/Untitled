@@ -1,5 +1,7 @@
 package physics;
 
+import main.Vec2;
+
 import java.util.LinkedList;
 import java.util.List;
 

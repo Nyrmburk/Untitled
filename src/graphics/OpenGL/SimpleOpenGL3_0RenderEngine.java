@@ -1,4 +1,4 @@
-package graphics.OpenGL;
+package graphics.opengl;
 
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -394,7 +394,7 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 	@Override
 	public String getRendererVersion() {
 
-		return "OpenGL " + GL11.glGetString(GL11.GL_VERSION);
+		return "opengl " + GL11.glGetString(GL11.GL_VERSION);
 	}
 
 	@Override

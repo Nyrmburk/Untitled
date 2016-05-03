@@ -2,9 +2,9 @@ package main;
 
 import activity.MainMenuActivity;
 import graphics.*;
-import graphics.OpenGL.GLErrorHelper;
-import graphics.OpenGL.ShaderProgram;
-import graphics.OpenGL.SimpleOpenGL3_0RenderEngine;
+import graphics.opengl.GLErrorHelper;
+import graphics.opengl.ShaderProgram;
+import graphics.opengl.SimpleOpenGL3_0RenderEngine;
 import input.*;
 
 import java.awt.image.BufferedImage;
@@ -23,7 +23,6 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 import activity.Activity;
-import physics.Vec2;
 import game.Level;
 
 public class Engine {

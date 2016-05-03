@@ -1,4 +1,4 @@
-package physics;
+package main;
 
 public class Vec2 {
 	

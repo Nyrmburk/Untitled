@@ -1,4 +1,4 @@
-package graphics.OpenGL;
+package graphics.opengl;
 
 import java.util.ArrayList;
 
