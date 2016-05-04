@@ -6,7 +6,7 @@ import gui.ContextBox;
 /**
  * Created by Nyrmburk on 5/3/2016.
  */
-public class GUI implements ModelConverter<ContextBox> {
+public class GUIConverter implements ModelConverter<ContextBox> {
 
 	public ModelLoader convert(ContextBox contextBox) {
 
