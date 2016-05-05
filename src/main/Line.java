@@ -17,6 +17,10 @@ public class Line {
 	public Line(int length, boolean loop) {
 
 		this.length = length;
+
+		vertices = new Vec2[length];
+		width = new float[length];
+		color = new int[length];
 		setLoop(loop);
 	}
 

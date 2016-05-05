@@ -1,11 +1,15 @@
 package activity;
 
+import draftform.Curve;
 import draftform.Draftform;
 import draftform.Vec2;
+import graphics.InstanceAttributes;
+import graphics.modelconverter.LineConverter;
 import gui.*;
 import gui.Button;
 import gui.Panel;
 import main.Engine;
+import main.Line;
 import tools.*;
 import tools.Toolkit;
 
@@ -15,6 +19,7 @@ public class CreateActivity extends Activity {
 
 	Draftform draftform = new Draftform();
 	tools.Toolkit toolkit = new Toolkit(draftform);
+	LineConverter lc = new LineConverter();
 
 	@Override
 	protected void onCreate() {
@@ -36,6 +41,22 @@ public class CreateActivity extends Activity {
 				if (getCurrentState() == State.RELEASE)
 					toolkit.end();
 
+
+
+				for (Curve curve : draftform.getCurves()) {
+
+					Vec2[] verts = curve.linearize(curve.recommendedSubdivisions());
+
+					Line line = new Line(verts.length, false);
+
+					for (int i = 0; i < verts.length; i++) {
+
+						main.Vec2 converted = new main.Vec2(verts[i].getX(), verts[i].getY());
+						line.setData(i, converted, 1, Color.BLACK);
+					}
+
+					Engine.renderEngine.addModel(lc.convert(line), new InstanceAttributes(new float[]{0, 0, 0}, new float[]{0, 0, 0}));
+				}
 //				System.out.println(vec);
 			}
 		});

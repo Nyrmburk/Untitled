@@ -130,6 +130,21 @@ public class Vec2 {
 	}
 
 	@Override
+	public boolean equals(Object obj) {
+
+		if (obj instanceof Vec2) {
+
+			Vec2 vec = (Vec2) obj;
+			if (x == vec.x && y == vec.y) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	@Override
 	public String toString() {
 
 		return "[" + x + ", " + y + "]";

@@ -32,26 +32,92 @@ public class LineConverter implements ModelConverter<Line> {
 
 		Vec2[] verts = line.getVertices();
 
-		Vec2 inLine = verts[1].subtract(verts[0]).normalized();
+		Vec2 inLine = null;
+		Vec2 outLine = null;
 
-		for (int i = 1; i < line.getLength(); i++) {
+		boolean endsEqual = verts[0].equals(verts[line.getLength() - 1]);
+
+		if (line.isLoop()) {
+
+			inLine = verts[0].subtract(verts[line.getLength() - 1]);
+		} else if (endsEqual){
+
+			inLine = verts[0].subtract(verts[line.getLength() - 2]);
+		} else {
+
+			inLine = verts[1].subtract(verts[0]);
+		}
+
+		for (int i = 0; i < line.getLength() - 1; i++) {
 
 			float width = line.getWidth()[i] / 2;
 
-			Vec2 outLine = verts[i + 1].subtract(verts[i]).normalized();
-			Vec2 normal = outLine.transpose();
-			Vec2 tangent = inLine.add(outLine).normalized();
+			outLine = verts[i + 1].subtract(verts[i]);
 
-			Vec2 miter = new Vec2(-tangent.getY(), tangent.getX());
-			float length = width / miter.dot(normal);
-			miter = miter.normalized().multiply(length);
+			Vec2 miter = getCorner(inLine, outLine);
 
 			Vec2 leftVert = verts[i].add(miter);
 			Vec2 rightVert = verts[i].subtract(miter);
 
+			model.vertices.put(leftVert.getX(), leftVert.getY(), 0);
+			model.vertices.put(rightVert.getX(), rightVert.getY(), 0);
+			System.out.println(leftVert + " " + rightVert);
+
 			inLine = outLine;
 		}
 
+		if (line.isLoop()) {
+
+			outLine = verts[0].subtract(verts[line.getLength() - 1]);
+		} else if (!endsEqual){
+
+			outLine = verts[line.getLength() - 1].subtract(verts[line.getLength() - 2]);
+			System.out.println("inLine = " + inLine);
+			System.out.println("outLine = " + outLine);
+		}
+
+		if (line.isLoop() || !endsEqual) {
+
+			Vec2 miter = getCorner(inLine, outLine);
+			Vec2 leftVert = verts[line.getLength() - 1].add(miter);
+			Vec2 rightVert = verts[line.getLength() - 1].subtract(miter);
+
+			model.vertices.put(leftVert.getX(), leftVert.getY(), 0);
+			model.vertices.put(rightVert.getX(), rightVert.getY(), 0);
+			System.out.println(leftVert + " " + rightVert);
+		}
+
+		int length = line.getLength() - 1;
+		if (endsEqual)
+			length--;
+		length *= 2;
+		for (int i = 0; i < length; i += 2) {
+
+			model.addFace(i, i + 1, i + 2);
+			model.addFace(i + 1, i + 3, i + 2);
+		}
+
+		if (line.isLoop() || endsEqual) {
+
+			model.addFace(length, length + 1, 0);
+			model.addFace(length + 1, 1, 0);
+		}
+
 		return model;
+	}
+
+	private Vec2 getCorner(Vec2 inLine, Vec2 outLine) {
+
+		inLine = inLine.normalized();
+		outLine = outLine.normalized();
+
+		Vec2 normal = outLine.transpose();
+		Vec2 tangent = inLine.add(outLine).normalized();
+
+		Vec2 miter = new Vec2(-tangent.getY(), tangent.getX());
+		float length = 0.5f / miter.dot(normal); //0.5f means the width is half (0.5) of 1 (normalized vector)
+		miter = miter.normalized().multiply(length);
+
+		return miter;
 	}
 }
