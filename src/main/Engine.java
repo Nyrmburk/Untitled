@@ -1,5 +1,6 @@
 package main;
 
+import activity.CreateActivity;
 import activity.MainMenuActivity;
 import graphics.*;
 import graphics.modelconverter.LineConverter;
@@ -96,7 +97,9 @@ public class Engine {
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
 			// render the scene
-			renderEngine.render();
+			RenderContext renderContext = level != null ? level.getRenderContext() : null;
+			if (renderContext != null)
+				renderEngine.render(renderContext);
 
 			renderUI();
 
@@ -208,7 +211,7 @@ public class Engine {
 	 */
 	private void initDisplay() {
 
-		renderEngine = new SimpleOpenGL3_0RenderEngine(new RenderContext());
+		renderEngine = new SimpleOpenGL3_0RenderEngine();
 //		renderEngine = new SoftwareRenderEngine(new RenderContext());
 		renderEngine.showWindow(Settings.windowWidth, Settings.windowHeight);
 
@@ -307,6 +310,7 @@ public class Engine {
 //		renderEngine.setContext(level.getRenderContext());
 
 		Activity.createActivity(new MainMenuActivity());
+
 //		long time = System.nanoTime();
 //		Activity.createActivity(new CSSActivity(canvas));
 //		System.out.println(((float) System.nanoTime() - time) / 1000000);

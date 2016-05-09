@@ -1,24 +1,13 @@
 package graphics;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Random;
-import java.util.TreeMap;
+import java.util.*;
 
+// This class needs some help. I will probably fix it next commit.
 public class RenderContext {
 
-	private RenderEngine engine;
-	public HashSet<InstancedModel> models = new HashSet<InstancedModel>();
-	private Random random = new Random();
+	private Set<InstancedModel> models = new HashSet<>();
+	private Camera camera;
 
-	/**
-	 * Add a model to the render context. The context returns a random value
-	 * that is used as ID for the lookup of removal.
-	 * 
-	 * @param model
-	 * @param attributes
-	 * @return
-	 */
 	public void addModel(ModelLoader model, InstanceAttributes attributes) {
 
 		InstancedModel instancedModel = null;
@@ -35,77 +24,59 @@ public class RenderContext {
 		if (instancedModel == null) {
 			instancedModel = new InstancedModel(model);
 			models.add(instancedModel);
-
-			if (engine != null)
-				getEngine().addModel(instancedModel);
 		}
 
-		int id = random.nextInt();
-		model.setId(id);
-
-		instancedModel.addInstance(id, attributes);
+		instancedModel.attributes.add(attributes);
 	}
 
-	/**
-	 * Remove a specific model.
-	 * 
-	 * @param model
-	 * @return
-	 */
-	public boolean removeModel(ModelLoader model) {
+	// FIXME: 5/9/2016
+	// closed until I can figure wtf this is supposed to do.
+//	public boolean removeModel(ModelLoader model) {
+//
+//		Iterator<InstancedModel> it = models.iterator();
+//
+//		boolean removed = false;
+//
+//		while (it.hasNext()) {
+//
+//			InstancedModel imodel = it.next();
+//
+//			if (imodel.removeInstance(model.getId()) != null) {
+//
+//				if (imodel.attributes.isEmpty()) {
+//					it.remove();
+//				}
+//
+//				removed = false;
+//				break;
+//			}
+//		}
+//
+//		return removed;
+//	}
 
-		Iterator<InstancedModel> it = models.iterator();
+	public Set<InstancedModel> getIModels() {
 
-		boolean removed = false;
-
-		while (it.hasNext()) {
-
-			InstancedModel imodel = it.next();
-
-			if (imodel.removeInstance(model.getId()) != null) {
-
-				if (imodel.attributes.isEmpty()) {
-
-					if (engine != null)
-						getEngine().removeModel(imodel);
-					it.remove();
-				}
-
-				removed = false;
-				break;
-			}
-		}
-
-		return removed;
+		return models;
 	}
 
-	public RenderEngine getEngine() {
-		return engine;
+	public Camera getCamera() {
+		return camera;
 	}
 
-	public void setEngine(RenderEngine engine) {
-		this.engine = engine;
+	public void setCamera(Camera camera) {
+
+		this.camera = camera;
 	}
 
 	public class InstancedModel {
 
 		public ModelLoader model;
-		public TreeMap<Integer, InstanceAttributes> attributes;
+		public List<InstanceAttributes> attributes = new LinkedList<>();
 
 		InstancedModel(ModelLoader model) {
 
 			this.model = model;
-			attributes = new TreeMap<Integer, InstanceAttributes>();
-		}
-
-		public void addInstance(int id, InstanceAttributes attributes) {
-
-			this.attributes.put(id, attributes);
-		}
-
-		public InstanceAttributes removeInstance(int id) {
-
-			return this.attributes.remove(id);
 		}
 	}
 }

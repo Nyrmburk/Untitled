@@ -6,39 +6,16 @@ import entity.Camera;
 import graphics.RenderContext.InstancedModel;
 import gui.Container;
 
-public class AndroidRenderEngine extends RenderEngine {
-
-	public AndroidRenderEngine(RenderContext context) {
-		super(context);
-		// TODO Auto-generated constructor stub
-	}
+public class AndroidRenderEngine implements RenderEngine {
 
 	@Override
-	public int render() {
+	public int render(RenderContext renderContext) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public void look(Camera camera) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void showWindow(int width, int height) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	protected void addModel(InstancedModel model) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	protected void removeModel(InstancedModel model) {
 		// TODO Auto-generated method stub
 
 	}

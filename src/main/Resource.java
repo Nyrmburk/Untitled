@@ -15,8 +15,19 @@ public abstract class Resource {
 	private int references = 0;
 	private RegisterListener registerListener;
 	private ReleaseListener releaseListener;
+	private Object userData;
 
 	public abstract String getName();
+
+	public Object getUserData() {
+
+		return userData;
+	}
+
+	public void setUserData(Object userData) {
+
+		this.userData = userData;
+	}
 
 	public final void register() {
 

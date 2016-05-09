@@ -1,0 +1,22 @@
+Making the Level Editor UI
+
+Goals
+	Easy to understand and use
+	fast (nobody likes clicking through dozens of menus)
+	simple
+	accesible (controllers, keyboards, mice, and touchscreens need to be able to use)
+	
+Ideas
+	Side panel with a grid of elements
+		pros: simple, lots of data can be shown, intuitive for all input types
+		cons: idk
+	Palette; A side panel with frequently used materials and objects
+		pros: makes digging through menus less frequently
+		cons: manual interaction and my confuse some players
+	Styles; Setting styles up for certain elements so that one change affects them all
+		pros: hardcore creators will love this because you can change entire atmospheres with one button
+		cons: a more advanced concept; It will be underutilized by the majority of the population
+		comment: this functionality could be passive with the inclusion of changing the material of all selected objects
+	Some way of informing the creator that the level is getting too complicated
+	
+	The side panel should automatically change based on context

@@ -3,19 +3,16 @@ package activity;
 import java.awt.*;
 import java.util.Stack;
 
+import graphics.RenderContext;
 import gui.*;
-import gui.Container;
-import gui.Panel;
-import input.*;
-import input.Button;
-import main.Engine;
 
 public abstract class Activity {
 	
 	private static Stack<Activity> stack = new Stack<Activity>();
 	private static boolean killCurrentActivity = false;
 	
-	protected View view;
+	private View view;
+	private RenderContext renderContext;
 	
 	protected abstract void onCreate();
 	protected abstract void onStart();
@@ -52,6 +49,16 @@ public abstract class Activity {
 
 		return view;
 	}
+
+	public void setRenderContext(RenderContext renderContext) {
+
+		this.renderContext = renderContext;
+	}
+
+	public RenderContext getRenderContext() {
+
+		return renderContext;
+	}
 	
 	public static void createActivity(Activity activity) {
 
@@ -70,7 +77,7 @@ public abstract class Activity {
 		activity.onCreate();
 		startActivity(activity);
 
-		if (activity.view == null) {
+		if (activity.getView() == null) {
 
 			stack.remove(activity);
 			stopActivity(activity);
@@ -79,6 +86,11 @@ public abstract class Activity {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+
+		if (activity.getRenderContext() == null) {
+
+			activity.setRenderContext(new RenderContext());
 		}
 	}
 	

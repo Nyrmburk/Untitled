@@ -22,7 +22,8 @@ import org.lwjgl.opengl.GL12;
  * @author Christopher Dombroski
  */
 public class Render {
-	
+
+	//TODO remove E V E R Y T H I N G. At least move what's useful to where it belongs.
 	String version = GL11.glGetString(GL11.GL_VERSION);
 	
 	public static void initGL() {
@@ -60,9 +61,7 @@ public class Render {
 		GL11.glLoadIdentity();
 		
 		GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
-		
-		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);// line point
-																	// fill\
+
 		GL11.glPointSize(3);
 		
 	}

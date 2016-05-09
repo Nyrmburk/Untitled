@@ -54,14 +54,13 @@ public class LineConverter implements ModelConverter<Line> {
 
 			outLine = verts[i + 1].subtract(verts[i]);
 
-			Vec2 miter = getCorner(inLine, outLine);
+			Vec2 miter = getCorner(inLine, outLine).multiply(width);
 
 			Vec2 leftVert = verts[i].add(miter);
 			Vec2 rightVert = verts[i].subtract(miter);
 
 			model.vertices.put(leftVert.getX(), leftVert.getY(), 0);
 			model.vertices.put(rightVert.getX(), rightVert.getY(), 0);
-			System.out.println(leftVert + " " + rightVert);
 
 			inLine = outLine;
 		}
@@ -72,8 +71,6 @@ public class LineConverter implements ModelConverter<Line> {
 		} else if (!endsEqual){
 
 			outLine = verts[line.getLength() - 1].subtract(verts[line.getLength() - 2]);
-			System.out.println("inLine = " + inLine);
-			System.out.println("outLine = " + outLine);
 		}
 
 		if (line.isLoop() || !endsEqual) {
@@ -84,7 +81,6 @@ public class LineConverter implements ModelConverter<Line> {
 
 			model.vertices.put(leftVert.getX(), leftVert.getY(), 0);
 			model.vertices.put(rightVert.getX(), rightVert.getY(), 0);
-			System.out.println(leftVert + " " + rightVert);
 		}
 
 		int length = line.getLength() - 1;

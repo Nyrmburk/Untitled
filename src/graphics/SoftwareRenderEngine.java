@@ -17,24 +17,20 @@ import main.Engine;
 
 import gui.Container;
 
-public class SoftwareRenderEngine extends RenderEngine {
+public class SoftwareRenderEngine implements RenderEngine {
 
 	private static JFrame frmMain;
 	private static Canvas display;
 	private static Graphics graphics;
 
-	public SoftwareRenderEngine(RenderContext context) {
-		super(context);
-	}
-
 	@SuppressWarnings("unused")
 	@Override
-	public int render() {
+	public int render(RenderContext renderContext) {
 
 		graphics.setColor(Color.BLACK);
 		graphics.fillRect(0, 0, display.getWidth(), display.getWidth());
 
-		for (InstancedModel iModel : context.models) {
+		for (InstancedModel iModel : renderContext.getIModels()) {
 
 			ModelLoader model = iModel.model;
 			
@@ -58,12 +54,6 @@ public class SoftwareRenderEngine extends RenderEngine {
 
 		}
 		return 0;
-	}
-
-	@Override
-	public void look(Camera camera) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -114,18 +104,6 @@ public class SoftwareRenderEngine extends RenderEngine {
 //			image = ((SoftwareTexture) textures.next()).texture;
 //			graphics.drawImage(image, bounds.x, bounds.y, bounds.width, bounds.height, null);
 //		}
-	}
-
-	@Override
-	protected void addModel(InstancedModel model) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	protected void removeModel(InstancedModel model) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void drawString(int x, int y, GraphicsFont font, String text) {

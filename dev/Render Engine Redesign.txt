@@ -1,0 +1,5 @@
+Render Engine Redesign
+
+Thoughts
+	The render engine needs not a render context, but rather renders directly from the level.
+		Issues arise from this. It does help a ton with syncronization but drawing temporary objects is a bit of a pain (as always). A rather elegant solution to this is to make 

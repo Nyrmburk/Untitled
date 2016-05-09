@@ -11,24 +11,6 @@ public class Texture extends Resource {
 
 	private String name;
 	private BufferedImage texture;
-	private RenderEngine renderEngine;
-	private Object renderEngineData;
-
-	public void setRenderEngine(RenderEngine renderEngine, Object data) {
-
-		this.renderEngine = renderEngine;
-		this.renderEngineData = data;
-	}
-
-	public RenderEngine getRenderEngine() {
-
-		return renderEngine;
-	}
-
-	public Object getRenderEngineData() {
-
-		return renderEngineData;
-	}
 
 	public BufferedImage getTexture() {
 

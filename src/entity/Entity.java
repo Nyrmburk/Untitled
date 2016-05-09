@@ -30,8 +30,9 @@ public class Entity {
 
 			this.level.removeEntity(this);
 
-			if (model != null)
-				this.level.getRenderContext().removeModel(model);
+			// FIXME: 5/9/2016 
+//			if (model != null)
+//				this.level.getRenderContext().removeModel(model);
 
 			if (physicsObject != null)
 				this.level.physicsEngine.removePhysicsObject(physicsObject);
@@ -95,8 +96,9 @@ public class Entity {
 	public void setModel(ModelLoader model) {
 
 		if (level != null) {
-			if (this.model != null)
-				level.getRenderContext().removeModel(this.model);
+			// FIXME: 5/9/2016 
+//			if (this.model != null)
+//				level.getRenderContext().removeModel(this.model);
 			level.getRenderContext().addModel(model, new InstanceAttributes(location, rotation));
 		}
 

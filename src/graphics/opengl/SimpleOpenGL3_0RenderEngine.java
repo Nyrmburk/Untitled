@@ -7,8 +7,7 @@ import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.List;
 
 import javax.swing.JFrame;
 
@@ -24,30 +23,20 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
-import entity.Camera;
 import graphics.RenderContext.InstancedModel;
 import main.Engine;
 import main.Settings;
 
-public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
+public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 
-	HashSet<RenderAttributes> renderAttributes;
-
-	int polys = 0;
-	int drawCalls = 0;
+	private int polys = 0;
+	private int drawCalls = 0;
 
 	private static JFrame frmMain;
 	private static Canvas display;
 
-	public SimpleOpenGL3_0RenderEngine(RenderContext context) {
-
-		super(context);
-		renderAttributes = new HashSet<RenderAttributes>();
-		// GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
-	}
-
 	@Override
-	public int render() {
+	public int render(RenderContext renderContext) {
 
 		long time = Engine.getTime();
 
@@ -63,14 +52,16 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 
 		setColor(Color.WHITE);
 
-		for (RenderAttributes renderAttribute : renderAttributes) {
+		for (InstancedModel iModel : renderContext.getIModels()) {
 
-			ModelLoader model = renderAttribute.iModel.model;
-			Collection<InstanceAttributes> instanceAttributes = renderAttribute.iModel.attributes.values();
+			ModelLoader model = iModel.model;
+			List<InstanceAttributes> instanceAttributes = iModel.attributes;
 
-			GL30.glBindVertexArray(renderAttribute.VAOID);
+			OpenGLModelData openGLModelData = OpenGLModelData.getOpenGLModelData(model);
+
+			GL30.glBindVertexArray(openGLModelData.VAOID);
 			GL20.glEnableVertexAttribArray(0);
-			GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, renderAttribute.VBOIID);
+			GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, openGLModelData.VBOIID);
 
 			for (InstanceAttributes instanceAttribute : instanceAttributes) {
 
@@ -101,7 +92,218 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 		return (int) (Engine.getTime() - time);
 	}
 
-	private class RenderAttributes {
+	@Override
+	public void showWindow(int width, int height) {
+
+		frmMain = new JFrame();
+		display = new Canvas();
+		display.setBackground(Color.BLACK);
+		display.setSize(width, height);
+		frmMain.add(display);
+		frmMain.pack();
+		frmMain.setTitle("Untitled");
+
+		frmMain.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frmMain.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				Engine.isClosing = true;
+			}
+		});
+
+		try {
+			if (Settings.fullscreen) {
+
+				Display.setFullscreen(true);
+			} else {
+
+				Display.setParent(display);
+				frmMain.setVisible(true);
+			}
+
+			Display.create();
+
+		} catch (LWJGLException e) {
+
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void renderUI(Container view) {
+
+		renderElement(view);
+//		System.out.println();
+	}
+
+	private void renderElement(GUIElement element) {
+
+//		System.out.println(element);
+
+		//render box
+		renderBox(element.getBox());
+
+		// recursively render children
+		if (element instanceof Container) {
+
+			for (GUIElement child : ((Container) element).getChildren()) {
+
+				renderElement(child);
+			}
+		}
+	}
+
+	private void renderBox(ContextBox box) {
+
+		if (box == null)
+			return;
+
+		if (box.color != null) {
+			setColor(box.color);
+
+			if (box.color.getAlpha() != 255) {
+				GL11.glEnable(GL11.GL_BLEND);
+			} else {
+				GL11.glDisable(GL11.GL_BLEND);
+			}
+		}
+
+		if (box.texture != null) {
+			drawTexture(box, OpenGLTextureData.getOpenGLTextureData(box.texture));
+		} else if (box.color != null) {
+
+			drawRect(box);
+		}
+
+		if (box.texts != null) {
+
+			for (ContextBox.Text text : box.texts) {
+
+				GraphicsFont font = text.font;
+				Color fontColor = text.color;
+				setColor(fontColor);
+
+				drawString(text.x, text.y, font, text.text);
+			}
+		}
+
+		if (box.subBoxes != null) {
+
+			for (ContextBox subBox : box.subBoxes)
+				renderBox(subBox);
+		}
+	}
+
+	private void drawRect(Rectangle bounds) {
+
+		GL11.glBegin(GL11.GL_QUADS);
+		GL11.glVertex2i(bounds.x, bounds.y);
+		GL11.glVertex2i(bounds.x, bounds.y + bounds.height);
+		GL11.glVertex2i(bounds.x + bounds.width, bounds.y + bounds.height);
+		GL11.glVertex2i(bounds.x + bounds.width, bounds.y);
+		GL11.glEnd();
+	}
+
+	private void drawTexture(Rectangle bounds, OpenGLTextureData texture) {
+
+		GL11.glEnable(GL11.GL_BLEND);
+		texture.bind();
+
+		GL11.glBegin(GL11.GL_QUADS);
+		GL11.glTexCoord2f(0, 0);
+		GL11.glVertex2i(bounds.x, bounds.y);
+		GL11.glTexCoord2f(0, texture.getHeightRatio());
+		GL11.glVertex2i(bounds.x, bounds.y + bounds.height);
+		GL11.glTexCoord2f(texture.getWidthRatio(), texture.getHeightRatio());
+		GL11.glVertex2i(bounds.x + bounds.width, bounds.y + bounds.height);
+		GL11.glTexCoord2f(texture.getWidthRatio(), 0);
+		GL11.glVertex2i(bounds.x + bounds.width, bounds.y);
+		GL11.glEnd();
+		GL11.glDisable(GL11.GL_BLEND);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+	}
+
+	private void drawString(int x, int y, GraphicsFont font, String text) {
+
+		FontMetrics metrics = font.getFontMetrics();
+		OpenGLTextureData texture = OpenGLTextureData.getOpenGLTextureData(font.getAtlas());
+		texture.bind();
+
+		Rectangle placement;
+		int advance = x;
+
+		Rectangle[] allBounds = font.getBounds();
+
+		GL11.glEnable(GL11.GL_BLEND);
+		for (int i = 0; i < text.length(); i++) {
+
+			char c = text.charAt(i);
+
+			if (c > 255)
+				c = ' ';
+
+			Rectangle bounds = allBounds[c];
+
+			if (bounds != null) {
+
+				placement = bounds.getBounds();
+				placement.x = advance;
+				placement.y = y;
+
+				GL11.glBegin(GL11.GL_QUADS);
+
+				GL11.glTexCoord2f(texture.xRatio(bounds.x), texture.yRatio(bounds.y));
+				GL11.glVertex2i(placement.x, placement.y);
+
+				GL11.glTexCoord2f(texture.xRatio(bounds.x), texture.yRatio(bounds.y + bounds.height));
+				GL11.glVertex2i(placement.x, placement.y + placement.height);
+
+				GL11.glTexCoord2f(texture.xRatio(bounds.x + bounds.width), texture.yRatio(bounds.y + bounds.height));
+				GL11.glVertex2i(placement.x + placement.width, placement.y + placement.height);
+
+				GL11.glTexCoord2f(texture.xRatio(bounds.x + bounds.width), texture.yRatio(bounds.y));
+				GL11.glVertex2i(placement.x + placement.width, placement.y);
+
+				GL11.glEnd();
+			}
+
+			advance += metrics.charWidth(c);
+		}
+		GL11.glDisable(GL11.GL_BLEND);
+	}
+
+	@Override
+	public int getWidth() {
+
+		return display.getWidth();
+	}
+
+	@Override
+	public int getHeight() {
+
+		return display.getHeight();
+	}
+
+	@Override
+	public String getRendererVersion() {
+
+		return "opengl " + GL11.glGetString(GL11.GL_VERSION);
+	}
+
+	@Override
+	public String getRenderDevice() {
+		return GL11.glGetString(GL11.GL_RENDERER);
+	}
+
+	private void setColor(Color color) {
+
+		GL11.glColor4f(((float) color.getRed())/255,
+				((float) color.getGreen())/255,
+				((float) color.getBlue())/255,
+				((float) color.getAlpha())/255);
+	}
+
+	private static class OpenGLModelData {
 
 		int VAOID;
 		int VBOID;
@@ -113,12 +315,7 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 		boolean textures;
 		boolean colors;
 
-		InstancedModel iModel;
-
-		RenderAttributes(InstancedModel iModel) {
-
-			this.iModel = iModel;
-			ModelLoader model = iModel.model;
+		OpenGLModelData(ModelLoader model) {
 
 			VAOID = GL30.glGenVertexArrays();
 			GL30.glBindVertexArray(VAOID);
@@ -181,250 +378,22 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 			GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL15.GL_STATIC_DRAW);
 			GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 		}
-	}
 
-	@Override
-	public void look(Camera camera) {
-		// TODO Auto-generated method stub
+		private static OpenGLModelData getOpenGLModelData(ModelLoader model) {
 
-	}
+			OpenGLModelData data;
 
-	@Override
-	public void showWindow(int width, int height) {
+			if (model.getUserData() instanceof OpenGLModelData) {
 
-		frmMain = new JFrame();
-		display = new Canvas();
-		display.setBackground(Color.BLACK);
-		display.setSize(width, height);
-		frmMain.add(display);
-		frmMain.pack();
-		frmMain.setTitle("Untitled");
-
-		frmMain.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		frmMain.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {
-				Engine.isClosing = true;
-			}
-		});
-
-		try {
-			if (Settings.fullscreen) {
-
-				Display.setFullscreen(true);
+				data =  (OpenGLModelData) model.getUserData();
 			} else {
 
-				Display.setParent(display);
-				frmMain.setVisible(true);
+				data = new OpenGLModelData(model);
+				model.setUserData(data);
 			}
 
-			Display.create();
-
-		} catch (LWJGLException e) {
-
-			e.printStackTrace();
+			return data;
 		}
-	}
-
-	@Override
-	protected void addModel(InstancedModel model) {
-
-		renderAttributes.add(new RenderAttributes(model));
-	}
-
-	@Override
-	protected void removeModel(InstancedModel model) {
-
-		renderAttributes.remove(model);
-	}
-
-	@Override
-	public void renderUI(Container view) {
-
-		renderElement(view);
-	}
-
-	private void renderElement(GUIElement element) {
-
-		//render box
-		renderBox(element.getBox());
-
-		// recursively render children
-		if (element instanceof Container) {
-
-			for (GUIElement child : ((Container) element).getChildren()) {
-
-				renderElement(child);
-			}
-		}
-	}
-
-	private void renderBox(ContextBox box) {
-
-		if (box == null)
-			return;
-
-		if (box.color != null) {
-			setColor(box.color);
-
-			if (box.color.getAlpha() != 255) {
-				GL11.glEnable(GL11.GL_BLEND);
-			} else {
-				GL11.glDisable(GL11.GL_BLEND);
-			}
-		}
-
-		if (box.texture != null) {
-			drawTexture(box, getOpenGLTextureData(box.texture));
-		} else if (box.color != null) {
-
-			drawRect(box);
-		}
-
-		if (box.texts != null) {
-
-			for (ContextBox.Text text : box.texts) {
-
-				GraphicsFont font = text.font;
-				Color fontColor = text.color;
-				setColor(fontColor);
-
-				drawString(text.x, text.y, font, text.text);
-			}
-		}
-
-		if (box.subBoxes != null) {
-
-			for (ContextBox subBox : box.subBoxes)
-				renderBox(subBox);
-		}
-	}
-
-	private void drawRect(Rectangle bounds) {
-
-		GL11.glBegin(GL11.GL_QUADS);
-		GL11.glVertex2i(bounds.x, bounds.y);
-		GL11.glVertex2i(bounds.x, bounds.y + bounds.height);
-		GL11.glVertex2i(bounds.x + bounds.width, bounds.y + bounds.height);
-		GL11.glVertex2i(bounds.x + bounds.width, bounds.y);
-		GL11.glEnd();
-	}
-
-	private void drawTexture(Rectangle bounds, OpenGLTextureData texture) {
-
-		GL11.glEnable(GL11.GL_BLEND);
-		texture.bind();
-
-		GL11.glBegin(GL11.GL_QUADS);
-		GL11.glTexCoord2f(0, 0);
-		GL11.glVertex2i(bounds.x, bounds.y);
-		GL11.glTexCoord2f(0, texture.getHeightRatio());
-		GL11.glVertex2i(bounds.x, bounds.y + bounds.height);
-		GL11.glTexCoord2f(texture.getWidthRatio(), texture.getHeightRatio());
-		GL11.glVertex2i(bounds.x + bounds.width, bounds.y + bounds.height);
-		GL11.glTexCoord2f(texture.getWidthRatio(), 0);
-		GL11.glVertex2i(bounds.x + bounds.width, bounds.y);
-		GL11.glEnd();
-		GL11.glDisable(GL11.GL_BLEND);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-	}
-
-	private void drawString(int x, int y, GraphicsFont font, String text) {
-
-		FontMetrics metrics = font.getFontMetrics();
-		OpenGLTextureData texture = getOpenGLTextureData(font.getAtlas());
-		texture.bind();
-
-		Rectangle placement;
-		int advance = x;
-		int height = y;
-
-		Rectangle[] allBounds = font.getBounds();
-
-		GL11.glEnable(GL11.GL_BLEND);
-		for (int i = 0; i < text.length(); i++) {
-
-			char c = text.charAt(i);
-
-			if (c > 255)
-				c = ' ';
-
-			Rectangle bounds = allBounds[c];
-
-			if (bounds != null) {
-
-				placement = bounds.getBounds();
-				placement.x = advance;
-				placement.y = height;
-
-				GL11.glBegin(GL11.GL_QUADS);
-
-				GL11.glTexCoord2f(texture.xRatio(bounds.x), texture.yRatio(bounds.y));
-				GL11.glVertex2i(placement.x, placement.y);
-
-				GL11.glTexCoord2f(texture.xRatio(bounds.x), texture.yRatio(bounds.y + bounds.height));
-				GL11.glVertex2i(placement.x, placement.y + placement.height);
-
-				GL11.glTexCoord2f(texture.xRatio(bounds.x + bounds.width), texture.yRatio(bounds.y + bounds.height));
-				GL11.glVertex2i(placement.x + placement.width, placement.y + placement.height);
-
-				GL11.glTexCoord2f(texture.xRatio(bounds.x + bounds.width), texture.yRatio(bounds.y));
-				GL11.glVertex2i(placement.x + placement.width, placement.y);
-
-				GL11.glEnd();
-			}
-
-			advance += metrics.charWidth(c);
-		}
-		GL11.glDisable(GL11.GL_BLEND);
-	}
-
-	@Override
-	public int getWidth() {
-
-		return display.getWidth();
-	}
-
-	@Override
-	public int getHeight() {
-
-		return display.getHeight();
-	}
-
-	@Override
-	public String getRendererVersion() {
-
-		return "opengl " + GL11.glGetString(GL11.GL_VERSION);
-	}
-
-	@Override
-	public String getRenderDevice() {
-		return GL11.glGetString(GL11.GL_RENDERER);
-	}
-
-	private void setColor(Color color) {
-
-		GL11.glColor4f(((float) color.getRed())/255,
-				((float) color.getGreen())/255,
-				((float) color.getBlue())/255,
-				((float) color.getAlpha())/255);
-	}
-
-	private OpenGLTextureData getOpenGLTextureData(Texture texture) {
-
-		OpenGLTextureData data;
-
-		if (texture.getRenderEngine() == this) {
-
-			data =  (OpenGLTextureData) texture.getRenderEngineData();
-		} else {
-
-			data = new OpenGLTextureData(texture.getTexture());
-			texture.setRenderEngine(this, data);
-			texture.setReleaseListener(data::release);//fancy lambda expression
-		}
-
-		return data;
 	}
 
 	private static class OpenGLTextureData {
@@ -459,37 +428,36 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 					GL11.GL_UNSIGNED_BYTE, buffer);
 		}
 
-		public void bind() {
+		void bind() {
 
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
 		}
 
-		public float getWidthRatio() {
+		float getWidthRatio() {
 
 			return ((float) originalWidth) / actualWidth;
 		}
 
-		public float getHeightRatio() {
+		float getHeightRatio() {
 
 			return ((float) originalHeight) / actualHeight;
 		}
 
-		public float xRatio(int x) {
+		float xRatio(int x) {
 
-			float coord = ((float) x) / originalWidth * getWidthRatio();
-			return coord;
+			return ((float) x) / originalWidth * getWidthRatio();
 		}
 
-		public float yRatio(int y) {
+		float yRatio(int y) {
 
 			return ((float) y) / originalHeight * getHeightRatio();
 		}
 
-		private int getMinimumPowerOfTwo(int x) {
+		private int getMinimumPowerOfTwo(int value) {
 
 			int powerOfTwo = 2;// opengl minimum texture size is 64x64?
 
-			while (powerOfTwo < x)
+			while (powerOfTwo < value)
 				powerOfTwo += powerOfTwo; // addition is faster than multiplication
 
 			return powerOfTwo;
@@ -540,15 +508,13 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 
 //				System.err.println("slow image: " + texture.getRaster());
 
-				int pixel = 0;
-
 				for (int y = 0; y < height; y++) {
 
 					texBuffer.position(y * actualWidth * bytesPerPixel);
 					for (int x = 0; x < width; x++) {
 
 						// the offending statement is right here
-						pixel = texture.getRGB(x, y);
+						int pixel = texture.getRGB(x, y);
 						texBuffer.put((byte) ((pixel & 0x00FF0000) >>> 16));
 						texBuffer.put((byte) ((pixel & 0x0000FF00) >>> 8));
 						texBuffer.put((byte) (pixel & 0x000000FF));
@@ -563,9 +529,26 @@ public class SimpleOpenGL3_0RenderEngine extends RenderEngine {
 			return texBuffer;
 		}
 
-		public void release() {
+		void release() {
 
 			GL11.glDeleteTextures(id);
+		}
+
+		private static OpenGLTextureData getOpenGLTextureData(Texture texture) {
+
+			OpenGLTextureData data;
+
+			if (texture.getUserData() instanceof OpenGLTextureData) {
+
+				data =  (OpenGLTextureData) texture.getUserData();
+			} else {
+
+				data = new OpenGLTextureData(texture.getTexture());
+				texture.setUserData(data);
+				texture.setReleaseListener(data::release);//fancy lambda expression
+			}
+
+			return data;
 		}
 	}
 }

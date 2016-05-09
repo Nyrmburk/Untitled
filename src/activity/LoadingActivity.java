@@ -76,7 +76,6 @@ public class LoadingActivity extends Activity {
 			Activity.stopCurrentActivity();
 
 			Engine.level = new Level();
-			Engine.renderEngine.setContext(Engine.level.getRenderContext());
 			try {
 				Engine.level.load(null);
 			} catch (IOException e) {

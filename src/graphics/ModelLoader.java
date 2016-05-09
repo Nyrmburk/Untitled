@@ -34,7 +34,6 @@ public class ModelLoader extends Resource {
 	public FloatList object;
 	public FloatList group;
 
-	private int id;
 	String name;
 
 	public ModelLoader() {
@@ -200,14 +199,6 @@ public class ModelLoader extends Resource {
 			}
 			indices.put(tri);
 		}
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
 	}
 
 	public class FloatList {
