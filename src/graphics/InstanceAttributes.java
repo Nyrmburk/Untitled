@@ -1,9 +1,11 @@
 package graphics;
 
+import main.Transform;
+
+//Beef this up.
 public class InstanceAttributes {
 
-	public float[] location;
-	public float[] rotation;
+	public Transform transform;
 
 	public InstanceAttributes(float[] location, float[] rotation) {
 

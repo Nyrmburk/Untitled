@@ -234,6 +234,8 @@ public class Engine {
 	 */
 	private void initWorld() {
 
+		//testing for NinePatch
+		//temporary
 		BufferedImage image = null;
 		try {
 			image = ImageIO.read(new File("dev\\plain.9.png"));
@@ -242,6 +244,8 @@ public class Engine {
 		}
 		new NinePatch(image);
 
+		//testing for convex hull and decomposition
+		//temporary
 		Vec2[] poly = {
 				new Vec2(115.0f, 131.0f),
 				new Vec2(131.0f, 232.0f),
@@ -254,23 +258,8 @@ public class Engine {
 		};
 		new physics.Polygon(poly).convexHull();
 
-//		System.out.println("start");
-//		org.fit.cssbox.demo.TextBoxes.main(new String[]{"file:///C:\\Users\\Nyrmburk\\Documents\\GitHub\\untitled\\dev\\Motherfucking Website.html"});
-//		System.out.println("end");
-
-//		new GraphicsFont(new Font("Roboto", Font.ITALIC, 72));
-
-//		CSSDocument doc = new CSSDocument();
-//		try {
-//			doc.load(new File("C:\\Users\\Nyrmburk\\Documents\\GitHub\\untitled\\dev\\ui\\mainmenu.html"));
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-
-//		long time = System.nanoTime();
-//		canvas = new CSSCanvas(doc, new Rectangle(0, 0, Settings.windowWidth, Settings.windowHeight));
-//		System.out.println(((float) System.nanoTime() - time) / 1000000);
-
+		//building .ini for keymap
+		//temporary
 		HashMap<String, String> map = new HashMap<>();
 
 		map.put("jump", "LWJGLKeyInput:SPACE");
@@ -291,30 +280,8 @@ public class Engine {
 		Binding.load(new File("res\\input\\player.ini"));
 		Binding.load(new File("res\\input\\ui.ini"));
 
-//		LWJGLKeyInput keyInput = new LWJGLKeyInput();
-//		keyInput.addInput(new Input("one") {
-//			@Override
-//			public void onUpdate(int delta) {
-//
-//			}
-//		});
-//
-//		keyInput.addInput(new Input("two") {
-//			@Override
-//			public void onUpdate(int delta) {
-//
-//			}
-//		});
-
-//		level = new Level();
-//		renderEngine.setContext(level.getRenderContext());
-
+		//start the main menu activity
 		Activity.createActivity(new MainMenuActivity());
-
-//		long time = System.nanoTime();
-//		Activity.createActivity(new CSSActivity(canvas));
-//		System.out.println(((float) System.nanoTime() - time) / 1000000);
-//		canvas.setBounds(new Dimension(100, 100));
 	}
 
 	public void renderUI() {
@@ -326,36 +293,8 @@ public class Engine {
 
 		 GL11.glShadeModel(GL11.GL_SMOOTH);
 
-//		 Draw the triangle of death
-//		 GL11.glBegin(GL11.GL_TRIANGLES);
-//		 GL11.glColor3f(1, 0, 0);
-//		 GL11.glVertex2f(450, 660);
-//		 GL11.glColor3f(0, 1, 0);
-//		 GL11.glVertex2f(450, 140);
-//		 GL11.glColor3f(0, 0, 1);
-//		 GL11.glVertex2f(900, 400);
-//		 GL11.glEnd();
-
-		// Render.drawActionCircle(new int[] {Input.mouseX, Input.mouseY},
-//		 new int[2], 5);
-
-//		 GL11.glColor3f(1, 1, 1);
-//		 GL11.glBegin(GL11.GL_LINE_LOOP);
-//		 GL11.glVertex2i(1, 1);
-//		 GL11.glVertex2i(1199, 1);
-//		 GL11.glVertex2i(1199, 899);
-//		 GL11.glVertex2i(1, 899);
-//		 GL11.glEnd();
-
-//		GUI.update();
-//		GUI.revalidate();
-//		GUI.render();
-//		GUI2.update();
-
 		if (Activity.currentActivity() != null)
 			renderEngine.renderUI(Activity.currentActivity().getView());
-
-//		((SimpleOpenGL3_0RenderEngine) renderEngine).renderUI2(canvas.getComposite());
 
 		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
