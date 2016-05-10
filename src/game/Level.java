@@ -4,7 +4,7 @@ import entity.Entity;
 import entity.MaterialEntity;
 import graphics.RenderContext;
 import main.Resource;
-import main.Vec2;
+import matrix.Vec2;
 import physics.*;
 
 import java.io.IOException;

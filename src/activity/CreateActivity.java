@@ -51,7 +51,7 @@ public class CreateActivity extends Activity {
 
 					for (int i = 0; i < verts.length; i++) {
 
-						main.Vec2 converted = new main.Vec2(verts[i].getX(), verts[i].getY());
+						matrix.Vec2 converted = new matrix.Vec2(verts[i].getX(), verts[i].getY());
 						line.setData(i, converted, 1, Color.BLACK);
 					}
 

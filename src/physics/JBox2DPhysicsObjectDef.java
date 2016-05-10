@@ -173,7 +173,7 @@ public class JBox2DPhysicsObjectDef implements PhysicsObjectDef {
 
 	private Vec2[] polygonToVec2Array(Polygon polygon) {
 
-		main.Vec2[] vec2s = polygon.getVertices();
+		matrix.Vec2[] vec2s = polygon.getVertices();
 		Vec2[] otherVec2s = new Vec2[vec2s.length];
 
 		for (int i = 0; i < vec2s.length; i++)

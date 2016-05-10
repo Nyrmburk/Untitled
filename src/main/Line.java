@@ -1,5 +1,7 @@
 package main;
 
+import matrix.Vec2;
+
 import java.awt.*;
 
 /**

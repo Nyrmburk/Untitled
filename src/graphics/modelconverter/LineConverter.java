@@ -2,7 +2,7 @@ package graphics.modelconverter;
 
 import graphics.ModelLoader;
 import main.Line;
-import main.Vec2;
+import matrix.Vec2;
 
 /**
  * Created by Nyrmburk on 5/3/2016.

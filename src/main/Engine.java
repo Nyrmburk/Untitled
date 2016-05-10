@@ -1,15 +1,12 @@
 package main;
 
-import activity.CreateActivity;
 import activity.MainMenuActivity;
 import graphics.*;
-import graphics.modelconverter.LineConverter;
 import graphics.opengl.GLErrorHelper;
 import graphics.opengl.ShaderProgram;
 import graphics.opengl.SimpleOpenGL3_0RenderEngine;
 import input.*;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +16,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import input.InputContext;
+import matrix.Vec2;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Mouse;

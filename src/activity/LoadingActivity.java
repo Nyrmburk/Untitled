@@ -8,7 +8,7 @@ import graphics.ModelLoader;
 import gui.*;
 import main.Engine;
 import main.ResourceManager;
-import main.Vec2;
+import matrix.Vec2;
 import physics.*;
 import game.Level;
 import physics.Polygon;
