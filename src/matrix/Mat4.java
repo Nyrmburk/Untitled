@@ -5,21 +5,94 @@ package matrix;
  */
 public class Mat4 {
 
-	//  1  2  3  4
-	//  5  6  7  8
-	//  9 10 11 12
-	// 13 14 15 16
+	public static final int SIZE = 4;
+	public static final int TOTAL_SIZE = SIZE * SIZE; //16
+
+	//  0  1  2  3
+	//  4  5  6  7
+	//  8  9 10 11
+	// 12 13 14 15
 	public float[] m = new float[16];
+
+	public Mat4() {
+	}
+
+	public Mat4(float... matrixArray) {
+
+		System.arraycopy(matrixArray, 0, m, 0, TOTAL_SIZE);
+	}
+
+	public Mat4(Mat4 copy) {
+
+		this(copy.m);
+	}
 
 	public Mat4 add(Mat4 toAdd) {
 
-		return null;
+		Mat4 added = new Mat4();
+
+		for (int i = 0; i < TOTAL_SIZE; i++)
+			added.m[i] = m[i] + toAdd.m[i];
+
+		return added;
 	}
 
 	public Mat4 subtract(Mat4 toSubtract) {
 
-		return null;
+		Mat4 added = new Mat4();
+
+		for (int i = 0; i < added.m.length; i++)
+			added.m[i] = m[i] - toSubtract.m[i];
+
+		return added;
 	}
 
-//	public Mat4 multiply
+	public Mat4 multiply(float scalar) {
+
+		Mat4 multiplied = new Mat4();
+		for (int i = 0; i < TOTAL_SIZE; i++)
+			multiplied.m[i] = m[i] * scalar;
+
+		return multiplied;
+	}
+
+	public Mat4 divide(float scalar) {
+
+		Mat4 divided = new Mat4();
+		for (int i = 0; i < TOTAL_SIZE; i++)
+			divided.m[i] = m[i] / scalar;
+
+		return divided;
+	}
+
+	public float dot(Mat4 toDot) {
+
+		float dot = 0;
+		for (int i = 0; i < TOTAL_SIZE; i++)
+			dot += m[i] * toDot.m[i];
+
+		return dot;
+	}
+
+	public Mat4 transpose() {
+
+		//  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
+		//  0  4  8 12  1  5  9 13  2  6 10 14  3  7 11 15
+
+		Mat4 transposed = new Mat4();
+
+		for (int i = 0; i < TOTAL_SIZE; i++)
+			transposed.m[i] = m[(i * SIZE) % TOTAL_SIZE + i / SIZE];
+
+		return transposed;
+	}
+
+	public static Mat4 identity() {
+
+		return new Mat4(
+				1, 0, 0, 0,
+				0, 1, 0, 0,
+				0, 0, 1, 0,
+				0, 0, 0, 1);
+	}
 }

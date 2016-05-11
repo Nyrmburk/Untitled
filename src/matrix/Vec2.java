@@ -69,7 +69,7 @@ public class Vec2 {
 		return new Vec2(-y, x);
 	}
 
-	public Vec2 invert() {
+	public Vec2 reciprocal() {
 
 		return new Vec2(1 / x, 1 / y);
 	}
@@ -81,7 +81,7 @@ public class Vec2 {
 
 	public Vec2 normalized() {
 
-		return new Vec2(this.divide(distance()));
+		return new Vec2(this.divide(length()));
 	}
 
 
@@ -113,12 +113,10 @@ public class Vec2 {
 
 	public float distance(Vec2 vec) {
 
-		float a = vec.x - x;
-		float b = vec.y - y;
-		return (float) Math.sqrt(a * a + b * b);
+		return vec.subtract(this).length();
 	}
 
-	public float distance() {
+	public float length() {
 
 		return (float) Math.sqrt(x * x + y * y);
 	}
@@ -135,10 +133,8 @@ public class Vec2 {
 		if (obj instanceof Vec2) {
 
 			Vec2 vec = (Vec2) obj;
-			if (x == vec.x && y == vec.y) {
-
+			if (x == vec.x && y == vec.y)
 				return true;
-			}
 		}
 
 		return false;
