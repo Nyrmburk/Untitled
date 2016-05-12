@@ -84,8 +84,33 @@ public class Transform {
 
 	}
 
-	public void rotate() {
+	public Mat4 rotate(Vec3 axis, float angle) {
 
+		Mat4 rotated = Mat4.identity();
+		float[] r = rotated.m;
+
+		float xx = axis.x * axis.x;
+		float xy = axis.x * axis.y;
+		float xz = axis.x * axis.z;
+		float yy = axis.y * axis.y;
+		float yz = axis.y * axis.z;
+		float zz = axis.z * axis.z;
+
+		float sin = (float) Math.sin(angle);
+		float cos = (float) Math.cos(angle);
+		float oneMinusCos = 1 - cos;
+
+		r[0] = xx * oneMinusCos + cos;
+		r[1] = xy * oneMinusCos + axis.z * sin;
+		r[2] = xz * oneMinusCos - axis.y * sin;
+		r[4] = xy * oneMinusCos - axis.z * sin;
+		r[5] = yy * oneMinusCos + cos;
+		r[6] = yz * oneMinusCos + axis.x * sin;
+		r[8] = xz * oneMinusCos + axis.y * sin;
+		r[9] = yz * oneMinusCos - axis.x * sin;
+		r[10]= zz * oneMinusCos + cos;
+
+		return transform.multiply(rotated);
 	}
 
 	public void pointAt() {
