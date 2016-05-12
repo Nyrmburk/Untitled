@@ -55,6 +55,23 @@ public class Mat3 {
 		return multiplied;
 	}
 
+	public Mat3 multiply(Mat3 matrix) {
+
+		Mat3 multiplied = new Mat3();
+		for (int i = 0; i < TOTAL_SIZE; i++) {
+			int j = i % SIZE;
+			int k = j;
+			// dot product
+			multiplied.m[i] =
+			//		columns  rows
+					m[j++] * matrix.m[k += SIZE] +
+					m[j++] * matrix.m[k += SIZE] +
+					m[j  ] * matrix.m[k        ];
+		}
+
+		return multiplied;
+	}
+
 	public Mat3 divide(float scalar) {
 
 		Mat3 divided = new Mat3();

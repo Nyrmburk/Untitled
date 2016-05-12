@@ -66,23 +66,20 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 
 			for (InstanceAttributes instanceAttribute : instanceAttributes) {
 
+				glPushMatrix();
+
 				//load the model translation matrix
-				Mat4 m = new Mat4(instanceAttribute.getTransform().getMatrix());
+				float[] m = instanceAttribute.getTransform().getMatrix().m;
 
-				//subtract the camera matrix from the position matrix
-				//TODO figure out how rotations work
-				//TODO replace this crummy camera with the one in the render context
-				m.m[12] -= Camera.eye[0];
-				m.m[13] -= Camera.eye[1];
-				m.m[14] -= Camera.eye[2];
-
-				glLoadMatrix(toFloatBuffer(m.m));
+				glMultMatrix(toFloatBuffer(m));
 
 				// Draw the vertices
 				glDrawElements(GL_TRIANGLES, model.indices.getSize() * model.indices.getStride(),
 						GL_UNSIGNED_INT, 0);
 
 				polys += model.indices.getSize();
+
+				glPopMatrix();
 			}
 
 			// Put everything back to default (deselect)

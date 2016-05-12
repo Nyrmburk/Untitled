@@ -56,6 +56,24 @@ public class Mat4 {
 		return multiplied;
 	}
 
+	public Mat4 multiply(Mat4 matrix) {
+
+		Mat4 multiplied = new Mat4();
+		for (int i = 0; i < TOTAL_SIZE; i++) {
+			int j = i % SIZE;
+			int k = j;
+			// dot product
+			multiplied.m[i] =
+			//		columns  rows
+					m[j++] * matrix.m[k += SIZE] +
+					m[j++] * matrix.m[k += SIZE] +
+					m[j++] * matrix.m[k += SIZE] +
+					m[j  ] * matrix.m[k        ];
+		}
+
+		return multiplied;
+	}
+
 	public Mat4 divide(float scalar) {
 
 		Mat4 divided = new Mat4();
