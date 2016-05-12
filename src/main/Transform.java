@@ -5,9 +5,6 @@ import matrix.Mat4;
 import matrix.Vec3;
 import matrix.Vec4;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
-
 /**
  * Created by Nyrmburk on 5/9/2016.
  * http://math.stackexchange.com/questions/82602/how-to-find-camera-position-and-rotation-from-a-4x4-matrix
@@ -64,8 +61,18 @@ public class Transform {
 				m[2], m[6], m[10]);
 	}
 
-	public void setRotationMatrix() {
+	public void setRotationMatrix(Mat3 matrix) {
 
+		float[] m = transform.m;
+		m[0] = matrix.m[0];
+		m[1] = matrix.m[1];
+		m[2] = matrix.m[2];
+		m[4] = matrix.m[3];
+		m[5] = matrix.m[4];
+		m[6] = matrix.m[5];
+		m[8] = matrix.m[6];
+		m[9] = matrix.m[7];
+		m[10] = matrix.m[8];
 	}
 
 	public Vec4 getRotationQuaternion() {

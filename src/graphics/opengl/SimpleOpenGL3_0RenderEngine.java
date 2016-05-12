@@ -19,10 +19,10 @@ import matrix.Mat4;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL30.*;
 
 import graphics.RenderContext.InstancedModel;
 import main.Engine;
@@ -49,7 +49,7 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 			// wasResized = false
 		}
 
-		GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		setColor(Color.WHITE);
 
@@ -60,9 +60,9 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 
 			OpenGLModelData openGLModelData = OpenGLModelData.getOpenGLModelData(model);
 
-			GL30.glBindVertexArray(openGLModelData.VAOID);
-			GL20.glEnableVertexAttribArray(0);
-			GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, openGLModelData.VBOIID);
+			glBindVertexArray(openGLModelData.VAOID);
+			glEnableVertexAttribArray(0);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, openGLModelData.VBOIID);
 
 			for (InstanceAttributes instanceAttribute : instanceAttributes) {
 
@@ -76,18 +76,18 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 				m.m[13] -= Camera.eye[1];
 				m.m[14] -= Camera.eye[2];
 
-				GL11.glLoadMatrix(toFloatBuffer(m.m));
+				glLoadMatrix(toFloatBuffer(m.m));
 
 				// Draw the vertices
-				GL11.glDrawElements(GL11.GL_TRIANGLES, model.indices.getSize() * model.indices.getStride(),
-						GL11.GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, model.indices.getSize() * model.indices.getStride(),
+						GL_UNSIGNED_INT, 0);
 
 				polys += model.indices.getSize();
 			}
 
 			// Put everything back to default (deselect)
-			GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
-			GL30.glBindVertexArray(0);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			glBindVertexArray(0);
 		}
 
 		// System.out.println(polys + " polygons");
@@ -165,9 +165,9 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 			setColor(box.color);
 
 			if (box.color.getAlpha() != 255) {
-				GL11.glEnable(GL11.GL_BLEND);
+				glEnable(GL_BLEND);
 			} else {
-				GL11.glDisable(GL11.GL_BLEND);
+				glDisable(GL_BLEND);
 			}
 		}
 
@@ -199,31 +199,31 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 
 	private void drawRect(Rectangle bounds) {
 
-		GL11.glBegin(GL11.GL_QUADS);
-		GL11.glVertex2i(bounds.x, bounds.y);
-		GL11.glVertex2i(bounds.x, bounds.y + bounds.height);
-		GL11.glVertex2i(bounds.x + bounds.width, bounds.y + bounds.height);
-		GL11.glVertex2i(bounds.x + bounds.width, bounds.y);
-		GL11.glEnd();
+		glBegin(GL_QUADS);
+		glVertex2i(bounds.x, bounds.y);
+		glVertex2i(bounds.x, bounds.y + bounds.height);
+		glVertex2i(bounds.x + bounds.width, bounds.y + bounds.height);
+		glVertex2i(bounds.x + bounds.width, bounds.y);
+		glEnd();
 	}
 
 	private void drawTexture(Rectangle bounds, OpenGLTextureData texture) {
 
-		GL11.glEnable(GL11.GL_BLEND);
+		glEnable(GL_BLEND);
 		texture.bind();
 
-		GL11.glBegin(GL11.GL_QUADS);
-		GL11.glTexCoord2f(0, 0);
-		GL11.glVertex2i(bounds.x, bounds.y);
-		GL11.glTexCoord2f(0, texture.getHeightRatio());
-		GL11.glVertex2i(bounds.x, bounds.y + bounds.height);
-		GL11.glTexCoord2f(texture.getWidthRatio(), texture.getHeightRatio());
-		GL11.glVertex2i(bounds.x + bounds.width, bounds.y + bounds.height);
-		GL11.glTexCoord2f(texture.getWidthRatio(), 0);
-		GL11.glVertex2i(bounds.x + bounds.width, bounds.y);
-		GL11.glEnd();
-		GL11.glDisable(GL11.GL_BLEND);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+		glBegin(GL_QUADS);
+		glTexCoord2f(0, 0);
+		glVertex2i(bounds.x, bounds.y);
+		glTexCoord2f(0, texture.getHeightRatio());
+		glVertex2i(bounds.x, bounds.y + bounds.height);
+		glTexCoord2f(texture.getWidthRatio(), texture.getHeightRatio());
+		glVertex2i(bounds.x + bounds.width, bounds.y + bounds.height);
+		glTexCoord2f(texture.getWidthRatio(), 0);
+		glVertex2i(bounds.x + bounds.width, bounds.y);
+		glEnd();
+		glDisable(GL_BLEND);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	private void drawString(int x, int y, GraphicsFont font, String text) {
@@ -237,7 +237,7 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 
 		Rectangle[] allBounds = font.getBounds();
 
-		GL11.glEnable(GL11.GL_BLEND);
+		glEnable(GL_BLEND);
 		for (int i = 0; i < text.length(); i++) {
 
 			char c = text.charAt(i);
@@ -253,26 +253,26 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 				placement.x = advance;
 				placement.y = y;
 
-				GL11.glBegin(GL11.GL_QUADS);
+				glBegin(GL_QUADS);
 
-				GL11.glTexCoord2f(texture.xRatio(bounds.x), texture.yRatio(bounds.y));
-				GL11.glVertex2i(placement.x, placement.y);
+				glTexCoord2f(texture.xRatio(bounds.x), texture.yRatio(bounds.y));
+				glVertex2i(placement.x, placement.y);
 
-				GL11.glTexCoord2f(texture.xRatio(bounds.x), texture.yRatio(bounds.y + bounds.height));
-				GL11.glVertex2i(placement.x, placement.y + placement.height);
+				glTexCoord2f(texture.xRatio(bounds.x), texture.yRatio(bounds.y + bounds.height));
+				glVertex2i(placement.x, placement.y + placement.height);
 
-				GL11.glTexCoord2f(texture.xRatio(bounds.x + bounds.width), texture.yRatio(bounds.y + bounds.height));
-				GL11.glVertex2i(placement.x + placement.width, placement.y + placement.height);
+				glTexCoord2f(texture.xRatio(bounds.x + bounds.width), texture.yRatio(bounds.y + bounds.height));
+				glVertex2i(placement.x + placement.width, placement.y + placement.height);
 
-				GL11.glTexCoord2f(texture.xRatio(bounds.x + bounds.width), texture.yRatio(bounds.y));
-				GL11.glVertex2i(placement.x + placement.width, placement.y);
+				glTexCoord2f(texture.xRatio(bounds.x + bounds.width), texture.yRatio(bounds.y));
+				glVertex2i(placement.x + placement.width, placement.y);
 
-				GL11.glEnd();
+				glEnd();
 			}
 
 			advance += metrics.charWidth(c);
 		}
-		GL11.glDisable(GL11.GL_BLEND);
+		glDisable(GL_BLEND);
 	}
 
 	@Override
@@ -290,17 +290,17 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 	@Override
 	public String getRendererVersion() {
 
-		return "opengl " + GL11.glGetString(GL11.GL_VERSION);
+		return "opengl " + glGetString(GL_VERSION);
 	}
 
 	@Override
 	public String getRenderDevice() {
-		return GL11.glGetString(GL11.GL_RENDERER);
+		return glGetString(GL_RENDERER);
 	}
 
 	private void setColor(Color color) {
 
-		GL11.glColor4f(((float) color.getRed())/255,
+		glColor4f(((float) color.getRed())/255,
 				((float) color.getGreen())/255,
 				((float) color.getBlue())/255,
 				((float) color.getAlpha())/255);
@@ -329,50 +329,50 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 
 		OpenGLModelData(ModelLoader model) {
 
-			VAOID = GL30.glGenVertexArrays();
-			GL30.glBindVertexArray(VAOID);
+			VAOID = glGenVertexArrays();
+			glBindVertexArray(VAOID);
 
-			GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+			glEnableClientState(GL_VERTEX_ARRAY);
 
 			if (!model.normals.isEmpty()) {
 				normals = true;
-				GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
+				glEnableClientState(GL_NORMAL_ARRAY);
 			} else {
-				GL11.glDisableClientState(GL11.GL_NORMAL_ARRAY);
+				glDisableClientState(GL_NORMAL_ARRAY);
 			}
 			if (!model.colorAmbient.isEmpty()) {
 				colors = true;
-				GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
+				glEnableClientState(GL_COLOR_ARRAY);
 			} else {
-				GL11.glDisableClientState(GL11.GL_COLOR_ARRAY);
+				glDisableClientState(GL_COLOR_ARRAY);
 			}
 			if (!model.textureCoords.isEmpty()) {
 				textures = true;
 			} else {
-				// GL11.glDisable(GL11.GL_TEXTURE_ARRAY); //something like that
+				// glDisable(GL_TEXTURE_ARRAY); //something like that
 			}
 
 			FloatBuffer verticesBuffer = model.vertices.toFloatBuffer();
-			VBOID = GL15.glGenBuffers();
-			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBOID);
-			GL15.glBufferData(GL15.GL_ARRAY_BUFFER, verticesBuffer, GL15.GL_STATIC_DRAW);
-			// GL11.glVertexPointer(3, GL11.GL_FLOAT, 0, 0);
-			GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0);
+			VBOID = glGenBuffers();
+			glBindBuffer(GL_ARRAY_BUFFER, VBOID);
+			glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
+			// glVertexPointer(3, GL_FLOAT, 0, 0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
 
 			if (normals) {
 				FloatBuffer normalsBuffer = model.normals.toFloatBuffer();
-				NBOID = GL15.glGenBuffers();
-				GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, NBOID);
-				GL15.glBufferData(GL15.GL_ARRAY_BUFFER, normalsBuffer, GL15.GL_STATIC_DRAW);
-				GL11.glNormalPointer(GL11.GL_FLOAT, 0, 0);
+				NBOID = glGenBuffers();
+				glBindBuffer(GL_ARRAY_BUFFER, NBOID);
+				glBufferData(GL_ARRAY_BUFFER, normalsBuffer, GL_STATIC_DRAW);
+				glNormalPointer(GL_FLOAT, 0, 0);
 			}
 
 			if (colors) {
 				FloatBuffer colorBuffer = model.colorAmbient.toFloatBuffer();
-				CBOID = GL15.glGenBuffers();
-				GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, CBOID);
-				GL15.glBufferData(GL15.GL_ARRAY_BUFFER, colorBuffer, GL15.GL_STATIC_DRAW);
-				GL11.glColorPointer(3, GL11.GL_FLOAT, 0, 0);
+				CBOID = glGenBuffers();
+				glBindBuffer(GL_ARRAY_BUFFER, CBOID);
+				glBufferData(GL_ARRAY_BUFFER, colorBuffer, GL_STATIC_DRAW);
+				glColorPointer(3, GL_FLOAT, 0, 0);
 			}
 
 			if (textures) {
@@ -380,15 +380,15 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 			}
 
 			// Deselect (bind to 0) the VBO
-			GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
 			// Deselect (bind to 0) the VAO
-			GL30.glBindVertexArray(0);
+			glBindVertexArray(0);
 
 			IntBuffer indicesBuffer = model.indices.toIntBuffer();
-			VBOIID = GL15.glGenBuffers();
-			GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, VBOIID);
-			GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL15.GL_STATIC_DRAW);
-			GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
+			VBOIID = glGenBuffers();
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, VBOIID);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_STATIC_DRAW);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		}
 
 		private static OpenGLModelData getOpenGLModelData(ModelLoader model) {
@@ -428,21 +428,21 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 
 			ByteBuffer buffer = getNativeData(actualWidth, actualHeight, texture);
 
-			int type = texture.getColorModel().hasAlpha() ? GL11.GL_RGBA : GL11.GL_RGB;
+			int type = texture.getColorModel().hasAlpha() ? GL_RGBA : GL_RGB;
 
-			id = GL11.glGenTextures();
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
-			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
-			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
-			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
-			GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, actualWidth, actualHeight, 0, type,
-					GL11.GL_UNSIGNED_BYTE, buffer);
+			id = glGenTextures();
+			glBindTexture(GL_TEXTURE_2D, id);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, actualWidth, actualHeight, 0, type,
+					GL_UNSIGNED_BYTE, buffer);
 		}
 
 		void bind() {
 
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, id);
+			glBindTexture(GL_TEXTURE_2D, id);
 		}
 
 		float getWidthRatio() {
@@ -543,7 +543,7 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 
 		void release() {
 
-			GL11.glDeleteTextures(id);
+			glDeleteTextures(id);
 		}
 
 		private static OpenGLTextureData getOpenGLTextureData(Texture texture) {
