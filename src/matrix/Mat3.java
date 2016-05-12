@@ -78,12 +78,10 @@ public class Mat3 {
 		//  0  1  2  3  4  5  6  7  8
 		//  0  3  6  1  4  7  2  5  8
 
-		Mat3 transposed = new Mat3();
-
-		for (int i = 0; i < TOTAL_SIZE; i++)
-			transposed.m[i] = m[(i * SIZE) % TOTAL_SIZE + i / SIZE];
-
-		return transposed;
+		return new Mat3(
+				m[0], m[3], m[6],
+				m[1], m[4], m[7],
+				m[2], m[5], m[8]);
 	}
 
 	public float trace() {

@@ -76,15 +76,11 @@ public class Mat4 {
 
 	public Mat4 transpose() {
 
-		//  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
-		//  0  4  8 12  1  5  9 13  2  6 10 14  3  7 11 15
-
-		Mat4 transposed = new Mat4();
-
-		for (int i = 0; i < TOTAL_SIZE; i++)
-			transposed.m[i] = m[(i * SIZE) % TOTAL_SIZE + i / SIZE];
-
-		return transposed;
+		return new Mat4(
+				m[0], m[4], m[8], m[12],
+				m[1], m[5], m[9], m[13],
+				m[2], m[6], m[10], m[14],
+				m[3], m[7], m[11], m[15]);
 	}
 
 	public float trace() {
