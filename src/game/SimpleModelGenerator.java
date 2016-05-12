@@ -17,11 +17,11 @@ public class SimpleModelGenerator implements MaterialModelGenerator {
 
 		//front of model
 		for (Vec2 point : vertices)
-			model.vertices.put(point.getX(), point.getY(), 0.5f);
+			model.vertices.put(point.x, point.y, 0.5f);
 
 		//back of model
 		for (Vec2 point : vertices)
-			model.vertices.put(point.getX(), point.getY(), -0.5f);
+			model.vertices.put(point.x, point.y, -0.5f);
 
 		//front face
 		int[] indices = new int[vertices.length];

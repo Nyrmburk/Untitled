@@ -2,8 +2,8 @@ package matrix;
 
 public class Vec2 {
 
-	private float x;
-	private float y;
+	public float x;
+	public float y;
 
 	public Vec2() {
 	}
@@ -17,16 +17,6 @@ public class Vec2 {
 	public Vec2(Vec2 copy) {
 
 		this(copy.x, copy.y);
-	}
-
-	public float getX() {
-
-		return x;
-	}
-
-	public float getY() {
-
-		return y;
 	}
 
 	public Vec2 add(Vec2 toAdd) {
@@ -84,7 +74,6 @@ public class Vec2 {
 		return new Vec2(this.divide(length()));
 	}
 
-
 	public void translate(Vec2 delta) {
 
 		setPosition(this.add(delta));
@@ -92,13 +81,13 @@ public class Vec2 {
 
 	public void rotate(Vec2 center, float radians) {
 
-		double angle = Math.atan2(y - center.getY(), x - center.getX());
+		double angle = Math.atan2(y - center.y, x - center.x);
 		angle += radians;
 
 		float distance = this.distance(center);
 
-		float x = (float) Math.cos(angle) * distance + center.getX();
-		float y = (float) Math.sin(angle) * distance + center.getY();
+		float x = (float) Math.cos(angle) * distance + center.x;
+		float y = (float) Math.sin(angle) * distance + center.x;
 
 		setPosition(new Vec2(x, y));
 	}

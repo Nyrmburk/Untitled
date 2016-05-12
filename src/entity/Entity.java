@@ -2,6 +2,8 @@ package entity;
 
 import graphics.InstanceAttributes;
 import graphics.ModelLoader;
+import main.Transform;
+import matrix.Vec3;
 import physics.PhysicsObject;
 import physics.PhysicsObjectDef;
 import game.Level;
@@ -16,10 +18,13 @@ public class Entity {
 	private boolean isActive = true;
 
 	// position, rotation
-	private float[] rotation = new float[3];
-	private float[] location = new float[3];
+	//TODO remove these chumps
+//	private float[] rotation = new float[3];
+//	private float[] location = new float[3];
 
 	private ModelLoader model;
+
+	private InstanceAttributes instanceAttributes = new InstanceAttributes();
 	private PhysicsObject physicsObject;
 	private PhysicsObjectDef physicsObjectDef;
 	private Level level;
@@ -50,8 +55,14 @@ public class Entity {
 
 	public void update(int delta) {
 
-		if (getPhysicsObject() != null)
-			setLocation(getPhysicsObject().getPosition());
+		if (getPhysicsObject() != null) {
+			Transform transform = instanceAttributes.getTransform();
+			Vec3 pos = transform.getPosition();
+			float[] newPos = getPhysicsObject().getPosition();
+			pos.x = newPos[0];
+			pos.y = newPos[1];
+			transform.setPosition(pos);
+		}
 	}
 
 	public boolean isActive() {
@@ -62,31 +73,20 @@ public class Entity {
 		isActive = active;
 	}
 
-	public float[] getRotation() {
-		return rotation;
+	public Transform getTransform() {
+
+		return new Transform(instanceAttributes.getTransform());
 	}
 
-	public void setRotation(float[] rotation) {
+	public void setTransform(Transform transform) {
 
-		for (int i = 0; i < location.length; i++) {
+		instanceAttributes.setTransform(transform);
 
-			this.rotation[i] = rotation[i];
+		// inform physics object of change
+		if (physicsObject != null) {
+			Vec3 pos = transform.getPosition();
+			physicsObject.setPosition(pos.x, pos.y);
 		}
-	}
-
-	public float[] getLocation() {
-		return location;
-	}
-
-	public void setLocation(float[] location) {
-
-		for (int i = 0; i < location.length; i++) {
-
-			this.location[i] = location[i];
-		}
-
-		if (physicsObject != null)
-			physicsObject.setPosition(this.location);
 	}
 
 	public ModelLoader getModel() {
@@ -99,7 +99,7 @@ public class Entity {
 			// FIXME: 5/9/2016 
 //			if (this.model != null)
 //				level.getRenderContext().removeModel(this.model);
-			level.getRenderContext().addModel(model, new InstanceAttributes(location, rotation));
+			level.getRenderContext().addModel(model, instanceAttributes);
 		}
 
 		this.model = model;

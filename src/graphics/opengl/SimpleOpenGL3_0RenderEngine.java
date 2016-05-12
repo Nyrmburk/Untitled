@@ -15,6 +15,7 @@ import graphics.*;
 import gui.Container;
 import gui.ContextBox;
 import gui.GUIElement;
+import matrix.Mat4;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
@@ -65,19 +66,21 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 
 			for (InstanceAttributes instanceAttribute : instanceAttributes) {
 
-				GL11.glPushMatrix();
+				//load the model translation matrix
+				Mat4 m = new Mat4(instanceAttribute.getTransform().getMatrix());
 
-				GL11.glTranslatef(instanceAttribute.location[0], instanceAttribute.location[1],
-						instanceAttribute.location[2]);
-				GL11.glRotatef(instanceAttribute.rotation[0], 1, 0, 0);
-				GL11.glRotatef(instanceAttribute.rotation[1], 0, 1, 0);
-				GL11.glRotatef(instanceAttribute.rotation[2], 0, 0, 1);
+				//subtract the camera matrix from the position matrix
+				//TODO figure out how rotations work
+				//TODO replace this crummy camera with the one in the render context
+				m.m[12] -= Camera.eye[0];
+				m.m[13] -= Camera.eye[1];
+				m.m[14] -= Camera.eye[2];
+
+				GL11.glLoadMatrix(toFloatBuffer(m.m));
 
 				// Draw the vertices
 				GL11.glDrawElements(GL11.GL_TRIANGLES, model.indices.getSize() * model.indices.getStride(),
 						GL11.GL_UNSIGNED_INT, 0);
-
-				GL11.glPopMatrix();
 
 				polys += model.indices.getSize();
 			}
@@ -301,6 +304,15 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 				((float) color.getGreen())/255,
 				((float) color.getBlue())/255,
 				((float) color.getAlpha())/255);
+	}
+
+	private FloatBuffer toFloatBuffer(float[] floatArray) {
+
+		FloatBuffer buffer = BufferUtils.createFloatBuffer(floatArray.length);
+		buffer.put(floatArray);
+		buffer.flip();
+
+		return buffer;
 	}
 
 	private static class OpenGLModelData {

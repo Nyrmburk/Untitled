@@ -5,11 +5,13 @@ import main.Transform;
 //Beef this up.
 public class InstanceAttributes {
 
-	public Transform transform;
+	private Transform transform = new Transform();
 
-	public InstanceAttributes(float[] location, float[] rotation) {
+	public Transform getTransform() {
+		return transform;
+	}
 
-		this.location = location;
-		this.rotation = rotation;
+	public void setTransform(Transform transform) {
+		this.transform = transform;
 	}
 }

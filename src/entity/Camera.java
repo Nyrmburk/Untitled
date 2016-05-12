@@ -1,25 +1,50 @@
 package entity;
 
-import graphics.ModelLoader;
+import main.Transform;
 
 public class Camera {
 
 	private float aspectRatio;
-//	private float fieldOfView = 90;
-//	private float[] quaternion = new float[16];
-	
+	private float fieldOfView = 90;
+	private Transform transform = new Transform();
+
+	public Camera(float aspectRatio, float fieldOfView) {
+
+		setAspectRatio(aspectRatio);
+		setFieldOfView(fieldOfView);
+	}
+
+	public Camera(int width, int height, float fieldOfView) {
+
+		 this(aspectRatioFromResolution(width, height), fieldOfView);
+	}
+
 	public float getAspectRatio() {
-		
 		return aspectRatio;
 	}
-	
-	public float[] getLocation() {
-		
-		return new float[3];
+
+	public void setAspectRatio(float aspectRatio) {
+		this.aspectRatio = aspectRatio;
 	}
-	
-	public float[] getRotation() {
-		
-		return new float[4];
+
+	public float getFieldOfView() {
+		return fieldOfView;
+	}
+
+	public void setFieldOfView(float fieldOfView) {
+		this.fieldOfView = fieldOfView;
+	}
+
+	public Transform getTransform() {
+		return transform;
+	}
+
+	public void setTransform(Transform transform) {
+		this.transform = transform;
+	}
+
+	public static float aspectRatioFromResolution(int width, int height) {
+
+		return ((float) width) / height;
 	}
 }

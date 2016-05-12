@@ -59,8 +59,8 @@ public class LineConverter implements ModelConverter<Line> {
 			Vec2 leftVert = verts[i].add(miter);
 			Vec2 rightVert = verts[i].subtract(miter);
 
-			model.vertices.put(leftVert.getX(), leftVert.getY(), 0);
-			model.vertices.put(rightVert.getX(), rightVert.getY(), 0);
+			model.vertices.put(leftVert.x, leftVert.y, 0);
+			model.vertices.put(rightVert.x, rightVert.y, 0);
 
 			inLine = outLine;
 		}
@@ -79,8 +79,8 @@ public class LineConverter implements ModelConverter<Line> {
 			Vec2 leftVert = verts[line.getLength() - 1].add(miter);
 			Vec2 rightVert = verts[line.getLength() - 1].subtract(miter);
 
-			model.vertices.put(leftVert.getX(), leftVert.getY(), 0);
-			model.vertices.put(rightVert.getX(), rightVert.getY(), 0);
+			model.vertices.put(leftVert.x, leftVert.y, 0);
+			model.vertices.put(rightVert.x, rightVert.y, 0);
 		}
 
 		int length = line.getLength() - 1;
@@ -110,7 +110,7 @@ public class LineConverter implements ModelConverter<Line> {
 		Vec2 normal = outLine.transpose();
 		Vec2 tangent = inLine.add(outLine).normalized();
 
-		Vec2 miter = new Vec2(-tangent.getY(), tangent.getX());
+		Vec2 miter = new Vec2(-tangent.y, tangent.x);
 		float length = 0.5f / miter.dot(normal); //0.5f means the width is half (0.5) of 1 (normalized vector)
 		miter = miter.normalized().multiply(length);
 

@@ -147,8 +147,8 @@ public class Polygon {
 
 	private static boolean isCCW(Vec2 a, Vec2 b, Vec2 c) {
 
-		return (b.getX() - a.getX())*(c.getY() - a.getY()) >
-				(b.getY() - a.getY())*(c.getX() - a.getX());
+		return (b.x - a.x)*(c.y - a.y) >
+				(b.y - a.y)*(c.x - a.x);
 	}
 
 	private static class VisibilityPair implements Comparable<VisibilityPair> {

@@ -5,9 +5,9 @@ package matrix;
  */
 public class Vec3 {
 
-	private float x;
-	private float y;
-	private float z;
+	public float x;
+	public float y;
+	public float z;
 
 	public Vec3() {
 	}
@@ -22,21 +22,6 @@ public class Vec3 {
 	public Vec3(Vec3 copy) {
 
 		this(copy.x, copy.y, copy.z);
-	}
-
-	public float getX() {
-
-		return x;
-	}
-
-	public float getY() {
-
-		return y;
-	}
-
-	public float getZ() {
-
-		return z;
 	}
 
 	public Vec3 add(Vec3 toAdd) {

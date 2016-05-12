@@ -6,11 +6,11 @@ package matrix;
 public class Mat3 {
 
 	public static final int SIZE = 3;
-	public static final int TOTAL_SIZE = SIZE * SIZE; //16
+	public static final int TOTAL_SIZE = SIZE * SIZE; //9
 
-	//  0  1  2  
-	//  3  4  5
-	//  6  7  8
+	//  0  3  6
+	//  1  4  7
+	//  2  5  8
 	public float[] m = new float[16];
 
 	public Mat3() {
@@ -84,6 +84,11 @@ public class Mat3 {
 			transposed.m[i] = m[(i * SIZE) % TOTAL_SIZE + i / SIZE];
 
 		return transposed;
+	}
+
+	public float trace() {
+
+		return m[0] + m[4] + m[8];
 	}
 
 	public static Mat3 identity() {

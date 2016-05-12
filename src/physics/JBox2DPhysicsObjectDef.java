@@ -177,7 +177,7 @@ public class JBox2DPhysicsObjectDef implements PhysicsObjectDef {
 		Vec2[] otherVec2s = new Vec2[vec2s.length];
 
 		for (int i = 0; i < vec2s.length; i++)
-			otherVec2s[i] = new Vec2(vec2s[i].getX(), vec2s[i].getY());
+			otherVec2s[i] = new Vec2(vec2s[i].x, vec2s[i].y);
 
 		return otherVec2s;
 	}

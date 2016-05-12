@@ -8,10 +8,10 @@ public class Mat4 {
 	public static final int SIZE = 4;
 	public static final int TOTAL_SIZE = SIZE * SIZE; //16
 
-	//  0  1  2  3
-	//  4  5  6  7
-	//  8  9 10 11
-	// 12 13 14 15
+	//  0  4  8 12
+	//  1  5  9 13
+	//  2  6 10 14
+	//  3  7 11 15
 	public float[] m = new float[16];
 
 	public Mat4() {
@@ -85,6 +85,11 @@ public class Mat4 {
 			transposed.m[i] = m[(i * SIZE) % TOTAL_SIZE + i / SIZE];
 
 		return transposed;
+	}
+
+	public float trace() {
+
+		return m[0] + m[5] + m [10] + m[15];
 	}
 
 	public static Mat4 identity() {

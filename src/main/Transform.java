@@ -1,7 +1,12 @@
 package main;
 
+import matrix.Mat3;
 import matrix.Mat4;
 import matrix.Vec3;
+import matrix.Vec4;
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
 
 /**
  * Created by Nyrmburk on 5/9/2016.
@@ -9,22 +14,66 @@ import matrix.Vec3;
  */
 public class Transform {
 
-	public Mat4 transform = new Mat4();
+	//  0  4  8 12
+	//  1  5  9 13
+	//  2  6 10 14
+	//  3  7 11 15
+
+	//  r  r  r  x
+	//  r  r  r  y
+	//  r  r  r  z
+	//  ?  ?  ?  w?
+	public Mat4 transform;
+
+	public Transform() {
+
+		transform = Mat4.identity();
+	}
+
+	public Transform(Transform copy) {
+
+		transform = new Mat4(copy.getMatrix());
+	}
+
+	public Mat4 getMatrix() {
+
+		return transform;
+	}
 
 	public Vec3 getPosition() {
 
-		return null;
+		float[] m = transform.m;
+		return new Vec3(m[12], m[13], m[14]);
 	}
 
 	public void setPosition(Vec3 position) {
 
+		float[] m = transform.m;
+		m[12] = position.x;
+		m[13] = position.y;
+		m[14] = position.z;
+//		System.out.println(Arrays.toString(m));
 	}
 
-	public void getRotation() {
+	public Mat3 getRotationMatrix() {
+
+		float[] m = transform.m;
+		return new Mat3(
+				m[0], m[4], m[8],
+				m[1], m[5], m[9],
+				m[2], m[6], m[10]);
+	}
+
+	public void setRotationMatrix() {
 
 	}
 
-	public void setRotation() {
+	public Vec4 getRotationQuaternion() {
+
+		return null;
+	}
+
+	public void setRotationQuaternion(Vec4 quaternion) {
 
 	}
 

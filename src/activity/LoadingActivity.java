@@ -8,7 +8,9 @@ import graphics.ModelLoader;
 import gui.*;
 import main.Engine;
 import main.ResourceManager;
+import main.Transform;
 import matrix.Vec2;
+import matrix.Vec3;
 import physics.*;
 import game.Level;
 import physics.Polygon;
@@ -105,7 +107,9 @@ public class LoadingActivity extends Activity {
 			Polygon meh = new Polygon(playerVertices);
 			PhysicsObjectDef objectDef = Engine.level.physicsEngine.getPhysicsObjectDef(PhysicsObject.Type.DYNAMIC, meh);
 			player.setPhysicsObject(objectDef);
-			player.setLocation(new float[]{-3, 0});
+			Transform transform = new Transform();
+			transform.setPosition(new Vec3(-3, 0, 0));
+			player.setTransform(transform);
 
 			//lambda expressions make this pretty
 			ResourceManager.getResource(

@@ -5,10 +5,10 @@ package matrix;
  */
 public class Vec4 {
 
-	private float x;
-	private float y;
-	private float z;
-	private float w;
+	public float x;
+	public float y;
+	public float z;
+	public float w;
 
 	public Vec4() {
 	}
@@ -24,26 +24,6 @@ public class Vec4 {
 	public Vec4(Vec4 copy) {
 
 		this(copy.x, copy.y, copy.z, copy.w);
-	}
-
-	public float getX() {
-
-		return x;
-	}
-
-	public float getY() {
-
-		return y;
-	}
-
-	public float getZ() {
-
-		return z;
-	}
-
-	public float getW() {
-
-		return w;
 	}
 
 	public Vec4 add(Vec4 toAdd) {
