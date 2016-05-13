@@ -6,6 +6,8 @@ import matrix.Mat4;
 public class InstanceAttributes {
 
 	private Mat4 transform = Mat4.identity();
+	// animation
+	// different textures??
 
 	public Mat4 getTransform() {
 		return transform;

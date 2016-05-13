@@ -51,7 +51,7 @@ public class Render {
 		GL11.glColorMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE);
 		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION,
 				asFloatBuffer(new float[] {127, 127, 500, 1}));
-		
+
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		// sky blue
@@ -59,7 +59,7 @@ public class Render {
 		// 0.9215686274509804f, 1f);
 		GL11.glClearColor(0.25f, 0.25f, 0.25f, 1f);
 		GL11.glLoadIdentity();
-		
+
 		GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
 
 		GL11.glPointSize(3);

@@ -1,0 +1,16 @@
+To use the input system, make an Input for each action in the context. Add those actions to a new context. And then figure out how to use the state system to build up the chain of actions.
+
+For activity's getting pointer input, there needs to be some sort of focus system? THere needs to be a class that checks for whether or not it has a PointerListener and adds it to a list? Another way is to find the topmost intersecting guielement and check if it implements PointerListener. It would remove any issues with updating info. The downside is (arguably poorly) using instanceof over and over. Once per frame is not bad though. Then there needs to be some way to call that class repeatedly. We could merge the view into the UIRenderContext. I already need to rewrite that class and solve both updating images and using color to prevent loading images. I also need to prevent remaking images if they are already loaded. If I merge mouse checking with UIRenderContext I canmake sure this image updates but it seems sketchy having input checking in a render context. I think I need some way of causing an invalidation or change notification for thh uirendercontext.
+
+Problem:
+I want to use InputContext to save and load different groupings of Inputs.
+
+Possible Solutions:
+Don't have a current context but rather just a list.
+	Rebuttal: It now means that there is no way to suppress inputs on separate layers.
+Have several current contexts
+	Rebuttal: How the fuck would that work? I guess if you can figure out a way to do it then it should work ok.
+Make a new grouping object that is independent of inputcontext
+	Rebuttal: gets a little confusing, but ultimately is the right decision.
+	
+Should I separate handling and mapping? Probably. idk. It kinda already is. The mapping is done with InputInterface. The problem is that when loading, I create Inputs and map them, but then I have not set any handling for it. Handling must also be done during initialization,. I am not sure if my current setup allows for multiple Inputs bound to several actions. If I separate, it may become an issue for specific activators to work. If I build activation into Handling, then it would no longer be an issue. Damn, this is getting confusing again. It sounds like the handling is exactly like the implementation of Input I have now.

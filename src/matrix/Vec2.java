@@ -2,6 +2,8 @@ package matrix;
 
 public class Vec2 {
 
+	public static final int SIZE = 2;
+
 	public float x;
 	public float y;
 

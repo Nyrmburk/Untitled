@@ -3,6 +3,7 @@ package matrix;
 /**
  * Created by Nyrmburk on 5/9/2016.
  * http://math.stackexchange.com/questions/82602/how-to-find-camera-position-and-rotation-from-a-4x4-matrix
+ * https://www.opengl.org/wiki/GluLookAt_code
  */
 public class Transform extends Mat4 {
 

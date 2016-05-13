@@ -412,9 +412,17 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 
 				data = new OpenGLModelData(model);
 				model.setUserData(data);
+				model.setReleaseListener(data::release);
 			}
 
 			return data;
+		}
+
+		void release() {
+
+			glDeleteBuffers(VBOID);
+			glDeleteBuffers(VBOIID);
+			glDeleteVertexArrays(VAOID);
 		}
 	}
 

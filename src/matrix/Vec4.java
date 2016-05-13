@@ -5,6 +5,8 @@ package matrix;
  */
 public class Vec4 {
 
+	public static final int SIZE = 4;
+
 	public float x;
 	public float y;
 	public float z;

@@ -161,8 +161,6 @@ public class ModelLoader extends Resource {
 	}
 
 	public void addFace(int... indices) {
-		// TODO Triangulate
-
 		triangulate(indices);
 	}
 
@@ -268,7 +266,7 @@ public class ModelLoader extends Resource {
 			trim();
 			FloatBuffer buffer = BufferUtils.createFloatBuffer(data.length);
 			buffer.put(data);
-			buffer.flip();
+			buffer.rewind();
 
 			return buffer;
 		}

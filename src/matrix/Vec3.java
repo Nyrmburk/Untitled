@@ -5,6 +5,8 @@ package matrix;
  */
 public class Vec3 {
 
+	public static final int SIZE = 3;
+
 	public float x;
 	public float y;
 	public float z;
@@ -68,6 +70,11 @@ public class Vec3 {
 		crossed.z = x * toCross.y - y * toCross.x;
 
 		return crossed;
+	}
+
+	public float angle(Vec3 toCompare) {
+
+		return (float) Math.acos(this.dot(toCompare) / (this.length() * toCompare.length()));
 	}
 
 	public Vec3 reciprocal() {

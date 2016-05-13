@@ -2,6 +2,8 @@ package matrix;
 
 /**
  * Created by Nyrmburk on 5/12/2016.
+ * http://www.songho.ca/opengl/gl_projectionmatrix.html
+ * https://www.opengl.org/wiki/GluProject_and_gluUnProject_code
  */
 public class Projection {
 
