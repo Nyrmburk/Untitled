@@ -15,6 +15,7 @@ import graphics.*;
 import gui.Container;
 import gui.ContextBox;
 import gui.GUIElement;
+import matrix.Mat4;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
@@ -38,6 +39,7 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 	@Override
 	public int render(RenderContext renderContext) {
 
+//		System.out.println(getCurrentMatrix().toString());
 		long time = Engine.getTime();
 
 		polys = 0;
@@ -68,7 +70,7 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 				glPushMatrix();
 
 				//load the model translation matrix
-				float[] m = instanceAttribute.getTransform().getMatrix().m;
+				float[] m = instanceAttribute.getTransform().m;
 
 				glMultMatrix(toFloatBuffer(m));
 
@@ -309,6 +311,18 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 		buffer.flip();
 
 		return buffer;
+	}
+
+	//for debug
+	private Mat4 getCurrentMatrix() {
+
+		FloatBuffer matrix = BufferUtils.createFloatBuffer(Mat4.TOTAL_SIZE);
+		glGetFloat(GL_MODELVIEW_MATRIX, matrix);
+
+		float[] array = new float[Mat4.TOTAL_SIZE];
+		matrix.get(array);
+
+		return new Mat4(array);
 	}
 
 	private static class OpenGLModelData {

@@ -114,4 +114,18 @@ public class Mat4 {
 				0, 0, 1, 0,
 				0, 0, 0, 1);
 	}
+
+	public String toString() {
+
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+
+				sb.append(String.format("%6.2f ", m[i * j + j]));
+			}
+			sb.append('\n');
+		}
+
+		return sb.toString();
+	}
 }

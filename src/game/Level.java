@@ -4,7 +4,8 @@ import entity.Entity;
 import entity.MaterialEntity;
 import graphics.RenderContext;
 import main.Resource;
-import main.Transform;
+import matrix.Mat4;
+import matrix.Transform;
 import matrix.Vec2;
 import matrix.Vec3;
 import physics.*;
@@ -87,8 +88,8 @@ public class Level extends Resource {
 		PhysicsObjectDef objectDef = this.physicsEngine.getPhysicsObjectDef(PhysicsObject.Type.KINEMATIC, shape);
 		objectDef.setDensity(1);
 		floor.setPhysicsObject(objectDef);
-		Transform transform = new Transform();
-		transform.setPosition(new Vec3(0, -5, 0));
+		Mat4 transform = Mat4.identity();
+		Transform.setPosition(transform, new Vec3(0, -5, 0));
 		floor.setTransform(transform);
 	}
 }

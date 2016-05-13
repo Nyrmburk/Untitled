@@ -1,15 +1,10 @@
-package main;
-
-import matrix.Mat3;
-import matrix.Mat4;
-import matrix.Vec3;
-import matrix.Vec4;
+package matrix;
 
 /**
  * Created by Nyrmburk on 5/9/2016.
  * http://math.stackexchange.com/questions/82602/how-to-find-camera-position-and-rotation-from-a-4x4-matrix
  */
-public class Transform {
+public class Transform extends Mat4 {
 
 	//  0  4  8 12
 	//  1  5  9 13
@@ -20,70 +15,53 @@ public class Transform {
 	//  r  r  r  y
 	//  r  r  r  z
 	//  ?  ?  ?  w?
-	public Mat4 transform;
 
-	public Transform() {
+	public static Vec3 getPosition(Mat4 matrix) {
 
-		transform = Mat4.identity();
-	}
-
-	public Transform(Transform copy) {
-
-		transform = new Mat4(copy.getMatrix());
-	}
-
-	public Mat4 getMatrix() {
-
-		return transform;
-	}
-
-	public Vec3 getPosition() {
-
-		float[] m = transform.m;
+		float[] m = matrix.m;
 		return new Vec3(m[12], m[13], m[14]);
 	}
 
-	public void setPosition(Vec3 position) {
+	public static void setPosition(Mat4 matrix, Vec3 position) {
 
-		float[] m = transform.m;
+		float[] m = matrix.m;
 		m[12] = position.x;
 		m[13] = position.y;
 		m[14] = position.z;
 	}
 
-	public Mat3 getRotationMatrix() {
+	public static Mat3 getRotationMatrix(Mat4 matrix) {
 
-		float[] m = transform.m;
+		float[] m = matrix.m;
 		return new Mat3(
 				m[0], m[4], m[8],
 				m[1], m[5], m[9],
 				m[2], m[6], m[10]);
 	}
 
-	public void setRotationMatrix(Mat3 matrix) {
+	public static void setRotationMatrix(Mat4 matrix, Mat3 rotation) {
 
-		float[] m = transform.m;
-		m[0] = matrix.m[0];
-		m[1] = matrix.m[1];
-		m[2] = matrix.m[2];
-		m[4] = matrix.m[3];
-		m[5] = matrix.m[4];
-		m[6] = matrix.m[5];
-		m[8] = matrix.m[6];
-		m[9] = matrix.m[7];
-		m[10] = matrix.m[8];
+		matrix.m[0] = rotation.m[0];
+		matrix.m[1] = rotation.m[1];
+		matrix.m[2] = rotation.m[2];
+		matrix.m[4] = rotation.m[3];
+		matrix.m[5] = rotation.m[4];
+		matrix.m[6] = rotation.m[5];
+		matrix.m[8] = rotation.m[6];
+		matrix.m[9] = rotation.m[7];
+		matrix.m[10]= rotation.m[8];
 	}
 
-	public Vec4 getRotationQuaternion() {
+	public static Vec4 getRotationQuaternion(Mat4 matrix) {
 
 		return null;
 	}
 
-	public void setRotationQuaternion(Vec4 quaternion) {
+	public static void setRotationQuaternion(Mat4 matrix, Vec4 quaternion) {
 
 	}
 
-	public Mat4 rotate(Vec3 axis, float angle) {
+	public static Mat4 rotate(Mat4 matrix, Vec3 axis, float angle) {
 
 		Mat4 rotated = Mat4.identity();
 		float[] r = rotated.m;
@@ -109,10 +87,10 @@ public class Transform {
 		r[9] = yz * oneMinusCos - axis.x * sin;
 		r[10]= zz * oneMinusCos + cos;
 
-		return transform.multiply(rotated);
+		return matrix.multiply(rotated);
 	}
 
-	public Mat4 pointAt(Vec3 position, Vec3 target, Vec3 up) {
+	public static Mat4 pointAt(Mat4 matrix, Vec3 position, Vec3 target, Vec3 up) {
 
 		Vec3 forward = target.subtract(position).normalized();
 		Vec3 side = forward.cross(up);
@@ -131,12 +109,8 @@ public class Transform {
 		m[6] = -forward.y;
 		m[10]= -forward.z;
 
-		result = transform.multiply(result);
+		result = matrix.multiply(result);
 
 		return result;
-	}
-
-	public void project() {
-
 	}
 }

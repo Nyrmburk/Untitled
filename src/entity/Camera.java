@@ -1,13 +1,13 @@
 package entity;
 
-import main.Transform;
+import matrix.Mat4;
 import matrix.Vec3;
 
 public class Camera {
 
 	private float aspectRatio;
 	private float fieldOfView = 90;
-	private Transform transform = new Transform();
+	private Mat4 transform = new Mat4();
 	private Vec3 up;
 
 	public Camera(float aspectRatio, float fieldOfView) {
@@ -37,11 +37,11 @@ public class Camera {
 		this.fieldOfView = fieldOfView;
 	}
 
-	public Transform getTransform() {
+	public Mat4 getTransform() {
 		return transform;
 	}
 
-	public void setTransform(Transform transform) {
+	public void setTransform(Mat4 transform) {
 		this.transform = transform;
 	}
 

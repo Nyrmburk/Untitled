@@ -1,17 +1,18 @@
 package graphics;
 
-import main.Transform;
+import matrix.Mat4;
 
 //Beef this up.
 public class InstanceAttributes {
 
-	private Transform transform = new Transform();
+	private Mat4 transform = Mat4.identity();
 
-	public Transform getTransform() {
+	public Mat4 getTransform() {
 		return transform;
 	}
 
-	public void setTransform(Transform transform) {
+	public void setTransform(Mat4 transform) {
+
 		this.transform = transform;
 	}
 }

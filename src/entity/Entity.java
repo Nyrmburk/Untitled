@@ -2,7 +2,8 @@ package entity;
 
 import graphics.InstanceAttributes;
 import graphics.ModelLoader;
-import main.Transform;
+import matrix.Mat4;
+import matrix.Transform;
 import matrix.Vec3;
 import physics.PhysicsObject;
 import physics.PhysicsObjectDef;
@@ -56,12 +57,12 @@ public class Entity {
 	public void update(int delta) {
 
 		if (getPhysicsObject() != null) {
-			Transform transform = instanceAttributes.getTransform();
-			Vec3 pos = transform.getPosition();
+			Mat4 transform = instanceAttributes.getTransform();
+			Vec3 pos = Transform.getPosition(transform);
 			float[] newPos = getPhysicsObject().getPosition();
 			pos.x = newPos[0];
 			pos.y = newPos[1];
-			transform.setPosition(pos);
+			Transform.setPosition(transform, pos);
 		}
 	}
 
@@ -73,18 +74,18 @@ public class Entity {
 		isActive = active;
 	}
 
-	public Transform getTransform() {
+	public Mat4 getTransform() {
 
-		return new Transform(instanceAttributes.getTransform());
+		return new Mat4(instanceAttributes.getTransform());
 	}
 
-	public void setTransform(Transform transform) {
+	public void setTransform(Mat4 transform) {
 
 		instanceAttributes.setTransform(transform);
 
 		// inform physics object of change
 		if (physicsObject != null) {
-			Vec3 pos = transform.getPosition();
+			Vec3 pos = Transform.getPosition(transform);
 			physicsObject.setPosition(pos.x, pos.y);
 		}
 	}
