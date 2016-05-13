@@ -59,6 +59,17 @@ public class Vec3 {
 		return x * toDot.x + this.y * toDot.y + z * toDot.z;
 	}
 
+	public Vec3 cross(Vec3 toCross) {
+
+		Vec3 crossed = new Vec3();
+
+		crossed.x = y * toCross.z - z * toCross.y;
+		crossed.y = z * toCross.x - x * toCross.z;
+		crossed.z = x * toCross.y - y * toCross.x;
+
+		return crossed;
+	}
+
 	public Vec3 reciprocal() {
 
 		return new Vec3(1 / x, 1 / y, 1 / z);

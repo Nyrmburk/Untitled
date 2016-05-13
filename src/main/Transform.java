@@ -49,7 +49,6 @@ public class Transform {
 		m[12] = position.x;
 		m[13] = position.y;
 		m[14] = position.z;
-//		System.out.println(Arrays.toString(m));
 	}
 
 	public Mat3 getRotationMatrix() {
@@ -113,8 +112,28 @@ public class Transform {
 		return transform.multiply(rotated);
 	}
 
-	public void pointAt() {
+	public Mat4 pointAt(Vec3 position, Vec3 target, Vec3 up) {
 
+		Vec3 forward = target.subtract(position).normalized();
+		Vec3 side = forward.cross(up);
+		up = side.cross(forward);
+
+		Mat4 result = Mat4.identity();
+		float[] m = result.m;
+
+		m[0] = side.x;
+		m[4] = side.y;
+		m[8] = side.z;
+		m[1] = up.x;
+		m[5] = up.y;
+		m[9] = up.z;
+		m[2] = -forward.x;
+		m[6] = -forward.y;
+		m[10]= -forward.z;
+
+		result = transform.multiply(result);
+
+		return result;
 	}
 
 	public void project() {

@@ -15,7 +15,6 @@ import graphics.*;
 import gui.Container;
 import gui.ContextBox;
 import gui.GUIElement;
-import matrix.Mat4;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
