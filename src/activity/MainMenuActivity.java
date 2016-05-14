@@ -67,7 +67,7 @@ public class MainMenuActivity extends Activity {
 		setView(view);
 		
 //		RenderContext context = new RenderContext();
-//		context.addModel(model, attributes);
+//		context.addInstance(model, attributes);
 //		Engine.renderEngine.setContext(context);
 	}
 

@@ -55,7 +55,7 @@ public class CreateActivity extends Activity {
 						line.setData(i, converted, 1, Color.BLACK);
 					}
 
-					getRenderContext().addModel(lc.convert(line), new InstanceAttributes());
+					getRenderContext().addInstance(lc.convert(line), new InstanceAttributes());
 				}
 //				System.out.println(vec);
 			}

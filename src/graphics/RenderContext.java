@@ -13,7 +13,7 @@ public class RenderContext {
 		setCamera(camera);
 	}
 
-	public void addModel(ModelLoader model, InstanceAttributes attributes) {
+	public void addInstance(ModelLoader model, InstanceAttributes attributes) {
 
 		InstancedModel instancedModel = null;
 
@@ -34,31 +34,28 @@ public class RenderContext {
 		instancedModel.attributes.add(attributes);
 	}
 
-	// FIXME: 5/9/2016
-	// closed until I can figure wtf this is supposed to do.
-//	public boolean removeModel(ModelLoader model) {
-//
-//		Iterator<InstancedModel> it = models.iterator();
-//
-//		boolean removed = false;
-//
-//		while (it.hasNext()) {
-//
-//			InstancedModel imodel = it.next();
-//
-//			if (imodel.removeInstance(model.getId()) != null) {
-//
-//				if (imodel.attributes.isEmpty()) {
-//					it.remove();
-//				}
-//
-//				removed = false;
-//				break;
-//			}
-//		}
-//
-//		return removed;
-//	}
+	public boolean removeInstance(InstanceAttributes instanceAttributes) {
+
+		Iterator<InstancedModel> it = models.iterator();
+
+		boolean removed = false;
+
+		while (it.hasNext()) {
+
+			InstancedModel iModel = it.next();
+
+			removed = iModel.attributes.remove(instanceAttributes);
+
+			if (removed) {
+
+				if (iModel.attributes.isEmpty())
+					it.remove();
+				break;
+			}
+		}
+
+		return removed;
+	}
 
 	public Set<InstancedModel> getIModels() {
 

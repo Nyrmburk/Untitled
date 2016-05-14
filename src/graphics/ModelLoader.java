@@ -34,6 +34,8 @@ public class ModelLoader extends Resource {
 	public FloatList object;
 	public FloatList group;
 
+	public Texture texture;
+
 	String name;
 
 	public ModelLoader() {
@@ -279,6 +281,8 @@ public class ModelLoader extends Resource {
 
 		public int getSize() {
 
+			if (data == null)
+				return 0;
 			return data.length / stride;
 		}
 
@@ -435,125 +439,125 @@ public class ModelLoader extends Resource {
 				put(ints);
 		}
 	}
-}
 
-class LoadOBJ {
+	public static class LoadOBJ {
 
-	ModelLoader model;
+		ModelLoader model;
 
-	public LoadOBJ(ModelLoader model) {
+		public LoadOBJ(ModelLoader model) {
 
-		this.model = model;
-	}
+			this.model = model;
+		}
 
-	public void parseLine(String line) {
-		// http://www.martinreddy.net/gfx/3d/OBJ.spec
+		public void parseLine(String line) {
+			// http://www.martinreddy.net/gfx/3d/OBJ.spec
 
-		String[] arguments = line.split("\\s+");
+			String[] arguments = line.split("\\s+");
 
-		// find out what the type definition is
-		switch (arguments[0]) {
+			// find out what the type definition is
+			switch (arguments[0]) {
 
-		case "#":// comment
-			break;
-		// vertex data
-		case "v":// vertex
-			putFloats(model.vertices, arguments, 1);
-			break;
-		case "vt":// texture vertex
-			putFloats(model.textureCoords, arguments, 1);
-			break;
-		case "vn":// vertex normal
-			putFloats(model.normals, arguments, 1);
-			break;
-		// elements
-		case "p":// point
-			break;
-		case "l":// line
-			break;
-		case "f":// face
-			// TODO do face parsing
-			int[] verts = new int[arguments.length - 1];
-			int[] uvs = new int[arguments.length - 1];
-			int[] norms = new int[arguments.length - 1];
+				case "#":// comment
+					break;
+				// vertex data
+				case "v":// vertex
+					putFloats(model.vertices, arguments, 1);
+					break;
+				case "vt":// texture vertex
+					putFloats(model.textureCoords, arguments, 1);
+					break;
+				case "vn":// vertex normal
+					putFloats(model.normals, arguments, 1);
+					break;
+				// elements
+				case "p":// point
+					break;
+				case "l":// line
+					break;
+				case "f":// face
+					// TODO do face parsing
+					int[] verts = new int[arguments.length - 1];
+					int[] uvs = new int[arguments.length - 1];
+					int[] norms = new int[arguments.length - 1];
 
-			@SuppressWarnings("unused")
-			boolean useUVs = false;
-			@SuppressWarnings("unused")
-			boolean useNorms = false;
+					@SuppressWarnings("unused")
+					boolean useUVs = false;
+					@SuppressWarnings("unused")
+					boolean useNorms = false;
 
-			for (int i = 0; i < arguments.length - 1; i++) {
+					for (int i = 0; i < arguments.length - 1; i++) {
 
-				String[] face = arguments[i + 1].split("/");
-				if (!face[0].isEmpty())
-					verts[i] = Integer.parseInt(face[0]) - 1;
+						String[] face = arguments[i + 1].split("/");
+						if (!face[0].isEmpty())
+							verts[i] = Integer.parseInt(face[0]) - 1;
 
-				if (face.length < 2)
-					continue;
-				if (!face[1].isEmpty()) {
+						if (face.length < 2)
+							continue;
+						if (!face[1].isEmpty()) {
 
-					uvs[i] = Integer.parseInt(face[1]) - 1;
-					useUVs = true;
-				}
+							uvs[i] = Integer.parseInt(face[1]) - 1;
+							useUVs = true;
+						}
 
-				if (face.length < 3)
-					continue;
-				if (!face[2].isEmpty()) {
+						if (face.length < 3)
+							continue;
+						if (!face[2].isEmpty()) {
 
-					norms[i] = Integer.parseInt(face[2]) - 1;
-					useNorms = true;
-				}
+							norms[i] = Integer.parseInt(face[2]) - 1;
+							useNorms = true;
+						}
+					}
+
+					model.addFace(verts);
+					// if (useUVs) model.textureCoords.put(uvs);
+					// if (useNorms) model.normals.put(norms);
+					break;
+				// grouping
+				case "g":// group name
+					break;
+				case "s":// smoothing group
+					break;
+				case "o":// object name
+					break;
+				// display/render attributes
+				case "bevel":// bevel interpolation
+					break;
+				case "c_interp":// color interpolation
+					break;
+				case "d_interp":// dissolve interpolation
+					break;
+				case "lod":// level of detail
+					break;
+				case "usemtl":// material name
+					break;
+				case "mtllib":// material library
+					break;
+				case "shadow_obj":// shadow casting
+					break;
+			}
+		}
+
+		private void putFloats(FloatList dest, String[] data, int offset) {
+
+			float[] floats = new float[data.length - offset];
+
+			for (int i = 0; i < data.length - offset; i++) {
+				floats[i] = Float.parseFloat(data[i + offset]);
 			}
 
-			model.addFace(verts);
-			// if (useUVs) model.textureCoords.put(uvs);
-			// if (useNorms) model.normals.put(norms);
-			break;
-		// grouping
-		case "g":// group name
-			break;
-		case "s":// smoothing group
-			break;
-		case "o":// object name
-			break;
-		// display/render attributes
-		case "bevel":// bevel interpolation
-			break;
-		case "c_interp":// color interpolation
-			break;
-		case "d_interp":// dissolve interpolation
-			break;
-		case "lod":// level of detail
-			break;
-		case "usemtl":// material name
-			break;
-		case "mtllib":// material library
-			break;
-		case "shadow_obj":// shadow casting
-			break;
-		}
-	}
-
-	private void putFloats(FloatList dest, String[] data, int offset) {
-
-		float[] floats = new float[data.length - offset];
-
-		for (int i = 0; i < data.length - offset; i++) {
-			floats[i] = Float.parseFloat(data[i + offset]);
+			dest.put(floats);
 		}
 
-		dest.put(floats);
-	}
+		@SuppressWarnings("unused")
+		private void putInts(IntList dest, String[] data, int offset) {
 
-	@SuppressWarnings("unused")
-	private void putInts(IntList dest, String[] data, int offset) {
+			int[] ints = new int[data.length - offset];
 
-		int[] ints = new int[data.length - offset];
+			for (int i = 1; i < data.length; i++) {
+				ints[i] = Integer.parseInt(data[1]);
+			}
 
-		for (int i = 1; i < data.length; i++) {
-			ints[i] = Integer.parseInt(data[1]);
+			dest.put(ints);
 		}
-
-		dest.put(ints);
 	}
 }

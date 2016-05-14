@@ -285,13 +285,13 @@ public class Engine {
 
 		 GL11.glShadeModel(GL11.GL_SMOOTH);
 
-		if (Activity.currentActivity() != null)
-			renderEngine.renderUI(Activity.currentActivity().getView());
+//		if (Activity.currentActivity() != null)
+//			renderEngine.renderUI(Activity.currentActivity().getView());
 
-//		if (Activity.currentActivity() != null) {
-//
-//			renderEngine.render(Activity.currentActivity().getRenderContext());
-//		}
+		if (Activity.currentActivity() != null) {
+
+			renderEngine.render(Activity.currentActivity().getRenderContext());
+		}
 
 		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);

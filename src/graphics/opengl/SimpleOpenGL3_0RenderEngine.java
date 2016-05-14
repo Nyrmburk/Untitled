@@ -98,7 +98,7 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 			// wasResized = false
 		}
 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		setColor(Color.WHITE);
 

@@ -4,28 +4,31 @@ import java.awt.*;
 import java.util.Stack;
 
 import entity.Camera;
+import graphics.InstanceAttributes;
 import graphics.RenderContext;
+import graphics.modelconverter.GUIConverter;
 import gui.*;
 import matrix.Mat4;
 import matrix.Projection;
 
 public abstract class Activity {
-	
+
 	private static Stack<Activity> stack = new Stack<Activity>();
 	private static boolean killCurrentActivity = false;
-	
+
 	private View view;
 	private RenderContext renderContext;
-	
+	private InstanceAttributes GUIModelAttributes = new InstanceAttributes();
+
 	protected abstract void onCreate();
 	protected abstract void onStart();
 	protected abstract void onResume();
 	protected abstract void onPause();
 	protected abstract void onStop();
 	protected abstract void onDestroy();
-	
+
 	public abstract void onUpdate(int delta);
-	
+
 	public static void update(int delta) {
 
 		if (killCurrentActivity) {
@@ -39,9 +42,15 @@ public abstract class Activity {
 
 			currentActivity.onUpdate(delta);
 			currentActivity.getView().revalidate();
+
+			GUIConverter converter = new GUIConverter();
+			currentActivity.getRenderContext().removeInstance(currentActivity.GUIModelAttributes);
+			currentActivity.getRenderContext().addInstance(
+					converter.convert(currentActivity.view), currentActivity.GUIModelAttributes);
 		}
+
 	}
-	
+
 	public void setView(View view) {
 
 		this.view = view;
@@ -62,19 +71,19 @@ public abstract class Activity {
 
 		return renderContext;
 	}
-	
+
 	public static void createActivity(Activity activity) {
 
 		if (killCurrentActivity)
 			killCurrentActivity();
 
 		if (!stack.isEmpty()) {
-			
+
 			Activity previousActivity = stack.peek();
-			
+
 			stopActivity(previousActivity);
 		}
-		
+
 		stack.push(activity);
 
 		activity.onCreate();
@@ -100,7 +109,7 @@ public abstract class Activity {
 			activity.setRenderContext(new RenderContext(new Camera(projection)));
 		}
 	}
-	
+
 	public static void stopCurrentActivity() {
 
 		killCurrentActivity = true;
@@ -117,7 +126,7 @@ public abstract class Activity {
 			startActivity(stack.peek());
 		}
 	}
-	
+
 	public static Activity currentActivity() {
 
 		Activity currentActivity;
@@ -132,15 +141,15 @@ public abstract class Activity {
 
 		return currentActivity;
 	}
-	
+
 	private static void startActivity(Activity activity) {
 
 		activity.onStart();
 		activity.onResume();
 	}
-	
+
 	private static void stopActivity(Activity activity) {
-		
+
 		activity.onPause();
 		activity.onStop();
 	}

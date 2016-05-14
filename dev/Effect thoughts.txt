@@ -1,0 +1,15 @@
+There needs to be some way to generate effects. Some common effects in games are as follows:
+
+Particles
+Smoke/fog
+Hair
+Text
+
+These effects all rely on data external to the render engine. If this is all I can come up with, then I might as well leave the implementation up the the render engine. The next challenge is to package these effects so that they can be passed to the render engine with the correct render context. I should probably add an Effect class and have RenderContext have an effect. Is rendering order going to be an issue? If it is anything transparent (all of the above) then they need to be rendered last. The rendering order should be as follows:
+
+Hair
+Smoke/Fog
+Particles
+Text
+
+In this order, transparency conflicts should be minimal (I think). After more thinking, an Effect class will not be created. This is because I can't think of a way to cleanly use polymorphism. 
