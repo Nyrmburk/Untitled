@@ -5,36 +5,14 @@ import matrix.Vec3;
 
 public class Camera {
 
-	private float aspectRatio;
-	private float fieldOfView = 90;
-	private Mat4 transform = new Mat4();
+	private Mat4 projection;
+
+	private Mat4 transform = Mat4.identity();
 	private Vec3 up;
 
-	public Camera(float aspectRatio, float fieldOfView) {
+	public Camera(Mat4 projection) {
 
-		setAspectRatio(aspectRatio);
-		setFieldOfView(fieldOfView);
-	}
-
-	public Camera(int width, int height, float fieldOfView) {
-
-		 this(aspectRatioFromResolution(width, height), fieldOfView);
-	}
-
-	public float getAspectRatio() {
-		return aspectRatio;
-	}
-
-	public void setAspectRatio(float aspectRatio) {
-		this.aspectRatio = aspectRatio;
-	}
-
-	public float getFieldOfView() {
-		return fieldOfView;
-	}
-
-	public void setFieldOfView(float fieldOfView) {
-		this.fieldOfView = fieldOfView;
+		setProjection(projection);
 	}
 
 	public Mat4 getTransform() {
@@ -45,9 +23,9 @@ public class Camera {
 		this.transform = transform;
 	}
 
-	public static float aspectRatioFromResolution(int width, int height) {
+	public static float aspectRatioFromResolution(float width, float height) {
 
-		return ((float) width) / height;
+		return width / height;
 	}
 
 	public Vec3 getUp() {
@@ -56,5 +34,15 @@ public class Camera {
 
 	public void setUp(Vec3 up) {
 		this.up = up;
+	}
+
+	public Mat4 getProjection() {
+
+		return projection;
+	}
+
+	public void setProjection(Mat4 projection) {
+
+		this.projection = projection;
 	}
 }

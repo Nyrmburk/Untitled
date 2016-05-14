@@ -19,12 +19,11 @@ import input.InputContext;
 import matrix.Vec2;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
 
 import activity.Activity;
 import game.Level;
+import org.lwjgl.opengl.GL11;
 
 public class Engine {
 
@@ -91,9 +90,7 @@ public class Engine {
 			// update the entities and whatnot in the engine
 			update(delta);
 
-			// Clear the screen and depth buffer
-			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-
+			renderEngine.start();
 			// render the scene
 			RenderContext renderContext = level != null ? level.getRenderContext() : null;
 			if (renderContext != null)
@@ -111,8 +108,6 @@ public class Engine {
 				Settings.windowHeight = renderEngine.getHeight();
 				GL11.glViewport(0, 0, renderEngine.getWidth(),
 						 renderEngine.getHeight());
-
-				graphics.Render.initGL();
 
 				Activity activity = Activity.currentActivity();
 				if (activity != null)
@@ -171,7 +166,6 @@ public class Engine {
 		initSystem();
 		initDisplay();
 		printSystem();
-		graphics.Render.initGL();
 //		AssetManager.loadAll();
 		initWorld();
 	}
@@ -294,34 +288,18 @@ public class Engine {
 		if (Activity.currentActivity() != null)
 			renderEngine.renderUI(Activity.currentActivity().getView());
 
+//		if (Activity.currentActivity() != null) {
+//
+//			renderEngine.render(Activity.currentActivity().getRenderContext());
+//		}
+
 		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
 		Camera.perspective();
-		// TEMORARY!
+//		 TEMORARY!
 		Camera.look();
-	}
-
-	/**
-	 * Render the scene in 3d using crossview
-	 */
-	public void render3D() {
-
-		// render to only the left side of the screen
-		GL11.glViewport(0, 0, Settings.windowWidth / 2, Settings.windowHeight);
-		// set up the right eye fustrum
-		Camera.rightEye();
-		// render eye
-//		render();
-		// render to only the right side of the screen
-		GL11.glViewport(Settings.windowWidth / 2, 0, Settings.windowWidth / 2,
-				Settings.windowHeight);
-		// set up the right eye fustrum
-		Camera.leftEye();
-		// render eye
-//		render();
-
 	}
 
 	/**
@@ -342,11 +320,11 @@ public class Engine {
 		Activity.update(delta);
 
 		// translate camera up and down (zoom)
-		int mousewheel = Mouse.getDWheel();
-		Camera.moveZ(-mousewheel / 60);
-
-		// actually translate the camera based on the previous commands
-		Camera.look();
+//		int mousewheel = Mouse.getDWheel();
+//		Camera.moveZ(-mousewheel / 60);
+//
+//		// actually translate the camera based on the previous commands
+//		Camera.look();
 
 		if (level != null)
 			level.update(delta);

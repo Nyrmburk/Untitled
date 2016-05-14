@@ -6,6 +6,8 @@ public interface RenderEngine {
 	
 	void showWindow(int width, int height);
 
+	void start();
+
 	int render(RenderContext renderContext);
 	void renderUI(Container view);
 

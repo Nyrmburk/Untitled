@@ -90,6 +90,11 @@ public class SoftwareRenderEngine implements RenderEngine {
 	}
 
 	@Override
+	public void start() {
+
+	}
+
+	@Override
 	public void renderUI(Container view) {
 
 //		Rectangle bounds;

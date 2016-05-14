@@ -244,6 +244,14 @@ public class Model extends Resource {
 	@Override
 	public void load(Path path) throws IOException {
 
+		OBJModelLoader loader = new OBJModelLoader();
+		Model temp = loader.load(path);
 
+		elementCount = temp.elementCount;
+		elementCapacity = temp.elementCapacity;
+		vertices = temp.vertices;
+		normals = temp.normals;
+		texCoords = temp.texCoords;
+		indices = temp.indices;
 	}
 }

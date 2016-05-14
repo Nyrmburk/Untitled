@@ -1,5 +1,6 @@
 package activity;
 
+import entity.Camera;
 import entity.MaterialEntity;
 import game.Material;
 import game.Player;
@@ -8,10 +9,7 @@ import graphics.ModelLoader;
 import gui.*;
 import main.Engine;
 import main.ResourceManager;
-import matrix.Mat4;
-import matrix.Transform;
-import matrix.Vec2;
-import matrix.Vec3;
+import matrix.*;
 import physics.*;
 import game.Level;
 import physics.Polygon;
@@ -78,7 +76,11 @@ public class LoadingActivity extends Activity {
 			percentComplete = 100;
 			Activity.stopCurrentActivity();
 
-			Engine.level = new Level();
+			float aspect = ((float) Engine.renderEngine.getWidth()) / Engine.renderEngine.getHeight();
+			Mat4 projection = Projection.perspective(60, aspect, 0.1f, 1000f);
+			Engine.level = new Level(new Camera(projection){{
+				Transform.setPosition(getTransform(), new Vec3(0, 0, -10));
+			}});
 			try {
 				Engine.level.load(null);
 			} catch (IOException e) {

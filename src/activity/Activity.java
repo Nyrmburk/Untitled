@@ -3,8 +3,11 @@ package activity;
 import java.awt.*;
 import java.util.Stack;
 
+import entity.Camera;
 import graphics.RenderContext;
 import gui.*;
+import matrix.Mat4;
+import matrix.Projection;
 
 public abstract class Activity {
 	
@@ -90,7 +93,11 @@ public abstract class Activity {
 
 		if (activity.getRenderContext() == null) {
 
-			activity.setRenderContext(new RenderContext());
+			//2d ortho projection
+			Mat4 projection = Projection.ortho(
+					0, activity.getView().getWidth(),
+					activity.getView().getHeight(), 0, -1, 1);
+			activity.setRenderContext(new RenderContext(new Camera(projection)));
 		}
 	}
 	

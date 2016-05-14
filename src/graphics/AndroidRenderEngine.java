@@ -1,9 +1,5 @@
 package graphics;
 
-import java.awt.image.BufferedImage;
-
-import entity.Camera;
-import graphics.RenderContext.InstancedModel;
 import gui.Container;
 
 public class AndroidRenderEngine implements RenderEngine {
@@ -17,6 +13,11 @@ public class AndroidRenderEngine implements RenderEngine {
 	@Override
 	public void showWindow(int width, int height) {
 		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void start() {
 
 	}
 

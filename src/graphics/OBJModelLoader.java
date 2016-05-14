@@ -63,8 +63,8 @@ public class OBJModelLoader {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-				if (read != null)
-					read.close();
+			if (read != null)
+				read.close();
 		}
 
 		Model model = new Model(0);

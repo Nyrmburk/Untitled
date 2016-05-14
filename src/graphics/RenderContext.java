@@ -6,7 +6,12 @@ import java.util.*;
 public class RenderContext {
 
 	private Set<InstancedModel> models = new HashSet<>();
-	private Camera camera;
+	private entity.Camera camera; //TODO remove the 'entity.' part after graphics.camera is gone
+
+	public RenderContext(entity.Camera camera) {
+
+		setCamera(camera);
+	}
 
 	public void addModel(ModelLoader model, InstanceAttributes attributes) {
 
@@ -60,11 +65,11 @@ public class RenderContext {
 		return models;
 	}
 
-	public Camera getCamera() {
+	public entity.Camera getCamera() {
 		return camera;
 	}
 
-	public void setCamera(Camera camera) {
+	public void setCamera(entity.Camera camera) {
 
 		this.camera = camera;
 	}

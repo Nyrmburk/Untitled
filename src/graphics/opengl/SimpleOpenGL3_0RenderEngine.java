@@ -4,11 +4,15 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.Calendar;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 import graphics.*;
@@ -20,6 +24,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL12.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
@@ -36,11 +41,54 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 	private static JFrame frmMain;
 	private static Canvas display;
 
+	public void intit() {
+
+		glEnableClientState(GL_NORMAL_ARRAY);
+		glEnableClientState(GL_VERTEX_ARRAY);
+
+		FloatBuffer ambient = toFloatBuffer(new float[] {0.2f, 0.2f, 0.2f, 1f});
+		FloatBuffer light = toFloatBuffer(new float[] {0.5f, 0.5f, 0.5f, 1f});
+
+		glShadeModel(GL_FLAT);
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_RESCALE_NORMAL);
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);
+		glLightModel(GL_LIGHT_MODEL_AMBIENT, ambient);
+		glLight(GL_LIGHT0, GL_DIFFUSE, light);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+		glEnable(GL_COLOR_MATERIAL);
+		glColorMaterial(GL_FRONT, GL_DIFFUSE);
+		glLight(GL_LIGHT0, GL_POSITION,
+				toFloatBuffer(new float[] {127, 127, 500, 1}));
+
+		glEnable(GL_TEXTURE_2D);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glClearColor(0.25f, 0.25f, 0.25f, 1f);
+
+		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+	}
+
+	@Override
+	public void start() {
+
+		// Clear the screen and depth buffer
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+
 	@Override
 	public int render(RenderContext renderContext) {
 
 //		System.out.println(getCurrentMatrix().toString());
 		long time = Engine.getTime();
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadMatrix(toFloatBuffer(renderContext.getCamera().getProjection().m));
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadMatrix(toFloatBuffer(renderContext.getCamera().getTransform().m));
+
 
 		polys = 0;
 
@@ -90,6 +138,7 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 
 		// System.out.println(polys + " polygons");
 
+		GLErrorHelper.checkError();
 		return (int) (Engine.getTime() - time);
 	}
 
@@ -128,6 +177,8 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 
 			e.printStackTrace();
 		}
+
+		intit();
 	}
 
 	@Override
@@ -314,15 +365,25 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 	}
 
 	//for debug
-	private Mat4 getCurrentMatrix() {
+	private Mat4 getCurrentMatrix(int glMatrix) {
 
 		FloatBuffer matrix = BufferUtils.createFloatBuffer(Mat4.TOTAL_SIZE);
-		glGetFloat(GL_MODELVIEW_MATRIX, matrix);
+		glGetFloat(glMatrix, matrix);
 
 		float[] array = new float[Mat4.TOTAL_SIZE];
 		matrix.get(array);
 
 		return new Mat4(array);
+	}
+
+	public static void screenshot() {
+
+		ByteBuffer array = BufferUtils.createByteBuffer(3
+				* Settings.windowWidth * Settings.windowHeight);
+		glReadPixels(0, 0, Settings.windowWidth, Settings.windowHeight,
+				GL_RGB, GL_UNSIGNED_BYTE, array);
+
+		new Thread(new ScreenshotRunnable(array.slice())).start();
 	}
 
 	private static class OpenGLModelData {
@@ -579,6 +640,61 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 			}
 
 			return data;
+		}
+	}
+
+	//temporarily move into here.
+	private static class ScreenshotRunnable implements Runnable {
+
+		ByteBuffer array;
+
+		ScreenshotRunnable(ByteBuffer array) {
+
+			this.array = array;
+		}
+
+		@Override
+		public void run() {
+
+			BufferedImage image = new BufferedImage(Settings.windowWidth,
+					Settings.windowHeight, BufferedImage.TYPE_INT_RGB);
+
+			int x = 0;
+			int y = Settings.windowHeight - 1;
+			while (array.hasRemaining()) {
+				short r = (short) (array.get() & 0xFF);
+				short g = (short) (array.get() & 0xFF);
+				short b = (short) (array.get() & 0xFF);
+				int color = 0;
+				color |= b;
+				color |= g << 8;
+				color |= r << 16;
+				image.setRGB(x, y, color);
+				x++;
+				if (x == Settings.windowWidth) {
+					x = 0;
+					y--;
+				}
+			}
+
+			File screenshotFolder = new File("screenshots");
+			if (!screenshotFolder.exists()) screenshotFolder.mkdir();
+
+			java.util.Calendar now = java.util.Calendar.getInstance();
+			File file = new File("screenshots" + File.separator
+					+ String.format("%04d", now.get(Calendar.YEAR)) + "-"
+					+ String.format("%02d", now.get(Calendar.MONTH)) + "-"
+					+ String.format("%02d", now.get(Calendar.DAY_OF_MONTH)) + "T"
+					+ String.format("%02d", now.get(Calendar.HOUR)) + "."
+					+ String.format("%02d", now.get(Calendar.MINUTE)) + "."
+					+ String.format("%02d", now.get(Calendar.SECOND)) + ".png");
+			System.out.println("screenshot: " + file);
+
+			try {
+				ImageIO.write(image, "png", file);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }
