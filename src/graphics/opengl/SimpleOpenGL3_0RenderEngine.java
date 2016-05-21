@@ -41,7 +41,7 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 	private static JFrame frmMain;
 	private static Canvas display;
 
-	public void intit() {
+	public void init() {
 
 		glEnableClientState(GL_NORMAL_ARRAY);
 		glEnableClientState(GL_VERTEX_ARRAY);
@@ -178,7 +178,7 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 			e.printStackTrace();
 		}
 
-		intit();
+		init();
 	}
 
 	@Override
@@ -393,6 +393,7 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 		int NBOID;
 		int CBOID;
 		int VBOIID;
+		int TBOID;
 
 		boolean normals;
 		boolean textures;
@@ -417,10 +418,11 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 			} else {
 				glDisableClientState(GL_COLOR_ARRAY);
 			}
-			if (!model.textureCoords.isEmpty()) {
+			if (!model.textureCoords.isEmpty() && model.texture != null) {
 				textures = true;
-			} else {
-				// glDisable(GL_TEXTURE_ARRAY); //something like that
+				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+//			} else {
+				glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 			}
 
 			FloatBuffer verticesBuffer = model.vertices.toFloatBuffer();
@@ -451,7 +453,13 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 			}
 
 			if (textures) {
-				// TODO
+				glEnable(GL_TEXTURE_2D);
+				FloatBuffer textureBuffer = model.textureCoords.toFloatBuffer();
+				TBOID = glGenBuffers();
+				glBindTexture(GL_TEXTURE_2D, OpenGLTextureData.getOpenGLTextureData(model.texture).id);
+				glBindBuffer(GL_TEXTURE_COORD_ARRAY, TBOID);
+				glBufferData(GL_TEXTURE_COORD_ARRAY, textureBuffer, GL_STATIC_DRAW);
+				glTexCoordPointer(2, GL_FLOAT, 0, 0);
 			}
 
 			// Deselect (bind to 0) the VBO

@@ -57,10 +57,11 @@ public class GUIConverter implements ModelConverter<GUIElement> {
 			model.color.add(box.color.getRGB());
 		}
 
+		// FIXME: 5/17/2016 A problem arises if multiple textures are present
 		//put texture and texture coords
 		Texture t = box.texture;
 		if (t != null) {
-			//model.setTexture(t); FIXME
+			model.texture = t;
 			model.textureCoords.put(0, 0);
 			model.textureCoords.put(0, 1);
 			model.textureCoords.put(1, 1);
