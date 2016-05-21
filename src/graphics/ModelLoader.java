@@ -6,6 +6,7 @@ import graphics.ModelLoader.IntList;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.io.BufferedReader;
 import java.io.File;
@@ -23,9 +24,7 @@ public class ModelLoader extends Resource {
 	public FloatList normals = new FloatList();
 	public FloatList surfNorm = new FloatList();
 	public FloatList textureCoords = new FloatList();
-	public FloatList colorAmbient = new FloatList();
-	public FloatList colorDiffuse = new FloatList();
-	public FloatList colorSpecular = new FloatList();
+	public ArrayList<Integer> color = new ArrayList<>();
 	public IntList indices = new IntList();
 	public IntList shading = new IntList();
 	public IntList illumination = new IntList();

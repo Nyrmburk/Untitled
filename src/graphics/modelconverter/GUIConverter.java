@@ -51,12 +51,10 @@ public class GUIConverter implements ModelConverter<GUIElement> {
 		//put colors
 		//I'm not sure this will work yet
 		if (box.color != null) {
-			float r, g, b, a;
-			r = box.color.getRed();
-			g = box.color.getGreen();
-			b = box.color.getBlue();
-			a = box.color.getAlpha();
-			model.colorDiffuse.put(r, g, b, a);
+			model.color.add(box.color.getRGB());
+			model.color.add(box.color.getRGB());
+			model.color.add(box.color.getRGB());
+			model.color.add(box.color.getRGB());
 		}
 
 		//put texture and texture coords

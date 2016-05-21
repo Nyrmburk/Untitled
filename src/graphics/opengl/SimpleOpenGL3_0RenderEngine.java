@@ -67,6 +67,8 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glClearColor(0.25f, 0.25f, 0.25f, 1f);
 
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 		glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 	}
 
@@ -97,8 +99,6 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 		} else {
 			// wasResized = false
 		}
-
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		setColor(Color.WHITE);
 
@@ -411,7 +411,7 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 			} else {
 				glDisableClientState(GL_NORMAL_ARRAY);
 			}
-			if (!model.colorAmbient.isEmpty()) {
+			if (!model.color.isEmpty()) {
 				colors = true;
 				glEnableClientState(GL_COLOR_ARRAY);
 			} else {
@@ -439,11 +439,15 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 			}
 
 			if (colors) {
-				FloatBuffer colorBuffer = model.colorAmbient.toFloatBuffer();
+				ByteBuffer colorBuffer = ByteBuffer.allocateDirect(model.color.size() * 4);
+				IntBuffer intBuffer = colorBuffer.asIntBuffer();
+				for (int i = 0; i < model.color.size(); i++)
+					intBuffer.put(model.color.get(i));
+				colorBuffer.rewind();
 				CBOID = glGenBuffers();
 				glBindBuffer(GL_ARRAY_BUFFER, CBOID);
 				glBufferData(GL_ARRAY_BUFFER, colorBuffer, GL_STATIC_DRAW);
-				glColorPointer(3, GL_FLOAT, 0, 0);
+				glColorPointer(4, GL_UNSIGNED_BYTE, 0, 0);
 			}
 
 			if (textures) {
