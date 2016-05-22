@@ -11,8 +11,7 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
-import entity.Camera;
-import graphics.RenderContext.InstancedModel;
+import graphics.ModelGroup.InstancedModel;
 import main.Engine;
 
 import gui.Container;
@@ -30,7 +29,7 @@ public class SoftwareRenderEngine implements RenderEngine {
 		graphics.setColor(Color.BLACK);
 		graphics.fillRect(0, 0, display.getWidth(), display.getWidth());
 
-		for (InstancedModel iModel : renderContext.getIModels()) {
+		for (InstancedModel iModel : renderContext.getModelGroup().getIModels()) {
 
 			ModelLoader model = iModel.model;
 			

@@ -4,6 +4,9 @@ import graphics.ModelLoader;
 import main.Line;
 import matrix.Vec2;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Created by Nyrmburk on 5/3/2016.
  * <p>
@@ -26,7 +29,7 @@ import matrix.Vec2;
  */
 public class LineConverter implements ModelConverter<Line> {
 
-	public ModelLoader convert(Line line) {
+	public List<ModelLoader> convert(Line line) {
 
 		ModelLoader model = new ModelLoader();
 
@@ -99,7 +102,9 @@ public class LineConverter implements ModelConverter<Line> {
 			model.addFace(length + 1, 1, 0);
 		}
 
-		return model;
+		List<ModelLoader> modelList = new LinkedList<>();
+		modelList.add(model);
+		return modelList;
 	}
 
 	private Vec2 getCorner(Vec2 inLine, Vec2 outLine) {

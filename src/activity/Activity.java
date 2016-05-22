@@ -5,9 +5,11 @@ import java.util.Stack;
 
 import entity.Camera;
 import graphics.InstanceAttributes;
+import graphics.ModelLoader;
 import graphics.RenderContext;
 import graphics.modelconverter.GUIConverter;
 import gui.*;
+import java.util.List;
 import matrix.Mat4;
 import matrix.Projection;
 
@@ -40,15 +42,17 @@ public abstract class Activity {
 
 		if (currentActivity != null) {
 
+			currentActivity.renderContext.getModelGroup().clear();
+
 			currentActivity.onUpdate(delta);
 			currentActivity.getView().revalidate();
 
 			GUIConverter converter = new GUIConverter();
-			currentActivity.getRenderContext().removeInstance(currentActivity.GUIModelAttributes);
-			currentActivity.getRenderContext().addInstance(
-					converter.convert(currentActivity.view), currentActivity.GUIModelAttributes);
+			currentActivity.getRenderContext().getModelGroup().removeInstance(currentActivity.GUIModelAttributes);
+			List<ModelLoader> GUIModels = converter.convert(currentActivity.view);
+			for (ModelLoader model : GUIModels)
+				currentActivity.getRenderContext().getModelGroup().addInstance(model, currentActivity.GUIModelAttributes);
 		}
-
 	}
 
 	public void setView(View view) {

@@ -16,6 +16,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 import graphics.*;
+import graphics.ModelGroup.InstancedModel;
 import gui.Container;
 import gui.ContextBox;
 import gui.GUIElement;
@@ -26,10 +27,8 @@ import org.lwjgl.opengl.Display;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.*;
 import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 
-import graphics.RenderContext.InstancedModel;
 import main.Engine;
 import main.Settings;
 
@@ -65,6 +64,7 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 
 		glEnable(GL_TEXTURE_2D);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
 		glClearColor(0.25f, 0.25f, 0.25f, 1f);
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -91,7 +91,6 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 		glMatrixMode(GL_MODELVIEW);
 		glLoadMatrix(toFloatBuffer(renderContext.getCamera().getTransform().m));
 
-
 		polys = 0;
 
 		if (Display.wasResized()) {
@@ -102,7 +101,7 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 
 		setColor(Color.WHITE);
 
-		for (InstancedModel iModel : renderContext.getIModels()) {
+		for (InstancedModel iModel : renderContext.getModelGroup().getIModels()) {
 
 			ModelLoader model = iModel.model;
 			List<InstanceAttributes> instanceAttributes = iModel.attributes;
@@ -110,8 +109,16 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 			OpenGLModelData openGLModelData = OpenGLModelData.getOpenGLModelData(model);
 
 			glBindVertexArray(openGLModelData.VAOID);
-			glEnableVertexAttribArray(0);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, openGLModelData.VBOIID);
+
+			if (openGLModelData.normals)
+				glEnableClientState(GL_NORMAL_ARRAY);
+			if (openGLModelData.colors)
+				glEnableClientState(GL_COLOR_ARRAY);
+			if (openGLModelData.textures) {
+				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+				glBindTexture(GL_TEXTURE_2D, OpenGLTextureData.getOpenGLTextureData(model.texture).id);
+			}
 
 			for (InstanceAttributes instanceAttribute : instanceAttributes) {
 
@@ -134,6 +141,12 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 			// Put everything back to default (deselect)
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 			glBindVertexArray(0);
+
+			glDisableClientState(GL_NORMAL_ARRAY);
+			glDisableClientState(GL_COLOR_ARRAY);
+			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 
 		// System.out.println(polys + " polygons");
@@ -221,7 +234,7 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 		}
 
 		if (box.texture != null) {
-			drawTexture(box, OpenGLTextureData.getOpenGLTextureData(box.texture));
+			drawTexture(box, box.texture);
 		} else if (box.color != null) {
 
 			drawRect(box);
@@ -256,10 +269,11 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 		glEnd();
 	}
 
-	private void drawTexture(Rectangle bounds, OpenGLTextureData texture) {
+	private void drawTexture(Rectangle bounds, Texture texture) {
 
 		glEnable(GL_BLEND);
-		texture.bind();
+		OpenGLTextureData textureData = OpenGLTextureData.getOpenGLTextureData(texture);
+		textureData.bind();
 
 		glBegin(GL_QUADS);
 		glTexCoord2f(0, 0);
@@ -278,8 +292,9 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 	private void drawString(int x, int y, GraphicsFont font, String text) {
 
 		FontMetrics metrics = font.getFontMetrics();
-		OpenGLTextureData texture = OpenGLTextureData.getOpenGLTextureData(font.getAtlas());
-		texture.bind();
+		Texture atlas = font.getAtlas();
+		OpenGLTextureData textureData = OpenGLTextureData.getOpenGLTextureData(font.getAtlas());
+		textureData.bind();
 
 		Rectangle placement;
 		int advance = x;
@@ -304,16 +319,16 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 
 				glBegin(GL_QUADS);
 
-				glTexCoord2f(texture.xRatio(bounds.x), texture.yRatio(bounds.y));
+				glTexCoord2f(atlas.xRatio(bounds.x), atlas.yRatio(bounds.y));
 				glVertex2i(placement.x, placement.y);
 
-				glTexCoord2f(texture.xRatio(bounds.x), texture.yRatio(bounds.y + bounds.height));
+				glTexCoord2f(atlas.xRatio(bounds.x), atlas.yRatio(bounds.y + bounds.height));
 				glVertex2i(placement.x, placement.y + placement.height);
 
-				glTexCoord2f(texture.xRatio(bounds.x + bounds.width), texture.yRatio(bounds.y + bounds.height));
+				glTexCoord2f(atlas.xRatio(bounds.x + bounds.width), atlas.yRatio(bounds.y + bounds.height));
 				glVertex2i(placement.x + placement.width, placement.y + placement.height);
 
-				glTexCoord2f(texture.xRatio(bounds.x + bounds.width), texture.yRatio(bounds.y));
+				glTexCoord2f(atlas.xRatio(bounds.x + bounds.width), atlas.yRatio(bounds.y));
 				glVertex2i(placement.x + placement.width, placement.y);
 
 				glEnd();
@@ -421,7 +436,7 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 			if (!model.textureCoords.isEmpty() && model.texture != null) {
 				textures = true;
 				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-//			} else {
+			} else {
 				glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 			}
 
@@ -429,8 +444,7 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 			VBOID = glGenBuffers();
 			glBindBuffer(GL_ARRAY_BUFFER, VBOID);
 			glBufferData(GL_ARRAY_BUFFER, verticesBuffer, GL_STATIC_DRAW);
-			// glVertexPointer(3, GL_FLOAT, 0, 0);
-			glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+			glVertexPointer(3, GL_FLOAT, 0, 0);
 
 			if (normals) {
 				FloatBuffer normalsBuffer = model.normals.toFloatBuffer();
@@ -456,9 +470,8 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 				glEnable(GL_TEXTURE_2D);
 				FloatBuffer textureBuffer = model.textureCoords.toFloatBuffer();
 				TBOID = glGenBuffers();
-				glBindTexture(GL_TEXTURE_2D, OpenGLTextureData.getOpenGLTextureData(model.texture).id);
-				glBindBuffer(GL_TEXTURE_COORD_ARRAY, TBOID);
-				glBufferData(GL_TEXTURE_COORD_ARRAY, textureBuffer, GL_STATIC_DRAW);
+				glBindBuffer(GL_ARRAY_BUFFER, TBOID);
+				glBufferData(GL_ARRAY_BUFFER, textureBuffer, GL_STATIC_DRAW);
 				glTexCoordPointer(2, GL_FLOAT, 0, 0);
 			}
 
@@ -503,133 +516,24 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 
 		private int id = 0;
 
-		private int originalWidth = 0;
-		private int originalHeight = 0;
+		OpenGLTextureData(Texture texture) {
 
-		private int actualWidth = 0;
-		private int actualHeight = 0;
-
-		OpenGLTextureData(BufferedImage texture) {
-
-			originalWidth = texture.getWidth();
-			originalHeight = texture.getHeight();
-
-			actualWidth = getMinimumPowerOfTwo(originalWidth);
-			actualHeight = getMinimumPowerOfTwo(originalHeight);
-
-			ByteBuffer buffer = getNativeData(actualWidth, actualHeight, texture);
-
-			int type = texture.getColorModel().hasAlpha() ? GL_RGBA : GL_RGB;
+			ByteBuffer buffer = texture.getTexture();
 
 			id = glGenTextures();
 			glBindTexture(GL_TEXTURE_2D, id);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, actualWidth, actualHeight, 0, type,
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);//GL_LINEAR_MIPMAP_LINEAR when mipmaps are made
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture.getActualWidth(), texture.getActualHeight(), 0, GL_RGBA,
 					GL_UNSIGNED_BYTE, buffer);
+			// build mipmaps somehow
 		}
 
 		void bind() {
 
 			glBindTexture(GL_TEXTURE_2D, id);
-		}
-
-		float getWidthRatio() {
-
-			return ((float) originalWidth) / actualWidth;
-		}
-
-		float getHeightRatio() {
-
-			return ((float) originalHeight) / actualHeight;
-		}
-
-		float xRatio(int x) {
-
-			return ((float) x) / originalWidth * getWidthRatio();
-		}
-
-		float yRatio(int y) {
-
-			return ((float) y) / originalHeight * getHeightRatio();
-		}
-
-		private int getMinimumPowerOfTwo(int value) {
-
-			int powerOfTwo = 2;// opengl minimum texture size is 64x64?
-
-			while (powerOfTwo < value)
-				powerOfTwo += powerOfTwo; // addition is faster than multiplication
-
-			return powerOfTwo;
-		}
-
-		private ByteBuffer getNativeData(int actualWidth, int actualHeight, BufferedImage texture) {
-			// http://stackoverflow.com/questions/6524196/java-get-pixel-array-from-image
-
-			final int bytesPerPixel = texture.getColorModel().hasAlpha() ? 4 : 3;
-
-			int height = texture.getHeight();
-			int width = texture.getWidth();
-
-			ByteBuffer texBuffer = BufferUtils.createByteBuffer(actualWidth * actualHeight * bytesPerPixel);
-
-//			if (texture.getRaster() instanceof ByteInterleavedRaster) {
-//
-//				byte[] pixels = ((DataBufferByte) texture.getRaster().getDataBuffer()).getData();
-//				byte[] slice = new byte[width * bytesPerPixel];
-//
-//				for (int y = 0; y < height; y++) {
-//
-//					texBuffer.position(y * actualWidth * bytesPerPixel);
-//					System.arraycopy(pixels, y * width * bytesPerPixel, slice, 0, slice.length);
-//					texBuffer.put(slice);
-//				}
-
-//			} else if (texture.getRaster() instanceof IntegerInterleavedRaster) {
-//
-//				// This is going to be a large speedup.
-////				System.out.println("fast int image");
-//
-////				if (originalWidth == 800)
-////					System.out.println(originalHeight);
-//
-//				int[] pixels = ((DataBufferInt) texture.getRaster().getDataBuffer()).getData();
-//				int[] slice = new int[width];
-//				IntBuffer intTexBuffer = texBuffer.asIntBuffer();
-//
-//				for (int y = 0; y < height; y++) {
-//
-//					texBuffer.position(y * actualWidth);
-//					System.arraycopy(pixels, y * width, slice, 0, slice.length);
-//					intTexBuffer.put(slice);
-//				}
-
-//			} else {
-
-//				System.err.println("slow image: " + texture.getRaster());
-
-				for (int y = 0; y < height; y++) {
-
-					texBuffer.position(y * actualWidth * bytesPerPixel);
-					for (int x = 0; x < width; x++) {
-
-						// the offending statement is right here
-						int pixel = texture.getRGB(x, y);
-						texBuffer.put((byte) ((pixel & 0x00FF0000) >>> 16));
-						texBuffer.put((byte) ((pixel & 0x0000FF00) >>> 8));
-						texBuffer.put((byte) (pixel & 0x000000FF));
-						if (bytesPerPixel == 4)
-							texBuffer.put((byte) ((pixel & 0xFF000000) >>> 24));
-					}
-				}
-//			}
-
-			texBuffer.rewind();
-
-			return texBuffer;
 		}
 
 		void release() {
@@ -646,7 +550,7 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 				data =  (OpenGLTextureData) texture.getUserData();
 			} else {
 
-				data = new OpenGLTextureData(texture.getTexture());
+				data = new OpenGLTextureData(texture);
 				texture.setUserData(data);
 				texture.setReleaseListener(data::release);//fancy lambda expression
 			}

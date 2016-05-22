@@ -5,6 +5,9 @@ import graphics.ModelLoader;
 
 import java.awt.*;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Created by Nyrmburk on 5/14/2016.
  */
@@ -14,7 +17,7 @@ public class TextConverter implements ModelConverter<TextConverter.Text> {
 	int totalIndex;
 
 	@Override
-	public ModelLoader convert(Text text) {
+	public List<ModelLoader> convert(Text text) {
 
 		totalIndex = 0;
 
@@ -74,7 +77,9 @@ public class TextConverter implements ModelConverter<TextConverter.Text> {
 			model.addFace(totalIndex++, totalIndex++, totalIndex++, totalIndex++);
 		}
 
-		return model;
+		List<ModelLoader> modelList = new LinkedList<>();
+		modelList.add(model);
+		return modelList;
 	}
 
 	public static class Text {

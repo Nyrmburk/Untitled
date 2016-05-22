@@ -1,8 +1,5 @@
 package graphics;
 
-import graphics.ModelLoader.FloatList;
-import graphics.ModelLoader.IntList;
-
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Path;

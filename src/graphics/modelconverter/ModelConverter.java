@@ -2,6 +2,8 @@ package graphics.modelconverter;
 
 import graphics.ModelLoader;
 
+import java.util.List;
+
 /**
  * Created by Nyrmburk on 5/3/2016.
  *
@@ -13,5 +15,5 @@ import graphics.ModelLoader;
  */
 public interface ModelConverter<T> {
 
-	ModelLoader convert(T element);
+	List<ModelLoader> convert(T element);
 }

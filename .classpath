@@ -20,6 +20,5 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/jars/jbox2d.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/draftform"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/draftform"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

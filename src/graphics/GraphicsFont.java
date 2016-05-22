@@ -81,7 +81,7 @@ public class GraphicsFont {
 		}
 
 		setAtlas(new Texture());
-		getAtlas().setTexture(image);
+		getAtlas().setDataFromImage(image);
 
 //		try {
 //			ImageIO.write(image, "png", new File(font.toString() + ".png"));

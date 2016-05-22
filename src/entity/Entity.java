@@ -100,7 +100,7 @@ public class Entity {
 			// FIXME: 5/9/2016 
 //			if (this.model != null)
 //				level.getRenderContext().removeInstance(this.model);
-			level.getRenderContext().addInstance(model, instanceAttributes);
+			level.getRenderContext().getModelGroup().addInstance(model, instanceAttributes);
 		}
 
 		this.model = model;

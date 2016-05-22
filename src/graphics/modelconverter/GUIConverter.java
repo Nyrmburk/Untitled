@@ -6,38 +6,44 @@ import gui.Container;
 import gui.ContextBox;
 import gui.GUIElement;
 
+import java.awt.*;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Created by Nyrmburk on 5/3/2016.
  */
 public class GUIConverter implements ModelConverter<GUIElement> {
 
-	private int totalIndex;
-	public ModelLoader convert(GUIElement element) {
+	public List<ModelLoader> convert(GUIElement element) {
 
 		//TODO remove renderGU() in RenderEngine and replace it with this. I might have to do some work to make it
 		// easy to replace with another model generator.
 
-		totalIndex = 0;
+		List<ModelLoader> modelList = new LinkedList<>();
 
-		ModelLoader model = new ModelLoader();
+		elementConvert(modelList, element);
 
-		elementConvert(model, element);
-
-		return model;
+		return modelList;
 	}
 
-	private void elementConvert(ModelLoader model, GUIElement element) {
+	private void elementConvert(List<ModelLoader> modelList, GUIElement element) {
 
-		boxConvert(model, element.getBox());
+		boxConvert(modelList, element.getBox());
 
 		if (element instanceof Container) {
 
 			for (GUIElement child : ((Container) element).getChildren())
-				elementConvert(model, child);
+				elementConvert(modelList, child);
 		}
 	}
 
-	private void boxConvert(ModelLoader model, ContextBox box) {
+	private void boxConvert(List<ModelLoader> modelList, ContextBox box) {
+
+//		if (box.color == null && box.texture == null && box.texts == null)
+//			return;
+
+		ModelLoader model = new ModelLoader();
 
 		//put vertices
 		//    0--------3
@@ -50,25 +56,39 @@ public class GUIConverter implements ModelConverter<GUIElement> {
 
 		//put colors
 		//I'm not sure this will work yet
+		int color = 0;
 		if (box.color != null) {
-			model.color.add(box.color.getRGB());
-			model.color.add(box.color.getRGB());
-			model.color.add(box.color.getRGB());
-			model.color.add(box.color.getRGB());
+			// the bit twiddling is to convert argb to rgba
+			color = box.color.getRGB() << 8 | box.color.getRGB() >>> 24;
 		}
 
-		// FIXME: 5/17/2016 A problem arises if multiple textures are present
+		if (box.texture != null)
+			color = 0xFF;
+		
+		model.color.add(color);
+		model.color.add(color);
+		model.color.add(color);
+		model.color.add(color);
+
 		//put texture and texture coords
+
+		//0,1-----------1,1
+		// |             |
+		// |             |
+		// |             |
+		//0,0-----------1,0
 		Texture t = box.texture;
 		if (t != null) {
 			model.texture = t;
-			model.textureCoords.put(0, 0);
-			model.textureCoords.put(0, 1);
-			model.textureCoords.put(1, 1);
-			model.textureCoords.put(1, 0);
+			model.textureCoords.put(0f, t.getHeightRatio());
+			model.textureCoords.put(0f, 0f);
+			model.textureCoords.put(t.getWidthRatio(), 0f);
+			model.textureCoords.put(t.getWidthRatio(), t.getHeightRatio());
 		}
 
 		//put indices
-		model.addFace(totalIndex++, totalIndex++, totalIndex++, totalIndex++);
+		model.addFace(0, 1, 2, 3);
+
+		modelList.add(model);
 	}
 }
