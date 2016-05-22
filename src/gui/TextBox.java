@@ -1,6 +1,7 @@
 package gui;
 
 import graphics.GraphicsFont;
+import graphics.Text;
 
 import java.awt.*;
 import java.util.LinkedList;
@@ -106,29 +107,25 @@ public class TextBox extends GUIElement {
 		box.setBounds(this.getBounds());
 		box.color = getBackgroundColor();
 
-		if (doesWordwrap()) {
+		box.texts = new Text[1];
+		box.texts[0] = new Text();
+		box.texts[0].instances = new LinkedList<>();
+		box.texts[0].font = getFont();
 
-			box.texts = new ContextBox.Text[lines.length];
+		if (doesWordwrap()) {
 
 			int y = getY();
 			for (int i = 0; i < lines.length; i++) {
 
-				box.texts[i].setLocation(getX(), y);
-				box.texts[i] = new ContextBox.Text();
-				box.texts[i].text = lines[i];
-				box.texts[i].color = getForegroundColor();
-				box.texts[i].font = font;
+				Text.TextInstance instance = new Text.TextInstance(getPosition(), lines[i], getForegroundColor());
+				instance.point.y = y;
 				y += font.getFontMetrics().getHeight();
+				box.texts[0].instances.add(instance);
 			}
 		} else {
 
-			box.texts = new ContextBox.Text[1];
-
-			box.texts[0] = new ContextBox.Text();
-			box.texts[0].setLocation(getX(), getY());
-			box.texts[0].text = text;
-			box.texts[0].color = getForegroundColor();
-			box.texts[0].font = getFont();
+			Text.TextInstance instance = new Text.TextInstance(getPosition(), text, getForegroundColor());
+			box.texts[0].instances.add(instance);
 		}
 
 		return box;

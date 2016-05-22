@@ -32,11 +32,6 @@ public class GraphicsFont {
 		fontGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 		setFontMetrics(fontGraphics.getFontMetrics());
 
-		// create an array of all the characters from 0 - 255
-		char[] chars = new char[CHARS];
-		for (char i = 0; i < CHARS; i++)
-			chars[i] = i;
-
 		// create a list to sort and hold the bounds and character
 		SortedSet<CharRect> sortedRects = new TreeSet<CharRect>();
 

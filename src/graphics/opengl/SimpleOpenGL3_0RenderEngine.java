@@ -18,8 +18,6 @@ import javax.swing.JFrame;
 import graphics.*;
 import graphics.ModelGroup.InstancedModel;
 import gui.Container;
-import gui.ContextBox;
-import gui.GUIElement;
 import matrix.Mat4;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
@@ -156,6 +154,11 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 	}
 
 	@Override
+	public void renderUI(Container view) {
+
+	}
+
+	@Override
 	public void showWindow(int width, int height) {
 
 		frmMain = new JFrame();
@@ -192,101 +195,6 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 		}
 
 		init();
-	}
-
-	@Override
-	public void renderUI(Container view) {
-
-		renderElement(view);
-//		System.out.println();
-	}
-
-	private void renderElement(GUIElement element) {
-
-//		System.out.println(element);
-
-		//render box
-		renderBox(element.getBox());
-
-		// recursively render children
-		if (element instanceof Container) {
-
-			for (GUIElement child : ((Container) element).getChildren()) {
-
-				renderElement(child);
-			}
-		}
-	}
-
-	private void renderBox(ContextBox box) {
-
-		if (box == null)
-			return;
-
-		if (box.color != null) {
-			setColor(box.color);
-
-			if (box.color.getAlpha() != 255) {
-				glEnable(GL_BLEND);
-			} else {
-				glDisable(GL_BLEND);
-			}
-		}
-
-		if (box.texture != null) {
-			drawTexture(box, box.texture);
-		} else if (box.color != null) {
-
-			drawRect(box);
-		}
-
-		if (box.texts != null) {
-
-			for (ContextBox.Text text : box.texts) {
-
-				GraphicsFont font = text.font;
-				Color fontColor = text.color;
-				setColor(fontColor);
-
-				drawString(text.x, text.y, font, text.text);
-			}
-		}
-
-		if (box.subBoxes != null) {
-
-			for (ContextBox subBox : box.subBoxes)
-				renderBox(subBox);
-		}
-	}
-
-	private void drawRect(Rectangle bounds) {
-
-		glBegin(GL_QUADS);
-		glVertex2i(bounds.x, bounds.y);
-		glVertex2i(bounds.x, bounds.y + bounds.height);
-		glVertex2i(bounds.x + bounds.width, bounds.y + bounds.height);
-		glVertex2i(bounds.x + bounds.width, bounds.y);
-		glEnd();
-	}
-
-	private void drawTexture(Rectangle bounds, Texture texture) {
-
-		glEnable(GL_BLEND);
-		OpenGLTextureData textureData = OpenGLTextureData.getOpenGLTextureData(texture);
-		textureData.bind();
-
-		glBegin(GL_QUADS);
-		glTexCoord2f(0, 0);
-		glVertex2i(bounds.x, bounds.y);
-		glTexCoord2f(0, texture.getHeightRatio());
-		glVertex2i(bounds.x, bounds.y + bounds.height);
-		glTexCoord2f(texture.getWidthRatio(), texture.getHeightRatio());
-		glVertex2i(bounds.x + bounds.width, bounds.y + bounds.height);
-		glTexCoord2f(texture.getWidthRatio(), 0);
-		glVertex2i(bounds.x + bounds.width, bounds.y);
-		glEnd();
-		glDisable(GL_BLEND);
-		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	private void drawString(int x, int y, GraphicsFont font, String text) {
