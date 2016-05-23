@@ -47,52 +47,56 @@ public class TextConverter implements ModelConverter<Text[]> {
 					//bounds of the current char
 					Rectangle bounds = allBounds[c];
 
-					if (bounds == null)
-						// char is not displayable or is whitespace
-						continue;
+					// char is not displayable or is whitespace
+					if (bounds != null) {
 
-					// copy the bounds (for width and height)
-					Rectangle r = bounds.getBounds();
+						// copy the bounds and scale to texture coordinates
+						Texture atlas = text.font.getAtlas();
+						float top = atlas.yRatio(atlas.getHeight() - bounds.y);
+						float bottom = atlas.yRatio(atlas.getHeight() - (bounds.y + bounds.height));
+						float left = atlas.xRatio(bounds.x);
+						float right = atlas.xRatio(bounds.x + bounds.width);
 
-					// copy the bounds and scale to texture coordinates
-					Texture atlas = text.font.getAtlas();
-					float top = atlas.yRatio(atlas.getHeight() - bounds.y);
-					float bottom = atlas.yRatio(atlas.getHeight() - (bounds.y + bounds.height));
-					float left = atlas.xRatio(bounds.x);
-					float right = atlas.xRatio(bounds.x + bounds.width);
+						// copy the bounds (for width and height)
+						Rectangle r = bounds.getBounds();
 
-					// change the position from texture pixel position to text position
-					r.x = charAdvance;
+						// change the position from texture pixel position to text position
+						r.x = charAdvance;
+						r.y = instance.point.y;
+
+						// put vertices
+						//    0--------3
+						//    |  \     |
+						//    |     \  |
+						//    1--------2
+						model.vertices.put((float) r.x, r.y, 0);
+						model.vertices.put((float) r.x, r.y + r.height, 0);
+						model.vertices.put((float) r.x + r.width, r.y + r.height, 0);
+						model.vertices.put((float) r.x + r.width, r.y, 0);
+
+						// put texture coordinates
+						// 0,1-----1,1
+						//  |       |
+						//  |       |
+						// 0,0-----1,0
+						model.textureCoords.put(left, top);
+						model.textureCoords.put(left, bottom);
+						model.textureCoords.put(right, bottom);
+						model.textureCoords.put(right, top);
+
+						int color = instance.color.getRGB();
+						color = color << 8 | color >>> 24;
+
+						//add the color; one for each of the vertices.
+						model.color.add(color);
+						model.color.add(color);
+						model.color.add(color);
+						model.color.add(color);
+
+						// put indices;
+						model.addFace(totalIndex++, totalIndex++, totalIndex++, totalIndex++);
+					}
 					charAdvance += text.font.getFontMetrics().charWidth(c);
-					r.y = instance.point.y;
-
-					// put vertices
-					//    0--------3
-					//    |  \     |
-					//    |     \  |
-					//    1--------2
-					model.vertices.put((float) r.x, r.y, 0);
-					model.vertices.put((float) r.x, r.y + r.height, 0);
-					model.vertices.put((float) r.x + r.width, r.y + r.height, 0);
-					model.vertices.put((float) r.x + r.width, r.y, 0);
-
-					// put texture coordinates
-					// 0,1-----1,1
-					//  |       |
-					//  |       |
-					// 0,0-----1,0
-					model.textureCoords.put(left, top);
-					model.textureCoords.put(left, bottom);
-					model.textureCoords.put(right, bottom);
-					model.textureCoords.put(right, top);
-
-//					int color = instance.color.getRGB();
-//					color = color >>> 8 | color << 24;
-//					model.color.add(color);
-					model.color.add(0xFF);
-
-					// put indices;
-					model.addFace(totalIndex++, totalIndex++, totalIndex++, totalIndex++);
 				}
 			}
 			modelList.add(model);

@@ -53,9 +53,6 @@ public class GUIConverter implements ModelConverter<GUIElement> {
 
 	private void boxConvert(List<ModelLoader> modelList, Map<GraphicsFont, List<Text.TextInstance>> text, ContextBox box) {
 
-//		if (box.color == null && box.texture == null && box.texts == null)
-//			return;
-
 		ModelLoader model = new ModelLoader();
 
 		//put vertices
