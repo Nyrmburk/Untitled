@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.Color;
 
+import graphics.GraphicsFont;
 import graphics.Texture;
 
 public class Button extends GUIElement {
@@ -89,6 +90,15 @@ public class Button extends GUIElement {
 	public boolean hasText() {
 
 		return textBox != null && textBox.getText() != null && !textBox.getText().isEmpty();
+	}
+
+	public void setFont(GraphicsFont font) {
+		textBox.setFont(font);
+	}
+
+	public GraphicsFont getFont() {
+
+		return textBox.getFont();
 	}
 
 	public void setImage(Texture texture) {
