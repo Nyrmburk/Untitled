@@ -70,7 +70,7 @@ public class GUIConverter implements ModelConverter<GUIElement> {
 			// the bit twiddling is to convert argb to rgba
 			color = box.color.getRGB() << 8 | box.color.getRGB() >>> 24;
 		} else if (box.texture != null)
-			color = 0xFF;
+			color = 0xFFFFFFFF;
 
 		model.color.add(color);
 		model.color.add(color);
