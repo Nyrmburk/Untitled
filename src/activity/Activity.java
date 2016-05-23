@@ -5,9 +5,11 @@ import java.util.Stack;
 
 import entity.Camera;
 import graphics.InstanceAttributes;
+import graphics.ModelGroup;
 import graphics.ModelLoader;
 import graphics.RenderContext;
 import graphics.modelconverter.GUIConverter;
+import graphics.modelconverter.ModelConverter;
 import gui.*;
 import java.util.List;
 import matrix.Mat4;
@@ -19,8 +21,11 @@ public abstract class Activity {
 	private static boolean killCurrentActivity = false;
 
 	private View view;
+
 	private RenderContext renderContext;
-	private InstanceAttributes GUIModelAttributes = new InstanceAttributes();
+	private ModelConverter<GUIElement> guiConverter = new GUIConverter();
+	private InstanceAttributes guiModelAttributes = new InstanceAttributes();
+	private ModelGroup guiModels = new ModelGroup();
 
 	protected abstract void onCreate();
 	protected abstract void onStart();
@@ -42,16 +47,15 @@ public abstract class Activity {
 
 		if (currentActivity != null) {
 
-			currentActivity.renderContext.getModelGroup().clear();
-
 			currentActivity.onUpdate(delta);
+
+			boolean rebuild = !currentActivity.getView().isValid();
 			currentActivity.getView().revalidate();
 
-			GUIConverter converter = new GUIConverter();
-			currentActivity.getRenderContext().getModelGroup().removeInstance(currentActivity.GUIModelAttributes);
-			List<ModelLoader> GUIModels = converter.convert(currentActivity.view);
-			for (ModelLoader model : GUIModels)
-				currentActivity.getRenderContext().getModelGroup().addInstance(model, currentActivity.GUIModelAttributes);
+			// something odd is going on. somehow the view is updating without being invalid
+			// I'll look into it later but in the meantime I have to disable this check.
+//			if (rebuild)
+				currentActivity.rebuildModel();
 		}
 	}
 
@@ -112,6 +116,8 @@ public abstract class Activity {
 					activity.getView().getHeight(), 0, -1, 1);
 			activity.setRenderContext(new RenderContext(new Camera(projection)));
 		}
+
+		activity.rebuildModel();
 	}
 
 	public static void stopCurrentActivity() {
@@ -161,5 +167,33 @@ public abstract class Activity {
 	public void setSize(Dimension size) {
 
 		this.view.setBounds(0, 0, size.width, size.height);
+	}
+
+	public ModelConverter<GUIElement> getGUIConverter() {
+		return guiConverter;
+	}
+
+	public void setGuiConverter(ModelConverter<GUIElement> guiConverter) {
+		this.guiConverter = guiConverter;
+	}
+
+	private void rebuildModel() {
+
+		// get the new model converter
+		ModelConverter<GUIElement> converter = getGUIConverter();
+
+		// clear the old models
+		getRenderContext().getModelGroup().removeModelGroup(guiModels);
+		guiModels.clear();
+
+		// get the fresh models
+		List<ModelLoader> models = converter.convert(getView());
+
+		// convert models into instances
+		for (ModelLoader model : models)
+			guiModels.addInstance(model, guiModelAttributes);
+
+		// add the new models to the RenderContext.
+		getRenderContext().getModelGroup().addModelGroup(guiModels);
 	}
 }

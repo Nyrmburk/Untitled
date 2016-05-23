@@ -63,18 +63,25 @@ public class ModelGroup {
 
 	public void addModelGroup(ModelGroup modelGroup) {
 
-		for (InstancedModel iModel : modelGroup.getIModels()) {
+		for (InstancedModel childIModel : modelGroup.getIModels()) {
+			InstancedModel iModel = null;
 
 			for (InstancedModel parentIModel : this.getIModels()) {
 
-				if (iModel.model == parentIModel.model) {
+				if (childIModel.model == parentIModel.model) {
 
-					for (InstanceAttributes iAttributes : iModel.attributes)
-						parentIModel.attributes.add(iAttributes);
-
+					iModel = parentIModel;
 					break;
 				}
 			}
+
+			if (iModel == null) {
+				iModel = new InstancedModel(childIModel.model);
+				models.add(iModel);
+			}
+
+			for (InstanceAttributes iAttributes : childIModel.attributes)
+				iModel.attributes.add(iAttributes);
 		}
 	}
 
