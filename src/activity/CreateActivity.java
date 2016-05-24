@@ -46,6 +46,8 @@ public class CreateActivity extends Activity {
 					toolkit.end();
 
 
+				getRenderContext().getModelGroup().removeModelGroup(draftformGroup);
+				draftformGroup.clear();
 
 				for (Curve curve : draftform.getCurves()) {
 
@@ -56,16 +58,14 @@ public class CreateActivity extends Activity {
 					for (int i = 0; i < verts.length; i++) {
 
 						matrix.Vec2 converted = new matrix.Vec2(verts[i].getX(), verts[i].getY());
-						line.setData(i, converted, 1, Color.BLACK);
+						line.setData(i, converted, 2, Color.WHITE);
 					}
 
-					getRenderContext().getModelGroup().removeModelGroup(draftformGroup);
-					draftformGroup.clear();
 					List<ModelLoader> lineModels = lc.convert(line);
 					for (ModelLoader model : lineModels)
 						draftformGroup.addInstance(model, new InstanceAttributes());
 				}
-//				System.out.println(vec);
+				getRenderContext().getModelGroup().addModelGroup(draftformGroup);
 			}
 		});
 

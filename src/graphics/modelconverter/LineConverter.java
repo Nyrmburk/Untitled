@@ -62,8 +62,12 @@ public class LineConverter implements ModelConverter<Line> {
 			Vec2 leftVert = verts[i].add(miter);
 			Vec2 rightVert = verts[i].subtract(miter);
 
-			model.vertices.put(leftVert.x, leftVert.y, 0);
 			model.vertices.put(rightVert.x, rightVert.y, 0);
+			model.vertices.put(leftVert.x, leftVert.y, 0);
+			int color = line.getColor()[i].getRGB();
+			color = color << 8 | color >>> 24;
+			model.color.add(color);
+			model.color.add(color);
 
 			inLine = outLine;
 		}
@@ -78,12 +82,16 @@ public class LineConverter implements ModelConverter<Line> {
 
 		if (line.isLoop() || !endsEqual) {
 
-			Vec2 miter = getCorner(inLine, outLine);
+			Vec2 miter = getCorner(inLine, outLine).multiply(line.getWidth()[0] / 2);
 			Vec2 leftVert = verts[line.getLength() - 1].add(miter);
 			Vec2 rightVert = verts[line.getLength() - 1].subtract(miter);
 
-			model.vertices.put(leftVert.x, leftVert.y, 0);
 			model.vertices.put(rightVert.x, rightVert.y, 0);
+			model.vertices.put(leftVert.x, leftVert.y, 0);
+			int color = line.getColor()[0].getRGB();
+			color = color << 8 | color >>> 24;
+			model.color.add(color);
+			model.color.add(color);
 		}
 
 		int length = line.getLength() - 1;
@@ -116,7 +124,7 @@ public class LineConverter implements ModelConverter<Line> {
 		Vec2 tangent = inLine.add(outLine).normalized();
 
 		Vec2 miter = new Vec2(-tangent.y, tangent.x);
-		float length = 0.5f / miter.dot(normal); //0.5f means the width is half (0.5) of 1 (normalized vector)
+		float length = 1 / miter.dot(normal);
 		miter = miter.normalized().multiply(length);
 
 		return miter;

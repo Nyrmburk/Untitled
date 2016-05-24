@@ -14,7 +14,7 @@ public class Line {
 
 	private Vec2[] vertices;
 	private float[] width;
-	private int[] color;
+	private Color[] color;
 
 	public Line(int length, boolean loop) {
 
@@ -22,20 +22,15 @@ public class Line {
 
 		vertices = new Vec2[length];
 		width = new float[length];
-		color = new int[length];
+		color = new Color[length];
 		setLoop(loop);
-	}
-
-	public void setData (int index, Vec2 vertex, float width, int color) {
-
-		this.vertices[index] = vertex;
-		this.width[index] = width;
-		this.color[index] = color;
 	}
 
 	public void setData (int index, Vec2 vertex, float width, Color color) {
 
-		setData(index, vertex, width, color.getRGB());
+		this.vertices[index] = vertex;
+		this.width[index] = width;
+		this.color[index] = color;
 	}
 
 	public int getLength() {
@@ -58,7 +53,7 @@ public class Line {
 		return width;
 	}
 
-	public int[] getColor() {
+	public Color[] getColor() {
 		return color;
 	}
 }
