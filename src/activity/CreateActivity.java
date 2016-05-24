@@ -60,6 +60,7 @@ public class CreateActivity extends Activity {
 					}
 
 					getRenderContext().getModelGroup().removeModelGroup(draftformGroup);
+					draftformGroup.clear();
 					List<ModelLoader> lineModels = lc.convert(line);
 					for (ModelLoader model : lineModels)
 						draftformGroup.addInstance(model, new InstanceAttributes());

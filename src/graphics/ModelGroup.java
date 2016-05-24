@@ -1,6 +1,5 @@
 package graphics;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,7 +13,7 @@ public class ModelGroup {
 
 	public ModelGroup() {
 
-		models = new ArrayList<>();
+		models = new LinkedList<>();
 	}
 
 	public void addInstance(ModelLoader model, InstanceAttributes attributes) {
