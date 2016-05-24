@@ -228,13 +228,13 @@ public class Engine {
 
 		//testing for NinePatch
 		//temporary
-		BufferedImage image = null;
-		try {
-			image = ImageIO.read(new File("dev\\plain.9.png"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		new NinePatch(image);
+//		BufferedImage image = null;
+//		try {
+//			image = ImageIO.read(new File("dev\\plain.9.png"));
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		new NinePatch(image);
 
 		//testing for convex hull and decomposition
 		//temporary

@@ -4,6 +4,8 @@ import draftform.Curve;
 import draftform.Draftform;
 import draftform.Vec2;
 import graphics.InstanceAttributes;
+import graphics.ModelGroup;
+import graphics.ModelLoader;
 import graphics.modelconverter.LineConverter;
 import gui.*;
 import gui.Button;
@@ -14,11 +16,13 @@ import tools.*;
 import tools.Toolkit;
 
 import java.awt.*;
+import java.util.List;
 
 public class CreateActivity extends Activity {
 
 	Draftform draftform = new Draftform();
 	tools.Toolkit toolkit = new Toolkit(draftform);
+	ModelGroup draftformGroup = new ModelGroup();
 	LineConverter lc = new LineConverter();
 
 	@Override
@@ -55,7 +59,10 @@ public class CreateActivity extends Activity {
 						line.setData(i, converted, 1, Color.BLACK);
 					}
 
-//					getRenderContext().getModelGroup().addInstance(lc.convert(line), new InstanceAttributes());
+					getRenderContext().getModelGroup().removeModelGroup(draftformGroup);
+					List<ModelLoader> lineModels = lc.convert(line);
+					for (ModelLoader model : lineModels)
+						draftformGroup.addInstance(model, new InstanceAttributes());
 				}
 //				System.out.println(vec);
 			}

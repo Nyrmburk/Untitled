@@ -96,6 +96,9 @@ public class ModelGroup {
 					for (InstanceAttributes iAttributes : iModel.attributes)
 						parentIModel.attributes.remove(iAttributes);
 
+					if (parentIModel.attributes.isEmpty())
+						models.remove(parentIModel);
+
 					break;
 				}
 			}
