@@ -4,10 +4,7 @@ possibilities
 	create focus system
 	make logic loop
 	controller inputinterface
-	add draftform
 	
 ordered
-	create ui
-	add draftform
 	finish ninepatch
 	async platform

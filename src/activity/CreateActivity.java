@@ -20,10 +20,10 @@ import java.util.List;
 
 public class CreateActivity extends Activity {
 
-	Draftform draftform = new Draftform();
-	tools.Toolkit toolkit = new Toolkit(draftform);
-	ModelGroup draftformGroup = new ModelGroup();
-	LineConverter lc = new LineConverter();
+	private Draftform draftform = new Draftform();
+	private tools.Toolkit toolkit = new Toolkit(draftform);
+	private ModelGroup draftformGroup = new ModelGroup();
+	private LineConverter lc = new LineConverter();
 
 	@Override
 	protected void onCreate() {

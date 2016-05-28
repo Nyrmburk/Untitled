@@ -121,7 +121,7 @@ public class Mat4 {
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
 
-				sb.append(String.format("%6.2f ", m[i * j + j]));
+				sb.append(String.format("%6.2f ", m[i * SIZE + j]));
 			}
 			sb.append('\n');
 		}
