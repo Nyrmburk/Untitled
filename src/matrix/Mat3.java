@@ -106,6 +106,43 @@ public class Mat3 {
 		return m[0] + m[4] + m[8];
 	}
 
+	public Mat3 swapRows(int row1, int row2) {
+
+		Mat3 swapped = new Mat3(this);
+
+		float[] tempRow = new float[SIZE];
+
+		// copy first row to temp
+		for (int i = 0; i < SIZE; i++)
+			tempRow[i] = swapped.m[i * SIZE + row1];
+
+		// copy second row to first
+		for (int i = 0; i < SIZE; i++)
+			swapped.m[i * SIZE + row1] = swapped.m[i * SIZE + row2];
+
+		// copy temp to second
+		for (int i = 0; i < SIZE; i++)
+			swapped.m[i * SIZE + row2] = tempRow[i];
+
+		return swapped;
+	}
+
+	public Mat3 swapCols(int col1, int col2) {
+
+		col1 *= SIZE;
+		col2 *= SIZE;
+
+		Mat3 swapped = new Mat3(this);
+
+		float[] tempCol = new float[SIZE];
+
+		System.arraycopy(swapped.m, col1, tempCol, 0, SIZE); // copy first col to temp
+		System.arraycopy(swapped.m, col2, swapped.m, col1, SIZE); // copy second col to first
+		System.arraycopy(tempCol, 0, swapped.m, col2, SIZE); // copy temp to second col
+
+		return swapped;
+	}
+
 	public static Mat3 identity() {
 
 		return new Mat3(

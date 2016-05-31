@@ -24,6 +24,7 @@ public class CreateActivity extends Activity {
 	private tools.Toolkit toolkit = new Toolkit(draftform);
 	private ModelGroup draftformGroup = new ModelGroup();
 	private LineConverter lc = new LineConverter();
+	private InstanceAttributes draftformInstance = new InstanceAttributes();
 
 	@Override
 	protected void onCreate() {
@@ -63,7 +64,7 @@ public class CreateActivity extends Activity {
 
 					List<ModelLoader> lineModels = lc.convert(line);
 					for (ModelLoader model : lineModels)
-						draftformGroup.addInstance(model, new InstanceAttributes());
+						draftformGroup.addInstance(model, draftformInstance);
 				}
 				getRenderContext().getModelGroup().addModelGroup(draftformGroup);
 			}
