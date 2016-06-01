@@ -143,6 +143,21 @@ public class Mat4 {
 		return swapped;
 	}
 
+	//  0  4  8 12
+	//  1  5  9 13
+	//  2  6 10 14
+	//  3  7 11 15
+	// http://www.cg.info.hiroshima-cu.ac.jp/~miyazaki/knowledge/teche23.html
+	public Mat4 inverse() {
+
+		Mat4 inverse = new Mat4();
+
+		inverse.m[0] = m[5]*m[10]*m[15] + m[9]*m[14]*m[7] + m[13]*m[6]*m[11];
+		inverse.m[0] -= m[5]*m[14]*m[11];
+
+		return inverse;
+	}
+
 	public static Mat4 identity() {
 
 		return new Mat4(
