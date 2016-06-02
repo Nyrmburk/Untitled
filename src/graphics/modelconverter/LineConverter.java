@@ -123,7 +123,7 @@ public class LineConverter implements ModelConverter<Line> {
 		Vec2 normal = outLine.transpose();
 		Vec2 tangent = inLine.add(outLine).normalized();
 
-		Vec2 miter = new Vec2(-tangent.y, tangent.x);
+		Vec2 miter = tangent.transpose();
 		float length = 1 / miter.dot(normal);
 		miter = miter.normalized().multiply(length);
 

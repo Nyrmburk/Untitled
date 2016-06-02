@@ -3,6 +3,7 @@ package activity;
 import draftform.Curve;
 import draftform.Draftform;
 import draftform.Vec2;
+import draftform.Vertex;
 import graphics.InstanceAttributes;
 import graphics.ModelGroup;
 import graphics.ModelLoader;
@@ -12,10 +13,14 @@ import gui.Button;
 import gui.Panel;
 import main.Engine;
 import main.Line;
+import matrix.Mat4;
+import matrix.Transform;
+import matrix.Vec3;
 import tools.*;
 import tools.Toolkit;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CreateActivity extends Activity {
@@ -25,9 +30,12 @@ public class CreateActivity extends Activity {
 	private ModelGroup draftformGroup = new ModelGroup();
 	private LineConverter lc = new LineConverter();
 	private InstanceAttributes draftformInstance = new InstanceAttributes();
+	private ModelLoader vertexModel = createVertexModel();
 
 	@Override
 	protected void onCreate() {
+
+		toolkit.setSnapRadius(3);
 
 		View view = new View(Engine.renderEngine);
 		view.setlayout(new GUIProportionLayout());
@@ -46,27 +54,7 @@ public class CreateActivity extends Activity {
 				if (getCurrentState() == State.RELEASE)
 					toolkit.end();
 
-
-				getRenderContext().getModelGroup().removeModelGroup(draftformGroup);
-				draftformGroup.clear();
-
-				for (Curve curve : draftform.getCurves()) {
-
-					Vec2[] verts = curve.linearize(curve.recommendedSubdivisions());
-
-					Line line = new Line(verts.length, false);
-
-					for (int i = 0; i < verts.length; i++) {
-
-						matrix.Vec2 converted = new matrix.Vec2(verts[i].getX(), verts[i].getY());
-						line.setData(i, converted, 2, Color.WHITE);
-					}
-
-					List<ModelLoader> lineModels = lc.convert(line);
-					for (ModelLoader model : lineModels)
-						draftformGroup.addInstance(model, draftformInstance);
-				}
-				getRenderContext().getModelGroup().addModelGroup(draftformGroup);
+				if (getCurrentState() != State.MOVE) drawDraftform();
 			}
 		});
 
@@ -149,5 +137,66 @@ public class CreateActivity extends Activity {
 
 	@Override
 	public void onUpdate(int delta) {
+	}
+
+	private void drawDraftform() {
+
+		getRenderContext().getModelGroup().removeModelGroup(draftformGroup);
+		draftformGroup.clear();
+
+		ArrayList<InstanceAttributes> vertices = new ArrayList<>(draftform.getCurves().size() * 4) ;
+
+		for (Curve curve : draftform.getCurves()) {
+
+			Vec2[] verts = curve.linearize(curve.recommendedSubdivisions());
+
+			Line line = new Line(verts.length, false);
+
+			for (int i = 0; i < verts.length; i++) {
+
+				matrix.Vec2 converted = new matrix.Vec2(verts[i].getX(), verts[i].getY());
+				line.setData(i, converted, 2, Color.WHITE);
+			}
+
+			List<ModelLoader> lineModels = lc.convert(line);
+			for (ModelLoader model : lineModels)
+				draftformGroup.addInstance(model, draftformInstance);
+
+			vertices.add(getVertexAttributes(curve.getStart()));
+			vertices.add(getVertexAttributes(curve.getEnd()));
+
+			for (Vertex vertex : curve.getControlPoints())
+			vertices.add(getVertexAttributes(vertex));
+		}
+
+		draftformGroup.addInstance(vertexModel, vertices);
+
+		getRenderContext().getModelGroup().addModelGroup(draftformGroup);
+	}
+
+	private InstanceAttributes getVertexAttributes(Vertex vertex) {
+
+		InstanceAttributes vertexAttributes = new InstanceAttributes();
+		vertexAttributes.setTransform(
+				Transform.setPosition(Mat4.identity(),
+				new Vec3(vertex.getX(), vertex.getY(), 0)));
+		return vertexAttributes;
+	}
+
+	private ModelLoader createVertexModel() {
+
+		ModelLoader vertexModel = new ModelLoader();
+		vertexModel.vertices.put(-3f, 3f, 0f);
+		vertexModel.vertices.put(-3f, -3f, 0f);
+		vertexModel.vertices.put(3f, -3f, 0f);
+		vertexModel.vertices.put(3f, 3f, 0f);
+		vertexModel.color.add(0xFFFFFFFF);
+		vertexModel.color.add(0xFFFFFFFF);
+		vertexModel.color.add(0xFFFFFFFF);
+		vertexModel.color.add(0xFFFFFFFF);
+//		vertexModel.addFace(0, 1, 2, 3);
+		vertexModel.addFace(3, 2, 1, 0);
+
+		return vertexModel;
 	}
 }
