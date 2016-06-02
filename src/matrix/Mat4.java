@@ -148,12 +148,107 @@ public class Mat4 {
 	//  2  6 10 14
 	//  3  7 11 15
 	// http://www.cg.info.hiroshima-cu.ac.jp/~miyazaki/knowledge/teche23.html
+	public float determinant() {
+
+		float determinant = 0;
+
+		determinant += m[0]*m[5]*m[10]*m[15] - m[0]*m[5]*m[14]*m[11];
+		determinant += m[0]*m[9]*m[14]*m[7] - m[0]*m[9]*m[6]*m[15];
+		determinant += m[0]*m[13]*m[6]*m[11] - m[0]*m[13]*m[10]*m[7];
+
+		determinant += m[4]*m[1]*m[14]*m[11] - m[4]*m[1]*m[10]*m[15];
+		determinant += m[4]*m[9]*m[2]*m[15] - m[4]*m[9]*m[14]*m[3];
+		determinant += m[4]*m[13]*m[10]*m[3] - m[4]*m[13]*m[2]*m[11];
+
+		determinant += m[8]*m[1]*m[6]*m[15] - m[8]*m[1]*m[14]*m[7];
+		determinant += m[8]*m[5]*m[14]*m[3] - m[8]*m[5]*m[2]*m[15];
+		determinant += m[8]*m[13]*m[2]*m[7] - m[8]*m[13]*m[6]*m[3];
+
+		determinant += m[12]*m[1]*m[10]*m[7] - m[12]*m[1]*m[6]*m[11];
+		determinant += m[12]*m[5]*m[2]*m[11] - m[12]*m[5]*m[10]*m[3];
+		determinant += m[12]*m[9]*m[6]*m[3] - m[12]*m[9]*m[2]*m[7];
+
+		return determinant;
+	}
+
+	//  0  4  8 12
+	//  1  5  9 13
+	//  2  6 10 14
+	//  3  7 11 15
+	// http://www.cg.info.hiroshima-cu.ac.jp/~miyazaki/knowledge/teche23.html
 	public Mat4 inverse() {
+
+		float determinant = this.determinant();
+
+		//inverse does not exist
+		if (determinant == 0)
+			return null;
 
 		Mat4 inverse = new Mat4();
 
 		inverse.m[0] = m[5]*m[10]*m[15] + m[9]*m[14]*m[7] + m[13]*m[6]*m[11];
-		inverse.m[0] -= m[5]*m[14]*m[11];
+		inverse.m[0] -= m[5]*m[14]*m[11] + m[9]*m[6]*m[15] + m[13]*m[10]*m[7];
+		inverse.m[0] /= determinant;
+
+		inverse.m[4] = m[4]*m[14]*m[11] + m[8]*m[6]*m[15] + m[12]*m[10]*m[7];
+		inverse.m[4] -= m[4]*m[10]*m[15] + m[8]*m[14]*m[7] + m[12]*m[6]*m[11];
+		inverse.m[4] /= determinant;
+
+		inverse.m[8] = m[4]*m[9]*m[15] + m[8]*m[13]*m[7] + m[12]*m[5]*m[11];
+		inverse.m[8] -= m[4]*m[13]*m[11] + m[8]*m[5]*m[15] + m[12]*m[9]*m[7];
+		inverse.m[8] /= determinant;
+
+		inverse.m[12] = m[4]*m[13]*m[10] + m[8]*m[5]*m[14] + m[12]*m[9]*m[6];
+		inverse.m[12] -= m[4]*m[9]*m[14] + m[8]*m[13]*m[6] + m[12]*m[5]*m[10];
+		inverse.m[12] /= determinant;
+
+		inverse.m[1] = m[1]*m[14]*m[11] + m[9]*m[2]*m[15] + m[13]*m[10]*m[3];
+		inverse.m[1] -= m[1]*m[10]*m[15] + m[9]*m[14]*m[3] + m[13]*m[2]*m[11];
+		inverse.m[1] /= determinant;
+
+		inverse.m[5] = m[0]*m[10]*m[15] + m[8]*m[14]*m[3] + m[12]*m[2]*m[11];
+		inverse.m[5] -= m[0]*m[14]*m[11] + m[8]*m[2]*m[15] + m[12]*m[10]*m[3];
+		inverse.m[5] /= determinant;
+
+		inverse.m[9] = m[0]*m[13]*m[11] + m[8]*m[1]*m[15] + m[12]*m[9]*m[3];
+		inverse.m[9] -= m[0]*m[9]*m[15] + m[8]*m[13]*m[3] + m[12]*m[1]*m[11];
+		inverse.m[9] /= determinant;
+
+		inverse.m[13] = m[0]*m[9]*m[14] + m[8]*m[13]*m[2] + m[12]*m[1]*m[10];
+		inverse.m[13] -= m[0]*m[13]*m[10] + m[8]*m[1]*m[14] + m[12]*m[9]*m[2];
+		inverse.m[13] /= determinant;
+
+		inverse.m[2] = m[1]*m[6]*m[15] + m[5]*m[14]*m[3] + m[13]*m[2]*m[7];
+		inverse.m[2] -= m[1]*m[14]*m[7] + m[5]*m[2]*m[15] + m[13]*m[6]*m[3];
+		inverse.m[2] /= determinant;
+
+		inverse.m[6] = m[0]*m[14]*m[7] + m[4]*m[2]*m[15] + m[12]*m[6]*m[3];
+		inverse.m[6] -= m[0]*m[6]*m[15] + m[4]*m[14]*m[3] + m[12]*m[2]*m[7];
+		inverse.m[6] /= determinant;
+
+		inverse.m[10] = m[0]*m[5]*m[15] + m[4]*m[13]*m[3] + m[12]*m[1]*m[7];
+		inverse.m[10] -= m[0]*m[13]*m[7] + m[4]*m[1]*m[15] + m[12]*m[5]*m[3];
+		inverse.m[10] /= determinant;
+
+		inverse.m[14] = m[0]*m[13]*m[6] + m[4]*m[1]*m[14] + m[12]*m[5]*m[2];
+		inverse.m[14] -= m[0]*m[5]*m[14] + m[4]*m[13]*m[2] + m[12]*m[1]*m[6];
+		inverse.m[14] /= determinant;
+
+		inverse.m[3] = m[1]*m[10]*m[7] + m[5]*m[2]*m[11] + m[9]*m[6]*m[3];
+		inverse.m[3] -= m[1]*m[6]*m[11] + m[5]*m[10]*m[3] + m[9]*m[2]*m[7];
+		inverse.m[3] /= determinant;
+
+		inverse.m[7] = m[0]*m[6]*m[11] + m[4]*m[10]*m[3] + m[8]*m[2]*m[7];
+		inverse.m[7] -= m[0]*m[10]*m[7] + m[4]*m[2]*m[11] + m[8]*m[6]*m[3];
+		inverse.m[7] /= determinant;
+
+		inverse.m[11] = m[0]*m[9]*m[7] + m[4]*m[1]*m[11] + m[8]*m[5]*m[3];
+		inverse.m[11] -= m[0]*m[5]*m[11] + m[4]*m[9]*m[3] + m[8]*m[1]*m[7];
+		inverse.m[11] /= determinant;
+
+		inverse.m[15] = m[0]*m[5]*m[10] + m[4]*m[9]*m[2] + m[8]*m[1]*m[6];
+		inverse.m[15] -= m[0]*m[9]*m[6] + m[4]*m[1]*m[10] + m[8]*m[5]*m[2];
+		inverse.m[15] /= determinant;
 
 		return inverse;
 	}
@@ -173,10 +268,12 @@ public class Mat4 {
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
 
-				sb.append(String.format("%6.2f ", m[i * SIZE + j]));
+				sb.append(String.format("%6.2f ", m[j * SIZE + i]));
 			}
 			sb.append('\n');
 		}
+
+		sb.deleteCharAt(sb.length() - 1);
 
 		return sb.toString();
 	}
