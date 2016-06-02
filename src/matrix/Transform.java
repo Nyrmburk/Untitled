@@ -23,12 +23,14 @@ public class Transform extends Mat4 {
 		return new Vec3(m[12], m[13], m[14]);
 	}
 
-	public static void setPosition(Mat4 matrix, Vec3 position) {
+	public static Mat4 setPosition(Mat4 matrix, Vec3 position) {
 
 		float[] m = matrix.m;
 		m[12] = position.x;
 		m[13] = position.y;
 		m[14] = position.z;
+
+		return matrix;
 	}
 
 	public static Mat3 getRotationMatrix(Mat4 matrix) {
@@ -40,7 +42,7 @@ public class Transform extends Mat4 {
 				m[2], m[6], m[10]);
 	}
 
-	public static void setRotationMatrix(Mat4 matrix, Mat3 rotation) {
+	public static Mat4 setRotationMatrix(Mat4 matrix, Mat3 rotation) {
 
 		matrix.m[0] = rotation.m[0];
 		matrix.m[1] = rotation.m[1];
@@ -51,6 +53,8 @@ public class Transform extends Mat4 {
 		matrix.m[8] = rotation.m[6];
 		matrix.m[9] = rotation.m[7];
 		matrix.m[10]= rotation.m[8];
+
+		return matrix;
 	}
 
 	public static Vec4 getRotationQuaternion(Mat4 matrix) {
@@ -58,8 +62,9 @@ public class Transform extends Mat4 {
 		return null;
 	}
 
-	public static void setRotationQuaternion(Mat4 matrix, Vec4 quaternion) {
+	public static Mat4 setRotationQuaternion(Mat4 matrix, Vec4 quaternion) {
 
+		return matrix;
 	}
 
 	public static Mat4 rotate(Mat4 matrix, Vec3 axis, float angle) {
