@@ -1,8 +1,6 @@
 package graphics;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Nyrmburk on 5/21/2016.
@@ -16,10 +14,9 @@ public class ModelGroup {
 		models = new LinkedList<>();
 	}
 
-	public void addInstance(ModelLoader model, InstanceAttributes attributes) {
+	private InstancedModel getInstancedModel(ModelLoader model) {
 
 		InstancedModel instancedModel = null;
-
 		for (InstancedModel iModel : models) {
 
 			if (iModel.model.equals(model)) {
@@ -29,35 +26,39 @@ public class ModelGroup {
 			}
 		}
 
+		return instancedModel;
+	}
+
+	public void addInstance(ModelLoader model, Collection<InstanceAttributes> instanceAttributes) {
+
+		InstancedModel instancedModel = getInstancedModel(model);
+
 		if (instancedModel == null) {
 			instancedModel = new InstancedModel(model);
 			models.add(instancedModel);
 		}
 
-		instancedModel.attributes.add(attributes);
+		instancedModel.attributes.addAll(instanceAttributes);
 	}
 
-	public boolean removeInstance(InstanceAttributes instanceAttributes) {
+	public void addInstance(ModelLoader model, InstanceAttributes... instanceAttributes) {
+		
+		addInstance(model, Arrays.asList(instanceAttributes));
+	}
 
-		Iterator<InstancedModel> it = models.iterator();
+	public void removeInstance(ModelLoader model, Collection<InstanceAttributes> instanceAttributes) {
 
-		boolean removed = false;
+		InstancedModel iModel = getInstancedModel(model);
 
-		while (it.hasNext()) {
+		iModel.attributes.removeAll(instanceAttributes);
 
-			InstancedModel iModel = it.next();
+		if (iModel.attributes.isEmpty())
+			models.remove(iModel);
+	}
 
-			removed = iModel.attributes.remove(instanceAttributes);
+	public void removeInstance(ModelLoader model, InstanceAttributes... instanceAttributes) {
 
-			if (removed) {
-
-				if (iModel.attributes.isEmpty())
-					it.remove();
-				break;
-			}
-		}
-
-		return removed;
+		removeInstance(model, Arrays.asList(instanceAttributes));
 	}
 
 	public void addModelGroup(ModelGroup modelGroup) {
