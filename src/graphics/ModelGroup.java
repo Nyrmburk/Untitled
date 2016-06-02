@@ -42,7 +42,7 @@ public class ModelGroup {
 	}
 
 	public void addInstance(ModelLoader model, InstanceAttributes... instanceAttributes) {
-		
+
 		addInstance(model, Arrays.asList(instanceAttributes));
 	}
 
@@ -80,8 +80,7 @@ public class ModelGroup {
 				models.add(iModel);
 			}
 
-			for (InstanceAttributes iAttributes : childIModel.attributes)
-				iModel.attributes.add(iAttributes);
+			iModel.attributes.addAll(childIModel.attributes);
 		}
 	}
 
@@ -93,8 +92,7 @@ public class ModelGroup {
 
 				if (iModel.model == parentIModel.model) {
 
-					for (InstanceAttributes iAttributes : iModel.attributes)
-						parentIModel.attributes.remove(iAttributes);
+					parentIModel.attributes.removeAll(iModel.attributes);
 
 					if (parentIModel.attributes.isEmpty())
 						models.remove(parentIModel);
