@@ -74,6 +74,28 @@ public class Mat4 {
 		return multiplied;
 	}
 
+	public Vec4 multiply(Vec4 vec) {
+
+		Vec4 multiplied = new Vec4();
+
+		multiplied.x = vec.x * m[0] + vec.y * m[4] + vec.z * m[8] + vec.w * m[12];
+		multiplied.y = vec.x * m[1] + vec.y * m[5] + vec.z * m[9] + vec.w * m[13];
+		multiplied.z = vec.x * m[2] + vec.y * m[6] + vec.z * m[10] + vec.w * m[14];
+		multiplied.w = vec.x * m[3] + vec.y * m[7] + vec.z * m[11] + vec.w * m[15];
+
+		return multiplied;
+	}
+
+	public Vec3 multiply(Vec3 vec) {
+
+		Vec4 multiplied = multiply(new Vec4(vec.x, vec.y, vec.z, 1));
+
+		if (multiplied.z == 0)
+			return null;
+
+		return new Vec3(multiplied.x, multiplied.y, multiplied.z).divide(multiplied.z);
+	}
+
 	public Mat4 divide(float scalar) {
 
 		Mat4 divided = new Mat4();

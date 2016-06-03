@@ -1,5 +1,7 @@
 package matrix;
 
+import java.awt.*;
+
 /**
  * Created by Nyrmburk on 5/12/2016.
  * http://www.songho.ca/opengl/gl_projectionmatrix.html
@@ -48,8 +50,30 @@ public class Projection {
 		return null;
 	}
 
-	public static Vec3 unproject() {
+	// This is not the traditional unproject from glu. It is similar in the fact that it serves the same purpose but in
+	// a better way. Instead of providing the point, it provides a ray from the front to the back of the
+	// projection matrix. Usually gluunproject is called twice to get this ray. By simplifying the method I can limit
+	// the number of matrix inversions.
+	public static Ray3 unproject(float x, float y, Mat4 transform, Mat4 projection, Rectangle viewport) {
 
-		return null;
+		// calculate inverse matrix
+		Mat4 A = projection.multiply(transform).inverse();
+		if (A == null)
+			return null;
+
+		// normalize point
+		x = (x - viewport.x) / viewport.width * 2 - 1;
+		y = (y - viewport.y) / viewport.height * 2 - 1;
+
+		// calculate beginning and end of ray
+		Vec3 start = A.multiply(new Vec3(x, y, -1));
+		Vec3 end = A.multiply(new Vec3(x, y, 1));
+
+		// check if above step failed
+		if (start == null || end == null)
+			return null;
+
+		// transform start and ind into start and direction
+		return new Ray3(start, end.subtract(start));
 	}
 }
