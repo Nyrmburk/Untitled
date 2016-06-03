@@ -5,6 +5,9 @@ public class RenderContext {
 	private entity.Camera camera; //TODO remove the 'entity.' part after graphics.camera is gone
 	private ModelGroup modelGroup = new ModelGroup();
 
+	// graphics properties such as disable depth buffer, etc.
+	// lights
+
 	public RenderContext(entity.Camera camera) {
 
 		setCamera(camera);

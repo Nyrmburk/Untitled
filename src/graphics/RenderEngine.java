@@ -14,6 +14,8 @@ public interface RenderEngine {
 	//TODO remove and replace with a screen object that has resolution, fullscreen, and refresh rate.
 	int getWidth();
 	int getHeight();
+
+	//get/set viewport (not window sizing but what frame inside the window to render)
 	
 	//public boolean sizeChanged()
 	
