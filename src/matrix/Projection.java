@@ -54,26 +54,32 @@ public class Projection {
 	// a better way. Instead of providing the point, it provides a ray from the front to the back of the
 	// projection matrix. Usually gluunproject is called twice to get this ray. By simplifying the method I can limit
 	// the number of matrix inversions.
-	public static Ray3 unproject(float x, float y, Mat4 transform, Mat4 projection, Rectangle viewport) {
+	public static Ray3[] unproject(Vec2[] points, Mat4 transform, Mat4 projection, Rectangle viewport) {
 
 		// calculate inverse matrix
 		Mat4 A = projection.multiply(transform).inverse();
 		if (A == null)
 			return null;
 
-		// normalize point
-		x = (x - viewport.x) / viewport.width * 2 - 1;
-		y = (y - viewport.y) / viewport.height * 2 - 1;
+		Ray3[] rays = new Ray3[points.length];
 
-		// calculate beginning and end of ray
-		Vec3 start = A.multiply(new Vec3(x, y, -1));
-		Vec3 end = A.multiply(new Vec3(x, y, 1));
+		// normalize points
+		for (int i = 0; i < points.length; i++) {
+			points[i].x = (points[i].x - viewport.x) / viewport.width * 2 - 1;
+			points[i].y = (points[i].y - viewport.y) / viewport.height * 2 - 1;
 
-		// check if above step failed
-		if (start == null || end == null)
-			return null;
+			// calculate beginning and end of ray
+			Vec3 start = A.multiply(new Vec3(points[i].x, points[i].y, -1));
+			Vec3 end = A.multiply(new Vec3(points[i].x, points[i].y, 1));
 
-		// transform start and ind into start and direction
-		return new Ray3(start, end.subtract(start));
+			// check if above step failed
+			if (start == null || end == null)
+				continue;
+
+			// transform start and ind into start and direction
+			rays[i] = new Ray3(start, end.subtract(start));
+		}
+
+		return rays;
 	}
 }
