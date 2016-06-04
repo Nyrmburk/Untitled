@@ -13,4 +13,9 @@ public class Ray3 {
 		this.position = position;
 		this.direction = direction;
 	}
+
+	public Vec3 point(float t) {
+
+		return position.add(direction.multiply(t));
+	}
 }
