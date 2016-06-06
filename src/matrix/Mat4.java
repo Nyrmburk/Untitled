@@ -60,15 +60,17 @@ public class Mat4 {
 
 		Mat4 multiplied = new Mat4();
 		for (int i = 0; i < TOTAL_SIZE; i++) {
-			int j = i % SIZE;
-			int k = j;
-			// dot product
-			multiplied.m[i] =
-			//		columns  rows
-					m[j++] * matrix.m[k += SIZE] +
-					m[j++] * matrix.m[k += SIZE] +
-					m[j++] * matrix.m[k += SIZE] +
-					m[j  ] * matrix.m[k        ];
+
+			int row = i % SIZE;
+			int col = i / SIZE * SIZE;
+
+			float dot = 0;
+			for (int j = 0; j < SIZE; j++) {
+				dot += m[row] * matrix.m[col++];
+				row += SIZE;
+			}
+
+			multiplied.m[i] = dot;
 		}
 
 		return multiplied;
