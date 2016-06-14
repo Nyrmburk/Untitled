@@ -2,25 +2,25 @@ package activity;
 
 import draftform.Curve;
 import draftform.Draftform;
-import draftform.Vec2;
 import draftform.Vertex;
 import graphics.InstanceAttributes;
 import graphics.ModelGroup;
 import graphics.ModelLoader;
+import graphics.RenderContext;
 import graphics.modelconverter.LineConverter;
 import gui.*;
 import gui.Button;
 import gui.Panel;
 import main.Engine;
 import main.Line;
-import matrix.Mat4;
-import matrix.Transform;
-import matrix.Vec3;
+import matrix.*;
 import tools.*;
 import tools.Toolkit;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 public class CreateActivity extends Activity {
@@ -36,6 +36,7 @@ public class CreateActivity extends Activity {
 	protected void onCreate() {
 
 		toolkit.setSnapRadius(3);
+		toolkit.setSnapToPoints(true);
 
 		View view = new View(Engine.renderEngine);
 		view.setlayout(new GUIProportionLayout());
@@ -44,7 +45,7 @@ public class CreateActivity extends Activity {
 			public void actionPerformed() {
 
 				Point point = getPointerLocation();
-				Vec2 vec = new Vec2(point.x, point.y);
+				draftform.Vec2 vec = new draftform.Vec2(point.x, point.y);
 
 //				System.out.println(getCurrentState());
 				if (getCurrentState() == State.PRESS)
@@ -109,6 +110,45 @@ public class CreateActivity extends Activity {
 		});
 		panel.addChild(vertex, 0);
 
+		Button commit = new Button();
+		commit.setText("Commit");
+		commit.addActionListener(new PointerListener() {
+			@Override
+			public void actionPerformed() {
+				if (this.getCurrentState() == State.CLICK) {
+					System.out.println("Committing drawn shape to world");
+
+					Vec2[] points = new Vec2[draftform.getCurves().size()];
+
+					Iterator<Curve> it = draftform.getCurves().iterator();
+					for (int i = 0; i < points.length; i++) {
+
+						draftform.Vec2 dVec = it.next().getStart();
+						points[i] = new Vec2(dVec.getX(), dVec.getY());
+					}
+
+					RenderContext world = Engine.level.getRenderContext();
+
+					Ray3[] rays = Projection.unproject(points, world.getCamera().getTransform(),
+							world.getCamera().getProjection(), new Rectangle(800, 600));
+
+					Plane plane = new Plane(0, 0, 0, 0, 0, 1);
+
+					Vec3[] vertices = new Vec3[rays.length];
+
+					for (int i = 0; i < rays.length; i++)
+						vertices[i] = rays[i].point(plane.intersect(rays[i]));
+
+					System.out.println(Arrays.toString(vertices));
+
+					draftform.getCurves().clear();
+					draftform.getVerts().clear();
+					drawDraftform();
+				}
+			}
+		});
+		panel.addChild(commit, 0);
+
 		setView(view);
 
 		LoadingActivity loading = new LoadingActivity();
@@ -148,7 +188,7 @@ public class CreateActivity extends Activity {
 
 		for (Curve curve : draftform.getCurves()) {
 
-			Vec2[] verts = curve.linearize(curve.recommendedSubdivisions());
+			draftform.Vec2[] verts = curve.linearize(curve.recommendedSubdivisions());
 
 			Line line = new Line(verts.length, false);
 
