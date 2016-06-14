@@ -69,8 +69,8 @@ public class Projection {
 			points[i].y = (points[i].y - viewport.y) / viewport.height * 2 - 1;
 
 			// calculate beginning and end of ray
-			Vec3 start = A.multiply(new Vec3(points[i].x, points[i].y, -1));
-			Vec3 end = A.multiply(new Vec3(points[i].x, points[i].y, 1));
+			Vec3 start = A.multiply(new Vec3(points[i].x, points[i].y, -1), 1);
+			Vec3 end = A.multiply(new Vec3(points[i].x, points[i].y, 1), 1);
 
 			// check if above step failed
 			if (start == null || end == null)

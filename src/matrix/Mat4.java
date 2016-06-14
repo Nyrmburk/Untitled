@@ -88,14 +88,14 @@ public class Mat4 {
 		return multiplied;
 	}
 
-	public Vec3 multiply(Vec3 vec) {
+	public Vec3 multiply(Vec3 vec, float w) {
 
-		Vec4 multiplied = multiply(new Vec4(vec.x, vec.y, vec.z, 1));
+		Vec4 multiplied = multiply(new Vec4(vec.x, vec.y, vec.z, w));
 
-		if (multiplied.z == 0)
+		if (multiplied.w == 0)
 			return null;
 
-		return new Vec3(multiplied.x, multiplied.y, multiplied.z).divide(multiplied.z);
+		return new Vec3(multiplied.x, multiplied.y, multiplied.z).divide(multiplied.w);
 	}
 
 	public Mat4 divide(float scalar) {
