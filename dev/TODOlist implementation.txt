@@ -1,16 +1,8 @@
 Goal for today
 
-check if printing matrices is wrong
-draw draftform
-	draw vertices
-	draw current mouse position
 update render context
 	add uninstanceable groups to render context
-	add rendering properties (depth buffer and shit)
-	add lights
 convert drawings to entities
-	mat4 project and unproject
-	probably matrix inversion as part of that
 	the real hard part here is determining validity
 		full loop
 		intersecting sides
@@ -32,4 +24,4 @@ fix camera so that it follows the character
 			getMatrix();
 			setViewport(Dimension size) //name still in progress
 		the separate implementations (ortho and perspective) have their own variables such as near and far z axis, field of view, position, etc.
-		a special not has to be taken to store the projection and position of a camera separately, because the projection matrix must be only the projection or things get messy fast.
+		
