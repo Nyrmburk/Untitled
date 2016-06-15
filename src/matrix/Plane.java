@@ -28,6 +28,6 @@ public class Plane {
 		if (denominator == 0)
 			return Float.NaN;
 
-		return -(relativePosition.dot(normal)) / denominator;
+		return (relativePosition.dot(normal)) / denominator;
 	}
 }
