@@ -124,7 +124,7 @@ public class CreateActivity extends Activity {
 					for (int i = 0; i < points.length; i++) {
 
 						draftform.Vec2 dVec = it.next().getStart();
-						points[i] = new Vec2(dVec.getX(), dVec.getY());
+						points[i] = new Vec2(dVec.getX(), view.getHeight() - dVec.getY());
 					}
 
 					RenderContext world = Engine.level.getRenderContext();
@@ -217,9 +217,11 @@ public class CreateActivity extends Activity {
 	private InstanceAttributes getVertexAttributes(Vertex vertex) {
 
 		InstanceAttributes vertexAttributes = new InstanceAttributes();
-		vertexAttributes.setTransform(
-				Transform.setPosition(Mat4.identity(),
-				new Vec3(vertex.getX(), vertex.getY(), 0)));
+
+		Mat4 transform = Mat4.identity();
+		Transform.setPosition(transform, new Vec3(vertex.getX(), vertex.getY(), 0));
+		vertexAttributes.setTransform(transform);
+
 		return vertexAttributes;
 	}
 

@@ -18,11 +18,6 @@ public class Entity {
 
 	private boolean isActive = true;
 
-	// position, rotation
-	//TODO remove these chumps
-//	private float[] rotation = new float[3];
-//	private float[] location = new float[3];
-
 	private ModelLoader model;
 
 	private InstanceAttributes instanceAttributes = new InstanceAttributes();
@@ -58,11 +53,15 @@ public class Entity {
 
 		if (getPhysicsObject() != null) {
 			Mat4 transform = instanceAttributes.getTransform();
+
 			Vec3 pos = Transform.getPosition(transform);
 			float[] newPos = getPhysicsObject().getPosition();
 			pos.x = newPos[0];
 			pos.y = newPos[1];
 			Transform.setPosition(transform, pos);
+
+			float rotation = getPhysicsObject().getAngle();
+			Transform.rotate(transform, new Vec3(0, 0, 1), rotation);
 		}
 	}
 

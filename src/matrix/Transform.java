@@ -23,14 +23,12 @@ public class Transform extends Mat4 {
 		return new Vec3(m[12], m[13], m[14]);
 	}
 
-	public static Mat4 setPosition(Mat4 matrix, Vec3 position) {
+	public static void setPosition(Mat4 matrix, Vec3 position) {
 
 		float[] m = matrix.m;
 		m[12] = position.x;
 		m[13] = position.y;
 		m[14] = position.z;
-
-		return matrix;
 	}
 
 	public static Mat3 getRotationMatrix(Mat4 matrix) {
@@ -67,10 +65,9 @@ public class Transform extends Mat4 {
 		return matrix;
 	}
 
-	public static Mat4 rotate(Mat4 matrix, Vec3 axis, float angle) {
+	public static void rotate(Mat4 matrix, Vec3 axis, float angle) {
 
-		Mat4 rotated = Mat4.identity();
-		float[] r = rotated.m;
+		float[] r = matrix.m;
 
 		float xx = axis.x * axis.x;
 		float xy = axis.x * axis.y;
@@ -92,8 +89,6 @@ public class Transform extends Mat4 {
 		r[8] = xz * oneMinusCos + axis.y * sin;
 		r[9] = yz * oneMinusCos - axis.x * sin;
 		r[10]= zz * oneMinusCos + cos;
-
-		return matrix.multiply(rotated);
 	}
 
 	public static Mat4 pointAt(Mat4 matrix, Vec3 position, Vec3 target, Vec3 up) {
