@@ -25,7 +25,7 @@ public class Level extends Resource {
 	private Camera camera;
 	private RenderContext renderContext;
 	private List<Entity> entities = new ArrayList<Entity>();
-	Player player;
+	public List<PlayerController> players = new ArrayList<>();
 
 	//players?
 	//checkpoints?

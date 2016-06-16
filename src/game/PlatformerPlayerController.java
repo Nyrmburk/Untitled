@@ -1,16 +1,19 @@
 package game;
 
-
-import entity.Entity;
-import input.*;
+import input.Binding;
+import input.Button;
+import input.Input;
+import input.InputContext;
 import physics.PhysicsObject;
-import game.Level;
 
-public class Player extends Entity {
+/**
+ * Created by Nyrmburk on 6/16/2016.
+ */
+public class PlatformerPlayerController extends PlayerController {
 
 	private float speed = 6;
-	private float acceleration = 6f;
-	private float jumpheight = 1;
+	private float acceleration = 0.3f;
+	private float jumpheight = 1.2f;
 
 	private Input jump = new Button("jump") {
 
@@ -22,7 +25,8 @@ public class Player extends Entity {
 		@Override
 		public void onPress() {
 
-			getPhysicsObject().applyLinearImpulse(new float[]{0, 4.905f}, new float[]{0, 0});
+			PhysicsObject physObj = getPawn().getPhysicsObject();
+			physObj.applyLinearImpulse(new float[]{0, 4.905f}, physObj.getPosition());
 		}
 
 		@Override
@@ -32,7 +36,8 @@ public class Player extends Entity {
 		@Override
 		public void onHold(int delta) {
 
-			getPhysicsObject().applyLinearImpulse(new float[]{0, 0.04905f}, new float[]{0, 0});
+			PhysicsObject physObj = getPawn().getPhysicsObject();
+			physObj.applyLinearImpulse(new float[]{0, 0.04905f}, physObj.getPosition());
 		}
 	};
 
@@ -54,12 +59,10 @@ public class Player extends Entity {
 		@Override
 		public void onHold(int delta) {
 
-			PhysicsObject physObj = getPhysicsObject();
+			PhysicsObject physObj = getPawn().getPhysicsObject();
 			float velChange = Math.max(-speed - physObj.getLinearVelocity()[0], -acceleration);
-			float impulse = convert(velChange);// / (((float) delta) / 1000);
-			physObj.applyForceToCenter(new float[]{impulse, 0});
-
-//			System.out.println(impulse + ", " + physObj.getLinearVelocity()[0]);
+			float impulse = velChange * getPawn().getPhysicsObject().getMass();
+			physObj.applyLinearImpulse(new float[]{impulse, 0}, physObj.getPosition());
 		}
 	};
 
@@ -81,17 +84,16 @@ public class Player extends Entity {
 		@Override
 		public void onHold(int delta) {
 
-			PhysicsObject physObj = getPhysicsObject();
+			PhysicsObject physObj = getPawn().getPhysicsObject();
 			float velChange = Math.min(speed - physObj.getLinearVelocity()[0], acceleration);
-			float impulse = convert(velChange) * (1f/70);
-			physObj.applyLinearImpulse(new float[]{impulse, 0}, new float[]{0, 0});
-
-//			System.out.println(impulse);
+			float impulse = velChange * getPawn().getPhysicsObject().getMass();
+			physObj.applyLinearImpulse(new float[]{impulse, 0}, physObj.getPosition());
 		}
 	};
 
-	public float convert(float value) {
-
-		return value * getPhysicsObject().getMass();
+	{
+		inputs.add(jump);
+		inputs.add(left);
+		inputs.add(right);
 	}
 }

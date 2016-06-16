@@ -1,17 +1,15 @@
 package activity;
 
 import entity.Camera;
+import entity.Entity;
 import entity.MaterialEntity;
-import game.Material;
-import game.Player;
-import game.SimpleModelGenerator;
+import game.*;
 import graphics.ModelLoader;
 import gui.*;
 import main.Engine;
 import main.ResourceManager;
 import matrix.*;
 import physics.*;
-import game.Level;
 import physics.Polygon;
 
 import java.awt.Color;
@@ -70,8 +68,8 @@ public class LoadingActivity extends Activity {
 	@Override
 	public void onUpdate(int delta) {
 		// TODO Auto-generated method stub
-		percentComplete += ((float) delta) / 5;
-//		if (percentComplete > 100) {
+		percentComplete += ((float) delta) / 1;
+		if (percentComplete > 100) {
 
 			percentComplete = 100;
 			Activity.stopCurrentActivity();
@@ -89,18 +87,24 @@ public class LoadingActivity extends Activity {
 			Material material = new Material();
 			material.setModelGenerator(new SimpleModelGenerator());
 			Vec2[] verts = {
-					new Vec2(0, 0),
-					new Vec2(1, 0),
+					new Vec2(-1, -1),
+					new Vec2(1, -1),
 					new Vec2(1, 1),
-					new Vec2(0, 1)};
+					new Vec2(-1, 1)};
 			PhysicsObjectDef shape = Engine.level.physicsEngine.getPhysicsObjectDef(PhysicsObject.Type.DYNAMIC, new Polygon(verts));
+			shape.setFriction(0.5f);
+			shape.setRestitution(0.15f);
+			shape.setDensity(1);
 			MaterialEntity entity = new MaterialEntity();
 			entity.setPhysicsObject(shape);
 			entity.setLevel(Engine.level);
 			entity.setMaterial(material);
 			entity.setShape(new Polygon(verts));
 
-			Player player = new Player();
+			Entity player = new Entity();
+			PlayerController controller = new PlatformerPlayerController();
+			controller.setPawn(player);
+			Engine.level.players.add(controller);
 			player.setLevel(Engine.level);
 			Vec2[] playerVertices = {
 					new Vec2(-0.35f, 0),
@@ -119,7 +123,7 @@ public class LoadingActivity extends Activity {
 					"Player.obj",
 					loadedResource -> player.setModel((ModelLoader) loadedResource),
 					ModelLoader.class);
-//		}
+		}
 		loadingText.setText(String.format(loadingMessage, (int) percentComplete));
 	}
 }
