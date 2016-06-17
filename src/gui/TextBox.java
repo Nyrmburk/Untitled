@@ -119,7 +119,7 @@ public class TextBox extends GUIElement {
 
 				Text.TextInstance instance = new Text.TextInstance(getPosition(), lines[i], getForegroundColor());
 				instance.point.y = y;
-				y += font.getFontMetrics().getHeight();
+				y += box.texts[0].font.getFontMetrics().getHeight();
 				box.texts[0].instances.add(instance);
 			}
 		} else {
