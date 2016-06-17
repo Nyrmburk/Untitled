@@ -318,8 +318,6 @@ public class Engine {
 
 		InputContext.getCurrentContext().update(delta);
 
-		Activity.update(delta);
-
 		// translate camera up and down (zoom)
 //		int mousewheel = Mouse.getDWheel();
 //		Camera.moveZ(-mousewheel / 60);
@@ -329,6 +327,8 @@ public class Engine {
 
 		if (level != null)
 			level.update(delta);
+
+		Activity.update(delta);
 
 		ResourceManager.update(delta);
 
