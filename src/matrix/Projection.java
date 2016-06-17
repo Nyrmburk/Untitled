@@ -47,16 +47,29 @@ public class Projection {
 		return projection;
 	}
 
-	public static Vec2 project() {
+	public static Vec3[] project(Camera camera, Rectangle viewport, Vec3... points) {
 
-		return null;
+		Mat4 A = camera.getProjection().multiply(camera.getTransform());
+
+		Vec3[] projections = new Vec3[points.length];
+
+		for (int i = 0; i < points.length; i++) {
+
+			projections[i] = A.multiply(points[i], 1);
+
+			projections[i].x = viewport.x + viewport.width * (projections[i].x + 1) / 2;
+			projections[i].y = viewport.y + viewport.height * (projections[i].y + 1) / 2;
+			projections[i].z = (projections[i].z + 1) / 2;
+		}
+
+		return projections;
 	}
 
 	// This is not the traditional unproject from glu. It is similar in the fact that it serves the same purpose but in
 	// a better way. Instead of providing the point, it provides a ray from the front to the back of the
 	// projection matrix. Usually gluunproject is called twice to get this ray. By simplifying the method I can limit
 	// the number of matrix inversions.
-	public static Ray3[] unproject(Vec2[] points, Camera camera, Rectangle viewport) {
+	public static Ray3[] unproject(Camera camera, Rectangle viewport, Vec2... points) {
 
 		// calculate inverse matrix
 		Mat4 A = camera.getProjection().multiply(camera.getTransform()).inverse();
