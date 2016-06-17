@@ -17,7 +17,6 @@ import javax.swing.JFrame;
 
 import graphics.*;
 import graphics.ModelGroup.InstancedModel;
-import gui.Container;
 import matrix.Mat4;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
@@ -29,14 +28,16 @@ import static org.lwjgl.opengl.GL30.*;
 
 import main.Engine;
 import main.Settings;
+import org.lwjgl.opengl.DisplayMode;
 
 public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 
 	private int polys = 0;
 	private int drawCalls = 0;
 
-	private static JFrame frmMain;
-	private static Canvas display;
+	private JFrame frmMain;
+	private Canvas display;
+	private Rectangle viewport;
 
 	public void init() {
 
@@ -153,18 +154,69 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 		return (int) (Engine.getTime() - time);
 	}
 
-	@Override
-	public void renderUI(Container view) {
+	private graphics.Display convertDisplay(DisplayMode displayMode) {
 
+		Dimension resolution = new Dimension(displayMode.getWidth(), displayMode.getHeight());
+		return new graphics.Display(resolution, displayMode.getFrequency());
 	}
 
 	@Override
-	public void showWindow(int width, int height) {
+	public graphics.Display[] getDisplays() {
 
+		graphics.Display[] displays = null;
+		try {
+
+			DisplayMode[] displayModes = Display.getAvailableDisplayModes();
+			displays = new graphics.Display[displayModes.length];
+
+			for (int i = 0; i < displayModes.length; i++)
+				displays[i] = convertDisplay(displayModes[i]);
+
+		} catch (LWJGLException e) {
+			e.printStackTrace();
+		}
+
+		return displays;
+	}
+
+	@Override
+	public graphics.Display getCurrentDisplay() {
+
+		return convertDisplay(Display.getDisplayMode());
+	}
+
+	@Override
+	public Rectangle getViewport() {
+
+		return viewport;
+	}
+
+	@Override
+	public void setViewport(Rectangle viewport) {
+
+		this.viewport = viewport;
+	}
+
+	@Override
+	public Rectangle getWindow() {
+
+		return frmMain.getBounds();
+	}
+
+	@Override
+	public void setWindow(Rectangle window) {
+
+		frmMain.setBounds(window);
+	}
+
+	@Override
+	public void createWindow(Rectangle viewport) {
+
+		setViewport(viewport);
 		frmMain = new JFrame();
 		display = new Canvas();
 		display.setBackground(Color.BLACK);
-		display.setSize(width, height);
+		display.setSize(viewport.getSize());
 		frmMain.add(display);
 		frmMain.pack();
 		frmMain.setTitle("Untitled");
@@ -248,18 +300,6 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 	}
 
 	@Override
-	public int getWidth() {
-
-		return display.getWidth();
-	}
-
-	@Override
-	public int getHeight() {
-
-		return display.getHeight();
-	}
-
-	@Override
 	public String getRendererVersion() {
 
 		return "opengl " + glGetString(GL_VERSION);
@@ -299,11 +339,11 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 		return new Mat4(array);
 	}
 
-	public static void screenshot() {
+	public void screenshot() {
 
 		ByteBuffer array = BufferUtils.createByteBuffer(3
-				* Settings.windowWidth * Settings.windowHeight);
-		glReadPixels(0, 0, Settings.windowWidth, Settings.windowHeight,
+				* viewport.width * viewport.height);
+		glReadPixels(0, 0, viewport.width, viewport.height,
 				GL_RGB, GL_UNSIGNED_BYTE, array);
 
 		new Thread(new ScreenshotRunnable(array.slice())).start();
@@ -468,7 +508,7 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 	}
 
 	//temporarily move into here.
-	private static class ScreenshotRunnable implements Runnable {
+	private class ScreenshotRunnable implements Runnable {
 
 		ByteBuffer array;
 
@@ -480,11 +520,10 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 		@Override
 		public void run() {
 
-			BufferedImage image = new BufferedImage(Settings.windowWidth,
-					Settings.windowHeight, BufferedImage.TYPE_INT_RGB);
+			BufferedImage image = new BufferedImage(viewport.width, viewport.height, BufferedImage.TYPE_INT_RGB);
 
 			int x = 0;
-			int y = Settings.windowHeight - 1;
+			int y = viewport.height - 1;
 			while (array.hasRemaining()) {
 				short r = (short) (array.get() & 0xFF);
 				short g = (short) (array.get() & 0xFF);
@@ -495,7 +534,7 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 				color |= r << 16;
 				image.setRGB(x, y, color);
 				x++;
-				if (x == Settings.windowWidth) {
+				if (x == viewport.width) {
 					x = 0;
 					y--;
 				}

@@ -1,8 +1,9 @@
 package activity;
 
-import draftform.Curve;
-import draftform.Draftform;
-import draftform.Vertex;
+import draftform.*;
+import entity.MaterialEntity;
+import game.Material;
+import game.SimpleModelGenerator;
 import graphics.InstanceAttributes;
 import graphics.ModelGroup;
 import graphics.ModelLoader;
@@ -14,13 +15,15 @@ import gui.Panel;
 import main.Engine;
 import main.Line;
 import matrix.*;
+import matrix.Vec2;
+import physics.PhysicsObject;
+import physics.PhysicsObjectDef;
+import physics.Polygon;
 import tools.*;
 import tools.Toolkit;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
 
 public class CreateActivity extends Activity {
@@ -118,28 +121,46 @@ public class CreateActivity extends Activity {
 				if (this.getCurrentState() == State.CLICK) {
 					System.out.println("Committing drawn shape to world");
 
-					Vec2[] points = new Vec2[draftform.getCurves().size()];
+					LinkedList<Vec2> pointsList = new LinkedList<>();
 
-					Iterator<Curve> it = draftform.getCurves().iterator();
-					for (int i = 0; i < points.length; i++) {
+					for (Curve curve : draftform.getCurves()) {
 
-						draftform.Vec2 dVec = it.next().getStart();
-						points[i] = new Vec2(dVec.getX(), view.getHeight() - dVec.getY());
+						for (draftform.Vec2 dVec : curve.linearize(curve.recommendedSubdivisions()))
+							pointsList.add(new Vec2(dVec.getX(), view.getHeight() - dVec.getY()));
+
+						pointsList.removeLast();
 					}
 
 					RenderContext world = Engine.level.getRenderContext();
 
-					Ray3[] rays = Projection.unproject(points, world.getCamera().getTransform(),
-							world.getCamera().getProjection(), new Rectangle(800, 600));
+					Vec2[] points = new Vec2[pointsList.size()];
+					pointsList.toArray(points);
+
+					Ray3[] rays = Projection.unproject(points, world.getCamera(), Engine.renderEngine.getViewport());
 
 					Plane plane = new Plane(0, 0, 0, 0, 0, 1);
 
-					Vec3[] vertices = new Vec3[rays.length];
+					Vec2[] vertices = new Vec2[rays.length];
 
-					for (int i = 0; i < rays.length; i++)
-						vertices[i] = rays[i].point(plane.intersect(rays[i]));
+					for (int i = 0; i < rays.length; i++) {
+						Vec3 point = rays[i].point(plane.intersect(rays[i]));
+						vertices[i] = new Vec2(point.x, point.y);
+					}
 
 					System.out.println(Arrays.toString(vertices));
+
+					Polygon poly = new Polygon(vertices);
+
+					MaterialEntity newEntity = new MaterialEntity();
+					Material material = new Material();
+					material.setModelGenerator(new SimpleModelGenerator());
+					newEntity.setMaterial(material);
+					newEntity.setShape(poly);
+					PhysicsObjectDef shape = Engine.level.physicsEngine.getPhysicsObjectDef(
+							PhysicsObject.Type.DYNAMIC, poly);
+					shape.setDensity(0.01f);
+					newEntity.setPhysicsObject(shape);
+					newEntity.setLevel(Engine.level);
 
 					draftform.getCurves().clear();
 					draftform.getVerts().clear();

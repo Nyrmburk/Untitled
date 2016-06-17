@@ -1,11 +1,11 @@
 package main;
 
-import java.awt.Font;
+import java.awt.*;
 
 public class Settings {
 	
 	// window settings
-	public static int windowWidth, windowHeight;
+	public static Rectangle window;
 	public static boolean fullscreen;
 	public static boolean _3D;
 	public static boolean AAFonts;
@@ -17,8 +17,7 @@ public class Settings {
 	 */
 	public static void loadSettings() {
 		
-		windowWidth = 1024;
-		windowHeight = 600;
+		window = new Rectangle(0, 0, 1024, 600);
 		_3D = false;
 		AAFonts = true;
 		fontSize = 14;

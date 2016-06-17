@@ -1,5 +1,7 @@
 package matrix;
 
+import entity.Camera;
+
 import java.awt.*;
 
 /**
@@ -54,10 +56,10 @@ public class Projection {
 	// a better way. Instead of providing the point, it provides a ray from the front to the back of the
 	// projection matrix. Usually gluunproject is called twice to get this ray. By simplifying the method I can limit
 	// the number of matrix inversions.
-	public static Ray3[] unproject(Vec2[] points, Mat4 transform, Mat4 projection, Rectangle viewport) {
+	public static Ray3[] unproject(Vec2[] points, Camera camera, Rectangle viewport) {
 
 		// calculate inverse matrix
-		Mat4 A = projection.multiply(transform).inverse();
+		Mat4 A = camera.getProjection().multiply(camera.getTransform()).inverse();
 		if (A == null)
 			return null;
 

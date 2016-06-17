@@ -5,6 +5,8 @@ import main.Engine;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
+import java.awt.*;
+
 /**
  * Add smarter camera control. Currently under development.
  * @author Christopher Dombroski
@@ -26,7 +28,7 @@ public class Camera {
 
 	public static void initialize() {
 
-		aspectRatio = (float)Engine.renderEngine.getWidth()/Engine.renderEngine.getHeight();
+		aspectRatio = 1.7777777777777777f;
 	}
 
 	public static void moveX(float f) {
@@ -122,7 +124,8 @@ public class Camera {
 
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-		GL11.glOrtho(0, Engine.renderEngine.getWidth(), Engine.renderEngine.getHeight(), 0, -10, 10);
+		Dimension viewport = Engine.renderEngine.getViewport().getSize();
+		GL11.glOrtho(0, viewport.width, viewport.height, 0, -10, 10);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glLoadIdentity();
 	}

@@ -25,7 +25,7 @@ public class View extends Panel {
 			size = parent.getPreferredSize();
 
 		if (size == null)
-			size = new Dimension(renderEngine.getWidth(), renderEngine.getHeight());
+			size = renderEngine.getViewport().getSize();
 
 		return size;
 	}

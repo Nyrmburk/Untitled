@@ -12,7 +12,7 @@ import matrix.*;
 import physics.*;
 import physics.Polygon;
 
-import java.awt.Color;
+import java.awt.*;
 import java.io.IOException;
 
 public class LoadingActivity extends Activity {
@@ -74,7 +74,8 @@ public class LoadingActivity extends Activity {
 			percentComplete = 100;
 			Activity.stopCurrentActivity();
 
-			float aspect = ((float) Engine.renderEngine.getWidth()) / Engine.renderEngine.getHeight();
+			Rectangle viewport = Engine.renderEngine.getViewport();
+			float aspect = (float) (viewport.getWidth() / viewport.getHeight());
 			Mat4 projection = Projection.perspective(60, aspect, 0.1f, 1000f);
 			Engine.level = new Level(new Camera(projection){{
 				Transform.setPosition(getTransform(), new Vec3(0, 0, -10));
@@ -91,7 +92,8 @@ public class LoadingActivity extends Activity {
 					new Vec2(1, -1),
 					new Vec2(1, 1),
 					new Vec2(-1, 1)};
-			PhysicsObjectDef shape = Engine.level.physicsEngine.getPhysicsObjectDef(PhysicsObject.Type.DYNAMIC, new Polygon(verts));
+			PhysicsObjectDef shape = Engine.level.physicsEngine.getPhysicsObjectDef(
+					PhysicsObject.Type.DYNAMIC, new Polygon(verts));
 			shape.setFriction(0.5f);
 			shape.setRestitution(0.15f);
 			shape.setDensity(1);
@@ -112,7 +114,8 @@ public class LoadingActivity extends Activity {
 					new Vec2(0.35f, 1.8f),
 					new Vec2(-0.35f, 1.8f)};
 			Polygon meh = new Polygon(playerVertices);
-			PhysicsObjectDef objectDef = Engine.level.physicsEngine.getPhysicsObjectDef(PhysicsObject.Type.DYNAMIC, meh);
+			PhysicsObjectDef objectDef = Engine.level.physicsEngine.getPhysicsObjectDef(
+					PhysicsObject.Type.DYNAMIC, meh);
 			player.setPhysicsObject(objectDef);
 			Mat4 transform = Mat4.identity();
 			Transform.setPosition(transform, new Vec3(-3, 0, 0));

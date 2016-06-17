@@ -1,21 +1,24 @@
 package graphics;
 
-import gui.Container;
+
+import java.awt.*;
 
 public interface RenderEngine {
-	
-	void showWindow(int width, int height);
+
+	void createWindow(Rectangle viewport);
 
 	void start();
 
 	int render(RenderContext renderContext);
-	void renderUI(Container view);
 
-	//TODO remove and replace with a screen object that has resolution, fullscreen, and refresh rate.
-	int getWidth();
-	int getHeight();
+	Display[] getDisplays();
+	Display getCurrentDisplay();
 
-	//get/set viewport (not window sizing but what frame inside the window to render)
+	Rectangle getViewport();
+	void setViewport(Rectangle viewport);
+
+	Rectangle getWindow();
+	void setWindow(Rectangle window);
 	
 	//public boolean sizeChanged()
 	

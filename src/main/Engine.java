@@ -7,6 +7,7 @@ import graphics.opengl.ShaderProgram;
 import graphics.opengl.SimpleOpenGL3_0RenderEngine;
 import input.*;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -104,10 +105,10 @@ public class Engine {
 			// handle resizing the window
 			if (Display.wasResized()) {
 
-				Settings.windowWidth = renderEngine.getWidth();
-				Settings.windowHeight = renderEngine.getHeight();
-				GL11.glViewport(0, 0, renderEngine.getWidth(),
-						 renderEngine.getHeight());
+				Rectangle viewport = new Rectangle();
+				Settings.window = renderEngine.getWindow();
+				viewport.setSize(renderEngine.getWindow().getSize());
+				renderEngine.setViewport(viewport);
 
 				Activity activity = Activity.currentActivity();
 				if (activity != null)
@@ -205,7 +206,7 @@ public class Engine {
 
 		renderEngine = new SimpleOpenGL3_0RenderEngine();
 //		renderEngine = new SoftwareRenderEngine(new RenderContext());
-		renderEngine.showWindow(Settings.windowWidth, Settings.windowHeight);
+		renderEngine.createWindow(Settings.window);
 
 		lastFrame = getTime();
 	}
