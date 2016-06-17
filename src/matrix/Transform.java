@@ -31,6 +31,14 @@ public class Transform extends Mat4 {
 		m[14] = position.z;
 	}
 
+	public static void translate(Mat4 matrix, Vec3 translate) {
+
+		Mat4 translation = Mat4.identity();
+		setPosition(translation, translate);
+
+		matrix.m = matrix.multiply(translation).m;
+	}
+
 	public static Mat3 getRotationMatrix(Mat4 matrix) {
 
 		float[] m = matrix.m;
@@ -91,10 +99,10 @@ public class Transform extends Mat4 {
 		r[10]= zz * oneMinusCos + cos;
 	}
 
-	public static Mat4 pointAt(Mat4 matrix, Vec3 position, Vec3 target, Vec3 up) {
+	public static void pointAt(Mat4 matrix, Vec3 position, Vec3 target, Vec3 up) {
 
 		Vec3 forward = target.subtract(position).normalized();
-		Vec3 side = forward.cross(up);
+		Vec3 side = forward.cross(up).normalized();
 		up = side.cross(forward);
 
 		Mat4 result = Mat4.identity();
@@ -110,8 +118,7 @@ public class Transform extends Mat4 {
 		m[6] = -forward.y;
 		m[10]= -forward.z;
 
-		result = matrix.multiply(result);
-
-		return result;
+		matrix.m = matrix.multiply(result).m;
+		translate(matrix, position.negate());
 	}
 }

@@ -14,19 +14,3 @@ convert drawings to entities
 					if they are all the same you know which side is which?
 						does it work for concave polygons?
 		over/under size
-		
-fix camera so that it follows the character
-	requires keeping track of camera settings and rebuilding the mat4 when resizing window
-	I am thinking having camera object that store the variables.
-		Camera interface has the following methods
-			getMatrix();
-			setViewport(Dimension size) //name still in progress
-		the separate implementations (ortho and perspective) have their own variables such as near and far z axis, field of view, position, etc.
-	The camera movement needs to be controlled by the character controller (I think).
-		This allows for the camera to look at the character and also have an entry for update().
-		downsides include making it extremely inconvenient to change cameras when a cutscene shows up or something.
-	Maybe there needs to be some updateCameras() method in update()?
-	Maybe make it controlled by a method in CreateActivity.update()?
-		This would allow for control of the camera at a more abstract level but still makes the other cameras hard.
-	Man I am stupid. If there are several camera object and each tidbit is only controlling one, then it makes no difference where the camera goes.
-	I agree that it should go in the player controller.

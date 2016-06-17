@@ -1,8 +1,10 @@
 package activity;
 
 import draftform.*;
+import entity.Camera;
 import entity.MaterialEntity;
 import game.Material;
+import game.PlayerController;
 import game.SimpleModelGenerator;
 import graphics.InstanceAttributes;
 import graphics.ModelGroup;
@@ -50,7 +52,6 @@ public class CreateActivity extends Activity {
 				Point point = getPointerLocation();
 				draftform.Vec2 vec = new draftform.Vec2(point.x, point.y);
 
-//				System.out.println(getCurrentState());
 				if (getCurrentState() == State.PRESS)
 					toolkit.start(vec);
 				if (getCurrentState() == State.DRAG)
@@ -121,50 +122,7 @@ public class CreateActivity extends Activity {
 				if (this.getCurrentState() == State.CLICK) {
 					System.out.println("Committing drawn shape to world");
 
-					LinkedList<Vec2> pointsList = new LinkedList<>();
-
-					for (Curve curve : draftform.getCurves()) {
-
-						for (draftform.Vec2 dVec : curve.linearize(curve.recommendedSubdivisions()))
-							pointsList.add(new Vec2(dVec.getX(), view.getHeight() - dVec.getY()));
-
-						pointsList.removeLast();
-					}
-
-					RenderContext world = Engine.level.getRenderContext();
-
-					Vec2[] points = new Vec2[pointsList.size()];
-					pointsList.toArray(points);
-
-					Ray3[] rays = Projection.unproject(points, world.getCamera(), Engine.renderEngine.getViewport());
-
-					Plane plane = new Plane(0, 0, 0, 0, 0, 1);
-
-					Vec2[] vertices = new Vec2[rays.length];
-
-					for (int i = 0; i < rays.length; i++) {
-						Vec3 point = rays[i].point(plane.intersect(rays[i]));
-						vertices[i] = new Vec2(point.x, point.y);
-					}
-
-					System.out.println(Arrays.toString(vertices));
-
-					Polygon poly = new Polygon(vertices);
-
-					MaterialEntity newEntity = new MaterialEntity();
-					Material material = new Material();
-					material.setModelGenerator(new SimpleModelGenerator());
-					newEntity.setMaterial(material);
-					newEntity.setShape(poly);
-					PhysicsObjectDef shape = Engine.level.physicsEngine.getPhysicsObjectDef(
-							PhysicsObject.Type.DYNAMIC, poly);
-					shape.setDensity(0.01f);
-					newEntity.setPhysicsObject(shape);
-					newEntity.setLevel(Engine.level);
-
-					draftform.getCurves().clear();
-					draftform.getVerts().clear();
-					drawDraftform();
+					commitDraftform();
 				}
 			}
 		});
@@ -198,6 +156,85 @@ public class CreateActivity extends Activity {
 
 	@Override
 	public void onUpdate(int delta) {
+
+		setVelocityCamera(new Vec3(0, 3, 10), 0.1f);
+	}
+
+	private void setVelocityCamera(Vec3 cameraOffset, float magnitude) {
+
+		Vec3 avgPosition = new Vec3();
+		Vec3 avgVelocity = new Vec3();
+
+		for (PlayerController player : Engine.level.players) {
+
+			float[] position = player.getPawn().getPhysicsObject().getPosition();
+			float[] velocity = player.getPawn().getPhysicsObject().getLinearVelocity();
+			avgPosition = avgPosition.add(new Vec3(position[0], position[1], 0));
+			avgVelocity = avgVelocity.add(new Vec3(velocity[0], velocity[1], 0));
+		}
+
+		avgPosition.divide(Engine.level.players.size());
+		avgVelocity.divide(Engine.level.players.size());
+
+		Vec3 cameraPosition = avgPosition.add(cameraOffset);
+
+		Camera camera = Engine.level.getRenderContext().getCamera();
+		cameraOffset.z = 0;
+
+		Mat4 transform = Mat4.identity();
+		Vec3 up = new Vec3(0, 1, 0);
+		Vec3 target = avgPosition.add(avgVelocity.multiply(magnitude).add(cameraOffset));
+		Transform.pointAt(transform, cameraPosition, target, up);
+
+		camera.setTransform(transform);
+	}
+
+	private void commitDraftform() {
+
+		LinkedList<Vec2> pointsList = new LinkedList<>();
+
+		for (Curve curve : draftform.getCurves()) {
+
+			for (draftform.Vec2 dVec : curve.linearize(curve.recommendedSubdivisions()))
+				pointsList.add(new Vec2(dVec.getX(), getView().getHeight() - dVec.getY()));
+
+			pointsList.removeLast();
+		}
+
+		RenderContext world = Engine.level.getRenderContext();
+
+		Vec2[] points = new Vec2[pointsList.size()];
+		pointsList.toArray(points);
+
+		Ray3[] rays = Projection.unproject(points, world.getCamera(), Engine.renderEngine.getViewport());
+
+		Plane plane = new Plane(0, 0, 0, 0, 0, 1);
+
+		Vec2[] vertices = new Vec2[rays.length];
+
+		for (int i = 0; i < rays.length; i++) {
+			Vec3 point = rays[i].point(plane.intersect(rays[i]));
+			vertices[i] = new Vec2(point.x, point.y);
+		}
+
+		System.out.println(Arrays.toString(vertices));
+
+		Polygon poly = new Polygon(vertices);
+
+		MaterialEntity newEntity = new MaterialEntity();
+		Material material = new Material();
+		material.setModelGenerator(new SimpleModelGenerator());
+		newEntity.setMaterial(material);
+		newEntity.setShape(poly);
+		PhysicsObjectDef shape = Engine.level.physicsEngine.getPhysicsObjectDef(
+				PhysicsObject.Type.DYNAMIC, poly);
+		shape.setDensity(0.1f);
+		newEntity.setPhysicsObject(shape);
+		newEntity.setLevel(Engine.level);
+
+		draftform.getCurves().clear();
+		draftform.getVerts().clear();
+		drawDraftform();
 	}
 
 	private void drawDraftform() {
