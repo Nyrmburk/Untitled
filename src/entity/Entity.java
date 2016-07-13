@@ -25,6 +25,11 @@ public class Entity {
 	private PhysicsObjectDef physicsObjectDef;
 	private Level level;
 
+	public Level getLevel() {
+
+		return level;
+	}
+
 	public void setLevel(Level level) {
 
 		if (this.level != null) {
@@ -55,10 +60,7 @@ public class Entity {
 			Mat4 transform = instanceAttributes.getTransform();
 
 			Vec3 pos = Transform.getPosition(transform);
-			float[] newPos = getPhysicsObject().getPosition();
-			pos.x = newPos[0];
-			pos.y = newPos[1];
-			Transform.setPosition(transform, pos);
+			Transform.setPosition(transform, getPhysicsObject().getPosition());
 
 			float rotation = getPhysicsObject().getAngle();
 			Transform.rotate(transform, new Vec3(0, 0, 1), rotation);
@@ -84,8 +86,7 @@ public class Entity {
 
 		// inform physics object of change
 		if (physicsObject != null) {
-			Vec3 pos = Transform.getPosition(transform);
-			physicsObject.setPosition(pos.x, pos.y);
+			physicsObject.setPosition(Transform.getPosition(transform));
 		}
 	}
 
@@ -109,7 +110,7 @@ public class Entity {
 		return physicsObject;
 	}
 
-	public void setPhysicsObject(PhysicsObjectDef physicsObjectDef) {
+	public PhysicsObject setPhysicsObject(PhysicsObjectDef physicsObjectDef) {
 
 		if (level != null) {
 			if (this.physicsObject != null)
@@ -119,5 +120,7 @@ public class Entity {
 		}
 
 		this.physicsObjectDef = physicsObjectDef;
+
+		return physicsObject;
 	}
 }

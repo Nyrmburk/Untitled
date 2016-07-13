@@ -1,8 +1,10 @@
-package physics;
+package physics.JBox2D;
 
+import matrix.Vec3;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
+import physics.*;
 
 /**
  * Created by Nyrmburk on 2/9/2016.
@@ -10,34 +12,33 @@ import org.jbox2d.dynamics.*;
 public class JBox2DPhysicsObjectDef implements PhysicsObjectDef {
 
 	BodyDef bodyDef;
-	FixtureDef fixtureDef;
 	PolygonShape shape;
-	Body body;
+	physics.Body body;
 
 	PhysicsObject.Type physicsType;
 
-	public JBox2DPhysicsObjectDef(PhysicsObject.Type physicsType, Polygon polygon) {
+	JBox2DPhysicsObjectDef(PhysicsObject.Type physicsType) {
 
 		bodyDef = new BodyDef();
-		fixtureDef = new FixtureDef();
 		setPhysicsType(physicsType);
+//		fixtureDef = new FixtureDef();
 
 		bodyDef.allowSleep = true;
 
-		//change based on analysis of the points
-		shape = new PolygonShape();
-
-		Vec2[] vec2Vertices = polygonToVec2Array(polygon);
-
-		shape.set(vec2Vertices, vec2Vertices.length);
-
-		fixtureDef.setShape(shape);
+//		//change based on analysis of the points
+//		shape = new PolygonShape();
+//
+//		Vec2[] vec2Vertices = vec2ArrayConvert(polygon);
+//
+//		shape.set(vec2Vertices, vec2Vertices.length);
+//
+//		fixtureDef.setShape(shape);
 	}
 
-	public Body applyToWorld (World world) {
+	org.jbox2d.dynamics.Body applyToWorld (World world) {
 
-		Body body = world.createBody(bodyDef);
-		body.createFixture(fixtureDef);
+		org.jbox2d.dynamics.Body body = world.createBody(bodyDef);
+//		body.createFixture(fixtureDef);
 
 		return body;
 	}
@@ -45,14 +46,14 @@ public class JBox2DPhysicsObjectDef implements PhysicsObjectDef {
 	@Override
 	public PhysicsObject create(PhysicsEngine physicsEngine) {
 
-		Body body = ((JBox2DPhysicsEngine) physicsEngine).getWorld().createBody(bodyDef);
+		org.jbox2d.dynamics.Body body = ((JBox2DPhysicsEngine) physicsEngine).getWorld().createBody(bodyDef);
 
-		body.createFixture(fixtureDef);
+//		body.createFixture(fixtureDef);
 
 		return new JBox2DPhysicsObject(body);
 	}
 
-	public Body getBody() {
+	public physics.Body getBody() {
 
 		return body;
 	}
@@ -80,55 +81,25 @@ public class JBox2DPhysicsObjectDef implements PhysicsObjectDef {
 	}
 
 	@Override
-	public float getDensity() {
-		return fixtureDef.getDensity();
-	}
-
-	@Override
-	public void setDensity(float density) {
-		fixtureDef.setDensity(density);
-	}
-
-	@Override
-	public float getRestitution() {
-		return fixtureDef.getRestitution();
-	}
-
-	@Override
-	public void setRestitution(float restitution) {
-		fixtureDef.setRestitution(restitution);
-	}
-
-	@Override
-	public float getFriction() {
-		return fixtureDef.getFriction();
-	}
-
-	@Override
-	public void setFriction(float friction) {
-		fixtureDef.setFriction(friction);
-	}
-
-	@Override
-	public float[] getPosition() {
+	public Vec3 getPosition() {
 		Vec2 position = bodyDef.getPosition();
-		return new float[]{position.x, position.y};
+		return new Vec3(position.x, position.y, 0);
 	}
 
 	@Override
-	public void setPosition(float... position) {
-		bodyDef.setPosition(new Vec2(position[0], position[1]));
+	public void setPosition(Vec3 position) {
+		bodyDef.setPosition(new Vec2(position.x, position.y));
 	}
 
 	@Override
-	public float[] getLinearVelocity() {
+	public Vec3 getLinearVelocity() {
 		Vec2 linearVelocity = bodyDef.getLinearVelocity();
-		return new float[]{linearVelocity.x, linearVelocity.y};
+		return new Vec3(linearVelocity.x, linearVelocity.y, 0);
 	}
 
 	@Override
-	public void setLinearVelocity(float... velocity) {
-		bodyDef.setLinearVelocity(new Vec2(velocity[0], velocity[1]));
+	public void setLinearVelocity(Vec3 velocity) {
+		bodyDef.setLinearVelocity(new Vec2(velocity.x, velocity.y));
 	}
 
 	@Override
@@ -171,9 +142,8 @@ public class JBox2DPhysicsObjectDef implements PhysicsObjectDef {
 		bodyDef.setAngularDamping(angularDamping);
 	}
 
-	private Vec2[] polygonToVec2Array(Polygon polygon) {
+	private Vec2[] vec2ArrayConvert(Vec2[] vec2s) {
 
-		matrix.Vec2[] vec2s = polygon.getVertices();
 		Vec2[] otherVec2s = new Vec2[vec2s.length];
 
 		for (int i = 0; i < vec2s.length; i++)

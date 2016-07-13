@@ -10,10 +10,9 @@ import matrix.Vec2;
 public class SimpleModelGenerator implements MaterialModelGenerator {
 
 	@Override
-	public ModelLoader generate(Polygon shape) {
+	public ModelLoader generate(Vec2[] vertices) {
 
 		ModelLoader model = new ModelLoader();
-		Vec2[] vertices = shape.getVertices();
 
 		//front of model
 		for (Vec2 point : vertices)

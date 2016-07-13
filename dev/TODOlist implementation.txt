@@ -1,5 +1,10 @@
 Goal for today
 
+design ui flow
+	refer to my earlier document of goals for the ui
+	
+change draftform from being in screen coordinates to world coordinates
+
 convert drawings to entities
 	the real hard part here is determining validity
 		full loop

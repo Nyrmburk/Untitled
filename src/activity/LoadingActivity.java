@@ -87,21 +87,25 @@ public class LoadingActivity extends Activity {
 			}
 			Material material = new Material();
 			material.setModelGenerator(new SimpleModelGenerator());
+			MaterialEntity entity = new MaterialEntity();
+			entity.setLevel(Engine.level);
+			entity.setMaterial(material);
 			Vec2[] verts = {
 					new Vec2(-1, -1),
 					new Vec2(1, -1),
 					new Vec2(1, 1),
 					new Vec2(-1, 1)};
-			PhysicsObjectDef shape = Engine.level.physicsEngine.getPhysicsObjectDef(
-					PhysicsObject.Type.DYNAMIC, new Polygon(verts));
-			shape.setFriction(0.5f);
-			shape.setRestitution(0.15f);
-			shape.setDensity(1);
-			MaterialEntity entity = new MaterialEntity();
-			entity.setPhysicsObject(shape);
-			entity.setLevel(Engine.level);
-			entity.setMaterial(material);
-			entity.setShape(new Polygon(verts));
+			PhysicsObjectDef ObjectDef = entity.getLevel().physicsEngine.newPhysicsObjectDef(
+					PhysicsObject.Type.DYNAMIC);
+			Body body = entity.getLevel().physicsEngine.newBody();
+			body.setFriction(0.5f);
+			body.setRestitution(0.15f);
+			body.setDensity(1);
+			Shape2 shape = entity.getLevel().physicsEngine.newShape2(Shape2.ShapeType.COMPLEX_POLYGON, verts);
+			body.setShape(shape);
+			PhysicsObject object = entity.setPhysicsObject(ObjectDef);
+			object.createBody(body);
+			entity.setShape(verts);
 
 			Entity player = new Entity();
 			PlayerController controller = new PlatformerPlayerController();
@@ -113,10 +117,13 @@ public class LoadingActivity extends Activity {
 					new Vec2(0.35f, 0),
 					new Vec2(0.35f, 1.8f),
 					new Vec2(-0.35f, 1.8f)};
-			Polygon meh = new Polygon(playerVertices);
-			PhysicsObjectDef objectDef = Engine.level.physicsEngine.getPhysicsObjectDef(
-					PhysicsObject.Type.DYNAMIC, meh);
-			player.setPhysicsObject(objectDef);
+			PhysicsObjectDef objectDef = player.getLevel().physicsEngine.newPhysicsObjectDef(
+					PhysicsObject.Type.DYNAMIC);
+			PhysicsObject playerObject = player.setPhysicsObject(objectDef);
+			Body playerBody = player.getLevel().physicsEngine.newBody();
+			Shape2 playerShape = player.getLevel().physicsEngine.newShape2(Shape2.ShapeType.COMPLEX_POLYGON, playerVertices);
+			playerBody.setShape(playerShape);
+			playerObject.createBody(playerBody);
 			Mat4 transform = Mat4.identity();
 			Transform.setPosition(transform, new Vec3(-3, 0, 0));
 			player.setTransform(transform);

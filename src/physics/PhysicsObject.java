@@ -1,5 +1,7 @@
 package physics;
 
+import matrix.Vec3;
+
 /**
  * Created by Nyrmburk on 2/10/2016.
  */
@@ -11,17 +13,21 @@ public interface PhysicsObject {
 		DYNAMIC
 	}
 
-	void applyForce(float[] force, float[] point);
+	void createSensor(Sensor sensor);
 
-	void applyForceToCenter(float[] force);
+	void createBody(Body body);
+
+	void applyForce(Vec3 force, Vec3 point);
+
+	void applyForceToCenter(Vec3 force);
 
 	void applyTorque(float torque);
 
-	void applyLinearImpulse(float[] impulse, float[] point);
+	void applyLinearImpulse(Vec3 impulse, Vec3 point);
 
 	void applyAngularImpulse(float impulse);
 
-	float[] getCenterOfGravity();
+	Vec3 getCenterOfGravity();
 
 	float getMass();
 
@@ -29,25 +35,13 @@ public interface PhysicsObject {
 
 	void setPhysicsType(Type physicsType);
 
-	float getDensity();
+	Vec3 getPosition();
 
-	void setDensity(float density);
+	void setPosition(Vec3 position);
 
-	float getRestitution();
+	Vec3 getLinearVelocity();
 
-	void setRestitution(float restitution);
-
-	float getFriction();
-
-	void setFriction(float friction);
-
-	float[] getPosition();
-
-	void setPosition(float... position);
-
-	float[] getLinearVelocity();
-
-	void setLinearVelocity(float... velocity);
+	void setLinearVelocity(Vec3 velocity);
 
 	float getlinearDamping();
 

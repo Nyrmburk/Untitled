@@ -1,37 +1,59 @@
-package physics;
+package physics.JBox2D;
 
+import matrix.Vec3;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.Fixture;
+import org.jbox2d.dynamics.FixtureDef;
+import physics.PhysicsObject;
+import physics.Sensor;
 
 /**
  * Created by Nyrmburk on 2/10/2016.
  */
-public class JBox2DPhysicsObject implements PhysicsObject {
+class JBox2DPhysicsObject implements PhysicsObject {
 
-	Body body;
+	private Body body;
 
-	public JBox2DPhysicsObject(Body body) {
+	JBox2DPhysicsObject(Body body) {
 
 		this.body = body;
 	}
 
-	public Body getBody() {
+	Body getBody() {
 
 		return body;
 	}
 
-	@Override
-	public void applyForce(float[] force, float[] point) {
+	void createFixture() {
 
-		body.applyForce(new Vec2(force[0], force[1]), new Vec2(point[0], point[1]));
+		body.createFixture(null);
 	}
 
 	@Override
-	public void applyForceToCenter(float[] force) {
+	public void createSensor(Sensor sensor) {
 
-		body.applyForceToCenter(new Vec2(force[0], force[1]));
+		FixtureDef fixtureDef = ((JBox2DFixture) sensor).getFixtureDef();
+		this.body.createFixture(fixtureDef);
+	}
+
+	@Override
+	public void createBody(physics.Body body) {
+
+		FixtureDef fixtureDef = ((JBox2DFixture) body).getFixtureDef();
+		this.body.createFixture(fixtureDef);
+	}
+
+	@Override
+	public void applyForce(Vec3 force, Vec3 point) {
+
+		body.applyForce(new Vec2(force.x, force.y), new Vec2(point.x, point.y));
+	}
+
+	@Override
+	public void applyForceToCenter(Vec3 force) {
+
+		body.applyForceToCenter(new Vec2(force.x, force.y));
 	}
 
 	@Override
@@ -41,9 +63,9 @@ public class JBox2DPhysicsObject implements PhysicsObject {
 	}
 
 	@Override
-	public void applyLinearImpulse(float[] impulse, float[] point) {
+	public void applyLinearImpulse(Vec3 impulse, Vec3 point) {
 
-		body.applyLinearImpulse(new Vec2(impulse[0], impulse[1]), new Vec2(point[0], point[1]), true);
+		body.applyLinearImpulse(new Vec2(impulse.x, impulse.y), new Vec2(point.x, point.y), true);
 	}
 
 	@Override
@@ -53,11 +75,11 @@ public class JBox2DPhysicsObject implements PhysicsObject {
 	}
 
 	@Override
-	public float[] getCenterOfGravity() {
+	public Vec3 getCenterOfGravity() {
 
 		Vec2 center = body.getWorldCenter();
 
-		return new float[]{center.x, center.y};
+		return new Vec3(center.x, center.y, 0);
 	}
 
 	@Override
@@ -106,86 +128,29 @@ public class JBox2DPhysicsObject implements PhysicsObject {
 	}
 
 	@Override
-	public float getDensity() {
-
-		return body.getFixtureList().getDensity();
-	}
-
-	@Override
-	public void setDensity(float density) {
-
-		Fixture fixture = body.getFixtureList();
-		while (fixture != null) {
-
-			if (!fixture.isSensor())
-				fixture.setDensity(density);
-
-			fixture = fixture.getNext();
-		}
-
-		body.resetMassData();
-	}
-
-	@Override
-	public float getRestitution() {
-		return body.getFixtureList().getRestitution();
-	}
-
-	@Override
-	public void setRestitution(float restitution) {
-
-		Fixture fixture = body.getFixtureList();
-		while (fixture != null) {
-
-			if (!fixture.isSensor())
-				fixture.setRestitution(restitution);
-
-			fixture = fixture.getNext();
-		}
-	}
-
-	@Override
-	public float getFriction() {
-		return body.getFixtureList().getFriction();
-	}
-
-	@Override
-	public void setFriction(float friction) {
-
-		Fixture fixture = body.getFixtureList();
-		while (fixture != null) {
-
-			if (!fixture.isSensor())
-				fixture.setFriction(friction);
-
-			fixture = fixture.getNext();
-		}
-	}
-
-	@Override
-	public float[] getPosition() {
+	public Vec3 getPosition() {
 
 		Vec2 position = body.getPosition();
-		return new float[]{position.x, position.y};
+		return new Vec3(position.x, position.y, 0);
 	}
 
 	@Override
-	public void setPosition(float... position) {
+	public void setPosition(Vec3 position) {
 
-		body.setTransform(new Vec2(position[0], position[1]), body.getAngle());
+		body.setTransform(new Vec2(position.x, position.y), body.getAngle());
 	}
 
 	@Override
-	public float[] getLinearVelocity() {
+	public Vec3 getLinearVelocity() {
 
 		Vec2 velocity = body.getLinearVelocity();
-		return new float[]{velocity.x, velocity.y};
+		return new Vec3(velocity.x, velocity.y, 0);
 	}
 
 	@Override
-	public void setLinearVelocity(float... velocity) {
+	public void setLinearVelocity(Vec3 velocity) {
 
-		body.setLinearVelocity(new Vec2(velocity[0], velocity[1]));
+		body.setLinearVelocity(new Vec2(velocity.x, velocity.y));
 	}
 
 	@Override

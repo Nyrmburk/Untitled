@@ -75,6 +75,12 @@ public class Mat3 {
 		return multiplied;
 	}
 
+	public Vec3 multiply(Vec3 vector) {
+
+		//TODO
+		return null;
+	}
+
 	public Mat3 divide(float scalar) {
 
 		Mat3 divided = new Mat3();

@@ -118,6 +118,16 @@ public class Vec2 {
 		y = vec.y;
 	}
 
+	public Vec3 asVec3(int z) {
+
+		return new Vec3(x, y, z);
+	}
+
+	public Vec3 asVec3() {
+
+		return asVec3(0);
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 

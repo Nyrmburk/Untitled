@@ -1,6 +1,6 @@
 package physics;
 
-import java.awt.*;
+import matrix.Vec3;
 
 public interface PhysicsObjectDef {
 
@@ -14,25 +14,13 @@ public interface PhysicsObjectDef {
 
 	void setPhysicsType(PhysicsObject.Type physicsType);
 
-	float getDensity();
+	Vec3 getPosition();
 
-	void setDensity(float density);
+	void setPosition(Vec3 position);
 
-	float getRestitution();
+	Vec3 getLinearVelocity();
 
-	void setRestitution(float restitution);
-
-	float getFriction();
-
-	void setFriction(float friction);
-
-	float[] getPosition();
-
-	void setPosition(float... position);
-
-	float[] getLinearVelocity();
-
-	void setLinearVelocity(float... velocity);
+	void setLinearVelocity(Vec3 velocity);
 
 	float getlinearDamping();
 

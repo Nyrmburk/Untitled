@@ -1,6 +1,7 @@
 package game;
 
 import graphics.ModelLoader;
+import matrix.Vec2;
 import physics.Polygon;
 
 /**
@@ -8,5 +9,5 @@ import physics.Polygon;
  */
 public interface MaterialModelGenerator {
 
-	ModelLoader generate(Polygon shape);
+	ModelLoader generate(Vec2[] vertices);
 }

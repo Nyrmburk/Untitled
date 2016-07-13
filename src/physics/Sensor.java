@@ -1,6 +1,8 @@
 package physics;
 
-public class Sensor {
+public interface Sensor {
 
-	//idk figure out later
+	Shape2 getShape();
+
+	void setShape(Shape2 shape);
 }

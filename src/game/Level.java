@@ -10,6 +10,7 @@ import matrix.Transform;
 import matrix.Vec2;
 import matrix.Vec3;
 import physics.*;
+import physics.JBox2D.JBox2DPhysicsEngine;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -86,12 +87,15 @@ public class Level extends Resource {
 				new Vec2(-100, -1),
 				new Vec2(100, -1),
 				new Vec2(100, 1)};
-		Polygon shape = new Polygon(floorVertices);
 		floor.setMaterial(material);
-		floor.setShape(shape);
-		PhysicsObjectDef objectDef = this.physicsEngine.getPhysicsObjectDef(PhysicsObject.Type.KINEMATIC, shape);
-		objectDef.setDensity(1);
-		floor.setPhysicsObject(objectDef);
+		floor.setShape(floorVertices);
+		PhysicsObjectDef objectDef = this.physicsEngine.newPhysicsObjectDef(PhysicsObject.Type.KINEMATIC);
+		PhysicsObject object = floor.setPhysicsObject(objectDef);
+		Body body = this.physicsEngine.newBody();
+		Shape2 shape = this.physicsEngine.newShape2(Shape2.ShapeType.COMPLEX_POLYGON, floorVertices);
+		body.setShape(shape);
+		body.setDensity(1);
+		object.createBody(body);
 		Mat4 transform = Mat4.identity();
 		Transform.setPosition(transform, new Vec3(0, -5, 0));
 		floor.setTransform(transform);

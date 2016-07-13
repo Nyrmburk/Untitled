@@ -1,5 +1,7 @@
 package physics;
 
+import matrix.Vec2;
+
 public interface PhysicsEngine {
 
 	void update(int milliseconds);
@@ -12,5 +14,11 @@ public interface PhysicsEngine {
 	String settingOptions(int setting);
 	boolean setSetting(int setting, Object option);
 
-	PhysicsObjectDef getPhysicsObjectDef(PhysicsObject.Type physicsType, Polygon polygon);
+	PhysicsObjectDef newPhysicsObjectDef(PhysicsObject.Type physicsType);
+
+	Body newBody();
+
+	Sensor newSensor();
+
+	Shape2 newShape2(Shape2.ShapeType shapeType, Vec2[] vertices);
 }

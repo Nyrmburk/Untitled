@@ -59,8 +59,8 @@ public class LineConverter implements ModelConverter<Line> {
 
 			Vec2 miter = getCorner(inLine, outLine).multiply(width);
 
-			Vec2 leftVert = verts[i].add(miter);
-			Vec2 rightVert = verts[i].subtract(miter);
+			Vec2 rightVert = verts[i].add(miter);
+			Vec2 leftVert = verts[i].subtract(miter);
 
 			model.vertices.put(rightVert.x, rightVert.y, 0);
 			model.vertices.put(leftVert.x, leftVert.y, 0);
@@ -83,8 +83,8 @@ public class LineConverter implements ModelConverter<Line> {
 		if (line.isLoop() || !endsEqual) {
 
 			Vec2 miter = getCorner(inLine, outLine).multiply(line.getWidth()[0] / 2);
-			Vec2 leftVert = verts[line.getLength() - 1].add(miter);
-			Vec2 rightVert = verts[line.getLength() - 1].subtract(miter);
+			Vec2 rightVert = verts[line.getLength() - 1].add(miter);
+			Vec2 leftVert = verts[line.getLength() - 1].subtract(miter);
 
 			model.vertices.put(rightVert.x, rightVert.y, 0);
 			model.vertices.put(leftVert.x, leftVert.y, 0);

@@ -2,6 +2,7 @@ package game;
 
 import graphics.ModelLoader;
 import graphics.Texture;
+import matrix.Vec2;
 import physics.Polygon;
 
 /**
@@ -28,9 +29,9 @@ public class Material {
 		this.modelGenerator = modelGenerator;
 	}
 
-	public ModelLoader getModel(Polygon polygon) {
+	public ModelLoader getModel(Vec2[] vertices) {
 
-		ModelLoader model = getModelGenerator().generate(polygon);
+		ModelLoader model = getModelGenerator().generate(vertices);
 //		model.setTexture(getTexture());
 		return model;
 	}

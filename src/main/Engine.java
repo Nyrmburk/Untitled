@@ -240,16 +240,15 @@ public class Engine {
 		//testing for convex hull and decomposition
 		//temporary
 		Vec2[] poly = {
-				new Vec2(115.0f, 131.0f),
-				new Vec2(131.0f, 232.0f),
-				new Vec2(262.0f, 259.0f),
-				new Vec2(399.0f, 203.0f),
-				new Vec2(257.0f, 183.0f),
-				new Vec2(257.0f, 123.0f),
-				new Vec2(363.0f, 81.0f),
-				new Vec2(194.0f, 59.0f),
+				new Vec2(263, 257),
+				new Vec2(404, 300),
+				new Vec2(492, 267),
+				new Vec2(372, 100),
+				new Vec2(391, 233),
+				new Vec2(213, 117),
 		};
-		new physics.Polygon(poly).convexHull();
+		physics.Polygon.convexHull(poly);
+		physics.Polygon.approximateDecomposition(poly);
 
 		//building .ini for keymap
 		//temporary
@@ -279,6 +278,15 @@ public class Engine {
 
 	public void renderUI() {
 
+//		GL11.glBegin(GL11.GL_TRIANGLES);
+//		GL11.glColor3f(10, 0, 0);
+//		GL11.glVertex2i(0, 0);
+//		GL11.glColor3f(0, 10, 0);
+//		GL11.glVertex2i(20, 0);
+//		GL11.glColor3f(0, 0, 10);
+//		GL11.glVertex2i(20, 20);
+//		GL11.glEnd();
+
 		Camera.UI();
 
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -293,6 +301,15 @@ public class Engine {
 
 			renderEngine.render(Activity.currentActivity().getRenderContext());
 		}
+
+//		GL11.glBegin(GL11.GL_TRIANGLES);
+//		GL11.glColor3f(1, 0, 0);
+//		GL11.glVertex2i(100, 100);
+//		GL11.glColor3f(0, 0, 1);
+//		GL11.glVertex2i(150, 150);
+//		GL11.glColor3f(0, 1, 0);
+//		GL11.glVertex2i(150, 100);
+//		GL11.glEnd();
 
 		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);

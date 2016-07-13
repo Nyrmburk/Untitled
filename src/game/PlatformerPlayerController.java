@@ -4,6 +4,7 @@ import input.Binding;
 import input.Button;
 import input.Input;
 import input.InputContext;
+import matrix.Vec3;
 import physics.PhysicsObject;
 
 /**
@@ -26,7 +27,7 @@ public class PlatformerPlayerController extends PlayerController {
 		public void onPress() {
 
 			PhysicsObject physObj = getPawn().getPhysicsObject();
-			physObj.applyLinearImpulse(new float[]{0, 4.905f}, physObj.getPosition());
+			physObj.applyLinearImpulse(new Vec3(0, 4.905f * physObj.getMass(), 0), physObj.getPosition());
 		}
 
 		@Override
@@ -37,7 +38,7 @@ public class PlatformerPlayerController extends PlayerController {
 		public void onHold(int delta) {
 
 			PhysicsObject physObj = getPawn().getPhysicsObject();
-			physObj.applyLinearImpulse(new float[]{0, 0.04905f}, physObj.getPosition());
+			physObj.applyLinearImpulse(new Vec3(0, 0.04905f, 0), physObj.getPosition());
 		}
 	};
 
@@ -60,9 +61,9 @@ public class PlatformerPlayerController extends PlayerController {
 		public void onHold(int delta) {
 
 			PhysicsObject physObj = getPawn().getPhysicsObject();
-			float velChange = Math.max(-speed - physObj.getLinearVelocity()[0], -acceleration);
+			float velChange = Math.max(-speed - physObj.getLinearVelocity().x, -acceleration);
 			float impulse = velChange * getPawn().getPhysicsObject().getMass();
-			physObj.applyLinearImpulse(new float[]{impulse, 0}, physObj.getPosition());
+			physObj.applyLinearImpulse(new Vec3(impulse, 0, 0), physObj.getPosition());
 		}
 	};
 
@@ -85,9 +86,9 @@ public class PlatformerPlayerController extends PlayerController {
 		public void onHold(int delta) {
 
 			PhysicsObject physObj = getPawn().getPhysicsObject();
-			float velChange = Math.min(speed - physObj.getLinearVelocity()[0], acceleration);
+			float velChange = Math.min(speed - physObj.getLinearVelocity().x, acceleration);
 			float impulse = velChange * getPawn().getPhysicsObject().getMass();
-			physObj.applyLinearImpulse(new float[]{impulse, 0}, physObj.getPosition());
+			physObj.applyLinearImpulse(new Vec3(impulse, 0, 0), physObj.getPosition());
 		}
 	};
 

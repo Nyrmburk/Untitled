@@ -18,8 +18,7 @@ import main.Engine;
 import main.Line;
 import matrix.*;
 import matrix.Vec2;
-import physics.PhysicsObject;
-import physics.PhysicsObjectDef;
+import physics.*;
 import physics.Polygon;
 import tools.*;
 import tools.Toolkit;
@@ -35,12 +34,13 @@ public class CreateActivity extends Activity {
 	private ModelGroup draftformGroup = new ModelGroup();
 	private LineConverter lc = new LineConverter();
 	private InstanceAttributes draftformInstance = new InstanceAttributes();
-	private ModelLoader vertexModel = createVertexModel();
+	private Plane drawPlane = new Plane(0, 0, 0, 0, 0, 1);
+	private ModelLoader vertexModel = createVertexModel(0.1f);
 
 	@Override
 	protected void onCreate() {
 
-		toolkit.setSnapRadius(3);
+		toolkit.setSnapRadius(0.5f);
 		toolkit.setSnapToPoints(true);
 
 		View view = new View(Engine.renderEngine);
@@ -49,15 +49,25 @@ public class CreateActivity extends Activity {
 			@Override
 			public void actionPerformed() {
 
-				Point point = getPointerLocation();
-				draftform.Vec2 vec = new draftform.Vec2(point.x, point.y);
+				Point pointer = getPointerLocation();
+
+				Vec2 screenpoint = new Vec2(pointer.x, getView().getHeight() - pointer.y);
+
+				RenderContext world = Engine.level.getRenderContext();
+				Ray3 ray = Projection.unproject(world.getCamera(), Engine.renderEngine.getViewport(), screenpoint)[0];
+
+				Vec3 worldPoint = ray.point(drawPlane.intersect(ray));
+				draftform.Vec2 draftformPoint = new draftform.Vec2(worldPoint.x, worldPoint.y);
 
 				if (getCurrentState() == State.PRESS)
-					toolkit.start(vec);
+					toolkit.start(draftformPoint);
 				if (getCurrentState() == State.DRAG)
-					toolkit.modify(vec);
-				if (getCurrentState() == State.RELEASE)
+					toolkit.modify(draftformPoint);
+				if (getCurrentState() == State.RELEASE) {
 					toolkit.end();
+					System.out.println(worldPoint);
+					System.out.println("new Vec2(" + pointer.x + ", " + pointer.y + "),");
+				}
 
 				if (getCurrentState() != State.MOVE) drawDraftform();
 			}
@@ -127,6 +137,7 @@ public class CreateActivity extends Activity {
 			}
 		});
 		panel.addChild(commit, 0);
+//		panel.setVisible(false);
 
 		setView(view);
 
@@ -157,7 +168,8 @@ public class CreateActivity extends Activity {
 	@Override
 	public void onUpdate(int delta) {
 
-		setVelocityCamera(new Vec3(0, 3, 10), 0.1f);
+		setVelocityCamera(new Vec3(0, 4, 10), 0);
+
 	}
 
 	private void setVelocityCamera(Vec3 cameraOffset, float magnitude) {
@@ -167,10 +179,8 @@ public class CreateActivity extends Activity {
 
 		for (PlayerController player : Engine.level.players) {
 
-			float[] position = player.getPawn().getPhysicsObject().getPosition();
-			float[] velocity = player.getPawn().getPhysicsObject().getLinearVelocity();
-			avgPosition = avgPosition.add(new Vec3(position[0], position[1], 0));
-			avgVelocity = avgVelocity.add(new Vec3(velocity[0], velocity[1], 0));
+			avgPosition = avgPosition.add(player.getPawn().getPhysicsObject().getPosition());
+			avgVelocity = avgVelocity.add(player.getPawn().getPhysicsObject().getLinearVelocity());
 		}
 
 		avgPosition.divide(Engine.level.players.size());
@@ -196,41 +206,28 @@ public class CreateActivity extends Activity {
 		for (Curve curve : draftform.getCurves()) {
 
 			for (draftform.Vec2 dVec : curve.linearize(curve.recommendedSubdivisions()))
-				pointsList.add(new Vec2(dVec.getX(), getView().getHeight() - dVec.getY()));
+				pointsList.add(new Vec2(dVec.getX(), dVec.getY()));
 
 			pointsList.removeLast();
 		}
 
-		RenderContext world = Engine.level.getRenderContext();
-
 		Vec2[] points = new Vec2[pointsList.size()];
 		pointsList.toArray(points);
 
-		Ray3[] rays = Projection.unproject(points, world.getCamera(), Engine.renderEngine.getViewport());
-
-		Plane plane = new Plane(0, 0, 0, 0, 0, 1);
-
-		Vec2[] vertices = new Vec2[rays.length];
-
-		for (int i = 0; i < rays.length; i++) {
-			Vec3 point = rays[i].point(plane.intersect(rays[i]));
-			vertices[i] = new Vec2(point.x, point.y);
-		}
-
-		System.out.println(Arrays.toString(vertices));
-
-		Polygon poly = new Polygon(vertices);
-
 		MaterialEntity newEntity = new MaterialEntity();
+		newEntity.setLevel(Engine.level);
 		Material material = new Material();
 		material.setModelGenerator(new SimpleModelGenerator());
 		newEntity.setMaterial(material);
-		newEntity.setShape(poly);
-		PhysicsObjectDef shape = Engine.level.physicsEngine.getPhysicsObjectDef(
-				PhysicsObject.Type.DYNAMIC, poly);
-		shape.setDensity(0.1f);
-		newEntity.setPhysicsObject(shape);
-		newEntity.setLevel(Engine.level);
+		newEntity.setShape(points);
+		PhysicsObjectDef objectDef = newEntity.getLevel().physicsEngine.newPhysicsObjectDef(
+				PhysicsObject.Type.DYNAMIC);
+		PhysicsObject object = newEntity.setPhysicsObject(objectDef);
+		Body body = newEntity.getLevel().physicsEngine.newBody();
+		body.setDensity(0.1f);
+		Shape2 shape = newEntity.getLevel().physicsEngine.newShape2(Shape2.ShapeType.COMPLEX_POLYGON, points);
+		body.setShape(shape);
+		object.createBody(body);
 
 		draftform.getCurves().clear();
 		draftform.getVerts().clear();
@@ -239,7 +236,8 @@ public class CreateActivity extends Activity {
 
 	private void drawDraftform() {
 
-		getRenderContext().getModelGroup().removeModelGroup(draftformGroup);
+		RenderContext world = Engine.level.getRenderContext();
+		world.getModelGroup().removeModelGroup(draftformGroup);
 		draftformGroup.clear();
 
 		ArrayList<InstanceAttributes> vertices = new ArrayList<>(draftform.getCurves().size() * 4) ;
@@ -253,7 +251,7 @@ public class CreateActivity extends Activity {
 			for (int i = 0; i < verts.length; i++) {
 
 				matrix.Vec2 converted = new matrix.Vec2(verts[i].getX(), verts[i].getY());
-				line.setData(i, converted, 2, Color.WHITE);
+				line.setData(i, converted, 0.1f, Color.WHITE);
 			}
 
 			List<ModelLoader> lineModels = lc.convert(line);
@@ -264,12 +262,12 @@ public class CreateActivity extends Activity {
 			vertices.add(getVertexAttributes(curve.getEnd()));
 
 			for (Vertex vertex : curve.getControlPoints())
-			vertices.add(getVertexAttributes(vertex));
+				vertices.add(getVertexAttributes(vertex));
 		}
 
 		draftformGroup.addInstance(vertexModel, vertices);
 
-		getRenderContext().getModelGroup().addModelGroup(draftformGroup);
+		world.getModelGroup().addModelGroup(draftformGroup);
 	}
 
 	private InstanceAttributes getVertexAttributes(Vertex vertex) {
@@ -283,19 +281,19 @@ public class CreateActivity extends Activity {
 		return vertexAttributes;
 	}
 
-	private ModelLoader createVertexModel() {
+	private ModelLoader createVertexModel(float radius) {
 
 		ModelLoader vertexModel = new ModelLoader();
-		vertexModel.vertices.put(-3f, 3f, 0f);
-		vertexModel.vertices.put(-3f, -3f, 0f);
-		vertexModel.vertices.put(3f, -3f, 0f);
-		vertexModel.vertices.put(3f, 3f, 0f);
+		vertexModel.vertices.put(-radius, radius, 0f);
+		vertexModel.vertices.put(-radius, -radius, 0f);
+		vertexModel.vertices.put(radius, -radius, 0f);
+		vertexModel.vertices.put(radius, radius, 0f);
 		vertexModel.color.add(0xFFFFFFFF);
 		vertexModel.color.add(0xFFFFFFFF);
 		vertexModel.color.add(0xFFFFFFFF);
 		vertexModel.color.add(0xFFFFFFFF);
-//		vertexModel.addFace(0, 1, 2, 3);
-		vertexModel.addFace(3, 2, 1, 0);
+		vertexModel.addFace(0, 1, 2, 3);
+//		vertexModel.addFace(3, 2, 1, 0);
 
 		return vertexModel;
 	}

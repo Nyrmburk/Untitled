@@ -1,6 +1,7 @@
 package entity;
 
 import game.Material;
+import matrix.Vec2;
 import physics.Polygon;
 
 /**
@@ -20,8 +21,8 @@ public class MaterialEntity extends Entity {
 		this.material = material;
 	}
 
-	public void setShape(Polygon polygon) {
+	public void setShape(Vec2[] vertices) {
 
-		setModel(material.getModel(polygon));
+		setModel(material.getModel(vertices));
 	}
 }

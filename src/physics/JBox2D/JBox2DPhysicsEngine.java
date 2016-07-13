@@ -1,8 +1,12 @@
-package physics;
+package physics.JBox2D;
 
+import matrix.Mat4;
+import org.jbox2d.common.Rot;
+import org.jbox2d.common.Transform;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
+import physics.*;
 
 public class JBox2DPhysicsEngine implements PhysicsEngine {
 
@@ -74,8 +78,44 @@ public class JBox2DPhysicsEngine implements PhysicsEngine {
 	}
 
 	@Override
-	public PhysicsObjectDef getPhysicsObjectDef(PhysicsObject.Type physicsType, Polygon polygon) {
+	public PhysicsObjectDef newPhysicsObjectDef(PhysicsObject.Type physicsType) {
 
-		return new JBox2DPhysicsObjectDef(physicsType, polygon);
+		return new JBox2DPhysicsObjectDef(physicsType);
+	}
+
+	@Override
+	public physics.Body newBody() {
+
+		return new JBox2DFixture(false);
+	}
+
+	@Override
+	public Sensor newSensor() {
+
+		return new JBox2DFixture(true);
+	}
+
+	@Override
+	public Shape2 newShape2(Shape2.ShapeType shapeType, matrix.Vec2[] vertices) {
+
+		Shape2 shape = null;
+
+		switch (shapeType) {
+
+			case CIRCLE:
+				break;
+			case EDGE:
+				break;
+			case POLYGON:
+				break;
+			case COMPLEX_POLYGON:
+				shape = new PolygonShape();
+				((PolygonShape) shape).setVertices(vertices);
+				break;
+			case CHAIN:
+				break;
+		}
+
+		return shape;
 	}
 }
