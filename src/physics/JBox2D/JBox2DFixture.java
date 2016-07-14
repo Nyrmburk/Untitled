@@ -1,74 +1,132 @@
 package physics.JBox2D;
 
+import matrix.Vec2;
+import org.jbox2d.collision.shapes.*;
 import org.jbox2d.dynamics.FixtureDef;
 import physics.Body;
+import physics.Polygon;
 import physics.Sensor;
-import physics.Shape2;
+
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
+import static physics.JBox2D.Convert.convert;
 
 /**
  * Created by Nyrmburk on 7/13/2016.
  */
 public class JBox2DFixture implements Body, Sensor {
 
-	private FixtureDef fixtureDef = new FixtureDef();
-	private Shape2 shape;
+	private LinkedList<FixtureDef> fixtureDefs = new LinkedList<>();
 
-	JBox2DFixture (boolean isSensor) {
-
-		fixtureDef.setSensor(isSensor);
+	{
+		fixtureDefs.add(new FixtureDef());
 	}
 
-	FixtureDef getFixtureDef() {
+	JBox2DFixture(boolean isSensor) {
 
-		return fixtureDef;
+		for (FixtureDef fixture : fixtureDefs)
+			fixture.setSensor(isSensor);
+	}
+
+	LinkedList<FixtureDef> getFixtureDefs() {
+
+		return fixtureDefs;
 	}
 
 	@Override
 	public float getDensity() {
 
-		return fixtureDef.getDensity();
+		return fixtureDefs.getFirst().getDensity();
 	}
 
 	@Override
 	public void setDensity(float density) {
 
-		fixtureDef.setDensity(density);
+		for (FixtureDef fixture : fixtureDefs)
+			fixture.setDensity(density);
 	}
 
 	@Override
 	public float getRestitution() {
 
-		return fixtureDef.getRestitution();
+		return fixtureDefs.getFirst().getRestitution();
 	}
 
 	@Override
 	public void setRestitution(float restitution) {
 
-		fixtureDef.setRestitution(restitution);
+		for (FixtureDef fixture : fixtureDefs)
+			fixture.setRestitution(restitution);
 	}
 
 	@Override
 	public float getFriction() {
 
-		return fixtureDef.getFriction();
+		return fixtureDefs.getFirst().getFriction();
 	}
 
 	@Override
 	public void setFriction(float friction) {
 
-		fixtureDef.setFriction(friction);
+		for (FixtureDef fixture : fixtureDefs)
+			fixture.setFriction(friction);
 	}
 
 	@Override
-	public Shape2 getShape() {
+	public void setShape(ShapeType type, Vec2[] vertices) {
+
+		Shape shape = null;
+
+		switch (type) {
+
+			case COMPLEX_POLYGON:
+
+				List<Vec2[]> decomposed = Polygon.approximateDecomposition(vertices);
+
+				Iterator<Vec2[]> it = decomposed.iterator();
+				fixtureDefs.getFirst().setShape(polygonShape(vertices));
+
+				while (it.hasNext()) {
+
+					Vec2[] poly = it.next();
+
+					FixtureDef fixtureDef = new FixtureDef();
+					fixtureDef.setFriction(getFriction());
+					fixtureDef.setRestitution(getRestitution());
+					fixtureDef.setDensity(getDensity());
+					fixtureDef.setSensor(fixtureDefs.getFirst().isSensor());
+					fixtureDef.setShape(polygonShape(poly));
+					fixtureDefs.add(fixtureDef);
+				}
+				return;
+			case CIRCLE:
+				
+				shape = new CircleShape();
+				break;
+			case EDGE:
+
+				shape = new EdgeShape();
+				break;
+			case POLYGON:
+
+				shape = polygonShape(vertices);
+				break;
+			case CHAIN:
+
+				shape = new ChainShape();
+				break;
+		}
+
+		fixtureDefs.getFirst().setShape(shape);
+	}
+
+	private Shape polygonShape(Vec2[] poly) {
+
+		Shape shape = new PolygonShape();
+		((PolygonShape) shape).set(convert(poly), poly.length);
 
 		return shape;
-	}
-
-	@Override
-	public void setShape(Shape2 shape) {
-
-		this.shape = shape;
-		fixtureDef.setShape(((JBox2DShape) shape).getShape());
 	}
 }

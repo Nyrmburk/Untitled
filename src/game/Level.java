@@ -92,8 +92,7 @@ public class Level extends Resource {
 		PhysicsObjectDef objectDef = this.physicsEngine.newPhysicsObjectDef(PhysicsObject.Type.KINEMATIC);
 		PhysicsObject object = floor.setPhysicsObject(objectDef);
 		Body body = this.physicsEngine.newBody();
-		Shape2 shape = this.physicsEngine.newShape2(Shape2.ShapeType.COMPLEX_POLYGON, floorVertices);
-		body.setShape(shape);
+		body.setShape(Body.ShapeType.COMPLEX_POLYGON, floorVertices);
 		body.setDensity(1);
 		object.createBody(body);
 		Mat4 transform = Mat4.identity();

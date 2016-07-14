@@ -455,6 +455,9 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 		void release() {
 
 			glDeleteBuffers(VBOID);
+			glDeleteBuffers(NBOID);
+			glDeleteBuffers(CBOID);
+			glDeleteBuffers(TBOID);
 			glDeleteBuffers(VBOIID);
 			glDeleteVertexArrays(VAOID);
 		}

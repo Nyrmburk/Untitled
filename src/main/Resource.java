@@ -40,7 +40,7 @@ public abstract class Resource {
 	public final void release() {
 
 		references--;
-		if (references == -1 && releaseListener != null)
+		if (references <= 0 && releaseListener != null)
 			releaseListener.onRelease();
 	}
 

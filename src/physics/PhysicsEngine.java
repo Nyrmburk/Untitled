@@ -19,6 +19,4 @@ public interface PhysicsEngine {
 	Body newBody();
 
 	Sensor newSensor();
-
-	Shape2 newShape2(Shape2.ShapeType shapeType, Vec2[] vertices);
 }

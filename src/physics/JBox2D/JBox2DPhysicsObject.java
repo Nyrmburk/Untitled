@@ -8,6 +8,8 @@ import org.jbox2d.dynamics.FixtureDef;
 import physics.PhysicsObject;
 import physics.Sensor;
 
+import java.util.List;
+
 /**
  * Created by Nyrmburk on 2/10/2016.
  */
@@ -33,15 +35,19 @@ class JBox2DPhysicsObject implements PhysicsObject {
 	@Override
 	public void createSensor(Sensor sensor) {
 
-		FixtureDef fixtureDef = ((JBox2DFixture) sensor).getFixtureDef();
-		this.body.createFixture(fixtureDef);
+		createFixtures(((JBox2DFixture) sensor).getFixtureDefs());
 	}
 
 	@Override
 	public void createBody(physics.Body body) {
 
-		FixtureDef fixtureDef = ((JBox2DFixture) body).getFixtureDef();
-		this.body.createFixture(fixtureDef);
+		createFixtures(((JBox2DFixture) body).getFixtureDefs());
+	}
+
+	private void createFixtures(List<FixtureDef> fixtureDefs) {
+
+		for (FixtureDef fixtureDef : fixtureDefs)
+			this.body.createFixture(fixtureDef);
 	}
 
 	@Override

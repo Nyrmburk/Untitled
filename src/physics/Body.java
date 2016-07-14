@@ -1,9 +1,20 @@
 package physics;
 
+import matrix.Vec2;
+
 /**
  * Created by Nyrmburk on 7/12/2016.
  */
 public interface Body {
+
+	enum ShapeType {
+
+		CIRCLE,
+		EDGE,
+		POLYGON,
+		COMPLEX_POLYGON,
+		CHAIN,
+	}
 
 	float getDensity();
 
@@ -17,9 +28,7 @@ public interface Body {
 
 	void setFriction(float friction);
 
-	Shape2 getShape();
-
-	void setShape(Shape2 shape);
+	void setShape(ShapeType type, Vec2[] vertices);
 
 	//TODO filters
 }

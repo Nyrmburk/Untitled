@@ -101,8 +101,7 @@ public class LoadingActivity extends Activity {
 			body.setFriction(0.5f);
 			body.setRestitution(0.15f);
 			body.setDensity(1);
-			Shape2 shape = entity.getLevel().physicsEngine.newShape2(Shape2.ShapeType.COMPLEX_POLYGON, verts);
-			body.setShape(shape);
+			body.setShape(Body.ShapeType.COMPLEX_POLYGON, verts);
 			PhysicsObject object = entity.setPhysicsObject(ObjectDef);
 			object.createBody(body);
 			entity.setShape(verts);
@@ -121,8 +120,7 @@ public class LoadingActivity extends Activity {
 					PhysicsObject.Type.DYNAMIC);
 			PhysicsObject playerObject = player.setPhysicsObject(objectDef);
 			Body playerBody = player.getLevel().physicsEngine.newBody();
-			Shape2 playerShape = player.getLevel().physicsEngine.newShape2(Shape2.ShapeType.COMPLEX_POLYGON, playerVertices);
-			playerBody.setShape(playerShape);
+			playerBody.setShape(Body.ShapeType.COMPLEX_POLYGON, playerVertices);
 			playerObject.createBody(playerBody);
 			Mat4 transform = Mat4.identity();
 			Transform.setPosition(transform, new Vec3(-3, 0, 0));

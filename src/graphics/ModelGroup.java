@@ -36,6 +36,7 @@ public class ModelGroup {
 		if (instancedModel == null) {
 			instancedModel = new InstancedModel(model);
 			models.add(instancedModel);
+			model.register();
 		}
 
 		instancedModel.attributes.addAll(instanceAttributes);
@@ -52,8 +53,10 @@ public class ModelGroup {
 
 		iModel.attributes.removeAll(instanceAttributes);
 
-		if (iModel.attributes.isEmpty())
+		if (iModel.attributes.isEmpty()) {
 			models.remove(iModel);
+			model.release();
+		}
 	}
 
 	public void removeInstance(ModelLoader model, InstanceAttributes... instanceAttributes) {
@@ -109,6 +112,9 @@ public class ModelGroup {
 	}
 
 	public void clear() {
+
+		for (InstancedModel model : models)
+			model.model.release();
 
 		models.clear();
 	}

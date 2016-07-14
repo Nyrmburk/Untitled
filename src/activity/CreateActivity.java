@@ -147,6 +147,7 @@ public class CreateActivity extends Activity {
 
 	@Override
 	protected void onStart() {
+		vertexModel.register();
 	}
 
 	@Override
@@ -159,6 +160,7 @@ public class CreateActivity extends Activity {
 
 	@Override
 	protected void onStop() {
+		vertexModel.release();
 	}
 
 	@Override
@@ -225,8 +227,7 @@ public class CreateActivity extends Activity {
 		PhysicsObject object = newEntity.setPhysicsObject(objectDef);
 		Body body = newEntity.getLevel().physicsEngine.newBody();
 		body.setDensity(0.1f);
-		Shape2 shape = newEntity.getLevel().physicsEngine.newShape2(Shape2.ShapeType.COMPLEX_POLYGON, points);
-		body.setShape(shape);
+		body.setShape(Body.ShapeType.COMPLEX_POLYGON, points);
 		object.createBody(body);
 
 		draftform.getCurves().clear();
@@ -255,6 +256,7 @@ public class CreateActivity extends Activity {
 			}
 
 			List<ModelLoader> lineModels = lc.convert(line);
+
 			for (ModelLoader model : lineModels)
 				draftformGroup.addInstance(model, draftformInstance);
 

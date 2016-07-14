@@ -68,11 +68,11 @@ public class Polygon {
 
 			// do not add next vertex to the decomposed polygon if it is a notch
 			boolean addVertex = true;
-			if (isCCW(previous, current, next))
+			if (!isCCW(previous, current, next))
 				addVertex = false;
-			if (isCCW(current, next, v0))
+			if (!isCCW(current, next, v0))
 				addVertex = false;
-			if (isCCW(next, v0, v1))
+			if (!isCCW(next, v0, v1))
 				addVertex = false;
 
 			if (addVertex) {
@@ -86,7 +86,7 @@ public class Polygon {
 			while (startIndex != jumpTable.peek()) {
 
 				Vec2 insideDecomposition = vertices[jumpTable.next()];
-				if (isCCW(next, insideDecomposition, v0) && isCCW(insideDecomposition, next, current)) {
+				if (!isCCW(next, insideDecomposition, v0) && !isCCW(insideDecomposition, next, current)) {
 					// vertex is inside current decomposition
 
 					// remove last vertex
@@ -94,7 +94,7 @@ public class Polygon {
 					Vec2 toRemove = decomposedVertices.get(decomposedVertices.size() - 1);
 
 					// keep removing vertices until convexity is reached
-					while (isCCW(toRemove, insideDecomposition, v0)) {
+					while (!isCCW(toRemove, insideDecomposition, v0)) {
 
 						toRemove = decomposedVertices.remove(decomposedVertices.size() - 1);
 					}

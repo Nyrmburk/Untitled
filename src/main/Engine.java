@@ -8,12 +8,10 @@ import graphics.opengl.SimpleOpenGL3_0RenderEngine;
 import input.*;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import input.InputContext;
@@ -205,6 +203,7 @@ public class Engine {
 	private void initDisplay() {
 
 		renderEngine = new SimpleOpenGL3_0RenderEngine();
+//		renderEngine = new LWGJLDummy();
 //		renderEngine = new SoftwareRenderEngine(new RenderContext());
 		renderEngine.createWindow(Settings.window);
 
@@ -239,16 +238,23 @@ public class Engine {
 
 		//testing for convex hull and decomposition
 		//temporary
-		Vec2[] poly = {
-				new Vec2(263, 257),
-				new Vec2(404, 300),
-				new Vec2(492, 267),
-				new Vec2(372, 100),
-				new Vec2(391, 233),
-				new Vec2(213, 117),
-		};
-		physics.Polygon.convexHull(poly);
-		physics.Polygon.approximateDecomposition(poly);
+//		Vec2[] poly = {
+//				new Vec2(263, 257),
+//				new Vec2(404, 300),
+//				new Vec2(492, 267),
+//				new Vec2(372, 100),
+//				new Vec2(391, 233),
+//				new Vec2(213, 117),
+//
+//				new Vec2(213, 117),
+//				new Vec2(391, 233),
+//				new Vec2(372, 100),
+//				new Vec2(492, 267),
+//				new Vec2(404, 300),
+//				new Vec2(263, 257),
+//		};
+//		physics.Polygon.convexHull(poly);
+//		physics.Polygon.approximateDecomposition(poly);
 
 		//building .ini for keymap
 		//temporary

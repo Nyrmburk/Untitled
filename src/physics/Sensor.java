@@ -1,8 +1,8 @@
 package physics;
 
+import matrix.Vec2;
+
 public interface Sensor {
 
-	Shape2 getShape();
-
-	void setShape(Shape2 shape);
+	void setShape(Body.ShapeType type, Vec2[] vertices);
 }
