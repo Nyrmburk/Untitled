@@ -237,24 +237,34 @@ public class Engine {
 //		new NinePatch(image);
 
 		//testing for convex hull and decomposition
+		Vec2[] winding = {
+			new Vec2(5, 0),
+			new Vec2(6, 4),
+			new Vec2(4, 5),
+			new Vec2(1, 5),
+			new Vec2(1, 0),
+		};
+		physics.Polygon.isWindingCCW(winding);
+		physics.Polygon.reverseWinding(winding);
+		physics.Polygon.isWindingCCW(winding);
+
 		//temporary
-//		Vec2[] poly = {
-//				new Vec2(263, 257),
-//				new Vec2(404, 300),
-//				new Vec2(492, 267),
-//				new Vec2(372, 100),
-//				new Vec2(391, 233),
-//				new Vec2(213, 117),
-//
-//				new Vec2(213, 117),
-//				new Vec2(391, 233),
-//				new Vec2(372, 100),
-//				new Vec2(492, 267),
-//				new Vec2(404, 300),
-//				new Vec2(263, 257),
-//		};
-//		physics.Polygon.convexHull(poly);
-//		physics.Polygon.approximateDecomposition(poly);
+		Vec2[] poly = {
+				new Vec2(-6.0507107f, 3.2494562f),
+				new Vec2(-6.12422f, -0.42606285f),
+				new Vec2(-1.7870836f, -0.5363283f),
+				new Vec2(-1.8605931f, 0.750104f),
+				new Vec2(-3.7718687f, 0.7868591f),
+				new Vec2(-3.7718687f, 2.2938218f),
+				new Vec2(2.4030337f, 1.9997791f),
+				new Vec2(2.1089957f, 0.60308206f),
+				new Vec2(-0.5741484f, 0.56632686f),
+				new Vec2(-0.610903f, -0.7201042f),
+				new Vec2(4.3510737f, -0.64659387f),
+				new Vec2(3.8732522f, 3.5434983f),
+		};
+		physics.Polygon.convexHull(poly);
+		physics.Polygon.approximateDecomposition(poly);
 
 		//building .ini for keymap
 		//temporary

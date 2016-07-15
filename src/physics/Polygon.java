@@ -37,17 +37,25 @@ public class Polygon {
 
 	public static List<Vec2[]> approximateDecomposition(Vec2[] vertices) {
 
+		if (!isWindingCCW(vertices))
+			reverseWinding(vertices);
+
 		return mp3Decomposition(new ArrayList<>(), vertices, new JumpTable(vertices.length), vertices.length, 0);
 	}
 
 	private static List<Vec2[]> mp3Decomposition(List<Vec2[]> polygons, Vec2[] vertices, JumpTable jumpTable, int size, int startIndex) {
 
+		// if the number of vertices is less than required to make a triangle, it cannot be a polygon
 		if (size < 3)
 			return polygons;
 
+		// This is a list of the current decomposition
+		// Because it is an iterative process, it is used to store temporary info
 		List<Vec2> decomposedVertices = new ArrayList<>();
 
-		int currentIndex = startIndex;
+		// nextIndex is used to reset after checking for vertices inside the polygon
+		int nextIndex = startIndex;
+
 		jumpTable.setIndex(startIndex);
 		Vec2 v0 = vertices[jumpTable.getIndex()];
 		Vec2 v1 = vertices[jumpTable.next()];
@@ -62,65 +70,85 @@ public class Polygon {
 		boolean converged = false;
 
 		for (int i = 2; i < size && !converged; i++) {
-//		while (!converged && !((startIndex - currentIndex) == size)) {
 
+			nextIndex = jumpTable.getIndex();
 			next = vertices[jumpTable.next()];
 
 			// do not add next vertex to the decomposed polygon if it is a notch
-			boolean addVertex = true;
-			if (!isCCW(previous, current, next))
-				addVertex = false;
-			if (!isCCW(current, next, v0))
-				addVertex = false;
-			if (!isCCW(next, v0, v1))
-				addVertex = false;
-
-			if (addVertex) {
-				decomposedVertices.add(next);
-			} else {
+			if (isNotch(v0, v1, previous, current, next))
 				break;
-			}
+
+			decomposedVertices.add(next);
 
 			// check for vertices inside the decomposed polygon so far
-			currentIndex = jumpTable.getIndex();
-			while (startIndex != jumpTable.peek()) {
+			while (startIndex != jumpTable.peek() && decomposedVertices.size() != 2) {
 
 				Vec2 insideDecomposition = vertices[jumpTable.next()];
-				if (!isCCW(next, insideDecomposition, v0) && !isCCW(insideDecomposition, next, current)) {
-					// vertex is inside current decomposition
 
-					// remove last vertex
-					decomposedVertices.remove(decomposedVertices.size() - 1);
-					Vec2 toRemove = decomposedVertices.get(decomposedVertices.size() - 1);
+//				if (isCCW(v0, next, insideDecomposition))
+//					continue;
+//				if (isCCW(next, current, insideDecomposition))
+//					continue;
+//				if (isCCW(v1, v0, insideDecomposition))
+//					continue;
+				if (!insidePolygon(decomposedVertices, insideDecomposition))
+					continue;
 
-					// keep removing vertices until convexity is reached
-					while (!isCCW(toRemove, insideDecomposition, v0)) {
+				// vertex is inside current decomposition
+				// remove last vertex
+				decomposedVertices.remove(decomposedVertices.size() - 1);
+				Vec2 toRemove = decomposedVertices.get(decomposedVertices.size() - 1);
 
-						toRemove = decomposedVertices.remove(decomposedVertices.size() - 1);
-					}
+				// keep removing vertices until convexity is reached
+				while (isCCW(v0, insideDecomposition, toRemove))
+					toRemove = decomposedVertices.remove(decomposedVertices.size() - 1);
 
-					converged = true;
-				}
+				converged = true;
 			}
-			jumpTable.setIndex(currentIndex);
+
+			jumpTable.setIndex(nextIndex);
+			jumpTable.next();
 
 			previous = current;
 			current = next;
 		}
 
 		// push new polygon and recursively start next segment
+		int polySize = decomposedVertices.size();
+		if (polySize > 2) {
 
-		Vec2[] decomposedVerticesArray = new Vec2[decomposedVertices.size()];
-		decomposedVertices.toArray(decomposedVerticesArray);
-		polygons.add(decomposedVerticesArray);
+			Vec2[] decomposedVerticesArray = new Vec2[polySize];
+			decomposedVertices.toArray(decomposedVerticesArray);
+			polygons.add(decomposedVerticesArray);
+		}
 
 		jumpTable.setIndex(startIndex);
-		jumpTable.setJump(decomposedVerticesArray.length - 1);
-		currentIndex = jumpTable.next();
-		size -= decomposedVerticesArray.length - 2;
-		mp3Decomposition(polygons, vertices, jumpTable, size, currentIndex);
+		jumpTable.setJumpTo(nextIndex);
+		nextIndex = jumpTable.next();
+		size -= polySize - 2;
+		mp3Decomposition(polygons, vertices, jumpTable, size, nextIndex);
 
 		return polygons;
+	}
+
+	private static boolean isNotch(Vec2 v0, Vec2 v1, Vec2 previous, Vec2 current, Vec2 next) {
+
+		return !isCCW(previous, current, next) || !isCCW(current, next, v0) || !isCCW(next, v0, v1);
+
+	}
+
+	private static boolean insidePolygon(List<Vec2> poly, Vec2 point) {
+
+		Vec2 previous = poly.get(poly.size() - 1);
+		for (Vec2 polyVec : poly) {
+
+			if ((point.y - previous.y) * (polyVec.x - previous.x) - (point.x - previous.x) * (polyVec.y - previous.y) < 0)
+				return false;
+
+			previous = polyVec;
+		}
+
+		return true;
 	}
 
 	public static List<Vec2[]> decompose(Vec2[] vertices) {
@@ -214,6 +242,30 @@ public class Polygon {
 				(b.y - a.y) * (c.x - a.x);
 	}
 
+	public static boolean isWindingCCW(Vec2[] vertices) {
+
+		float sum = 0;
+
+		Vec2 previous = vertices[vertices.length - 1];
+		for (Vec2 vertex : vertices) {
+
+			sum += (vertex.x - previous.x) * (vertex.y + previous.y);
+			previous = vertex;
+		}
+
+		return sum < 0;
+	}
+
+	public static void reverseWinding(Vec2[] vertices) {
+
+		int halfLength = vertices.length / 2;
+		for(int i = 0; i < halfLength; i++) {
+			Vec2 temp = vertices[i];
+			vertices[i] = vertices[vertices.length - i - 1];
+			vertices[vertices.length - i - 1] = temp;
+		}
+	}
+
 	private static class JumpTable {
 
 		int index = 0;
@@ -235,6 +287,8 @@ public class Polygon {
 
 			index += nextJump;
 			index %= table.length;
+			if (index < 0)
+				index += table.length;
 			nextJump = table[index];
 			return index;
 		}
@@ -253,6 +307,21 @@ public class Polygon {
 
 			nextJump = jump;
 			table[index] = jump;
+		}
+
+		public void setJumpTo(int destination) {
+
+			setJump(destination - getIndex());
+		}
+
+		public void addJump(int jump) {
+
+			setJump(getJump() + jump);
+		}
+
+		public int getJump() {
+
+			return nextJump;
 		}
 
 		public void setIndex(int index) {
@@ -276,6 +345,31 @@ public class Polygon {
 		@Override
 		public int compareTo(VisibilityPair o) {
 			return 0;
+		}
+	}
+
+	private static class Bounds {
+
+		float top = Float.MIN_NORMAL;
+		float left = Float.MAX_VALUE;
+		float right = Float.MIN_NORMAL;
+		float bottom = Float.MAX_VALUE;
+
+		public void grow(Vec2 vec) {
+
+			if (vec.x > right)
+				right = vec.x;
+			if (vec.x < left)
+				left = vec.x;
+			if (vec.y > top)
+				top = vec.y;
+			if (vec.y < bottom)
+				bottom = vec.y;
+		}
+
+		public boolean inside(Vec2 vec) {
+
+			return (vec.x < right && vec.x > left && vec.y < top && vec.y > bottom);
 		}
 	}
 }

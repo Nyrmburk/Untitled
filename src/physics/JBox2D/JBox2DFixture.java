@@ -86,7 +86,7 @@ public class JBox2DFixture implements Body, Sensor {
 				List<Vec2[]> decomposed = Polygon.approximateDecomposition(vertices);
 
 				Iterator<Vec2[]> it = decomposed.iterator();
-				fixtureDefs.getFirst().setShape(polygonShape(vertices));
+				fixtureDefs.getFirst().setShape(polygonShape(it.next()));
 
 				while (it.hasNext()) {
 
