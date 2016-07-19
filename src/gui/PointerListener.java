@@ -61,7 +61,7 @@ public abstract class PointerListener extends ActionListener {
 		}
 
 		@Override
-		public void onUpdate(Input[] inputs, int delta) {
+		public void onUpdate(Input[] inputs, float delta) {
 
 			int x = (int) inputs[0].getValue();
 			int y = (int) inputs[1].getValue();
@@ -166,7 +166,7 @@ public abstract class PointerListener extends ActionListener {
 		}
 
 		@Override
-		public void onHold(int delta) {
+		public void onHold(float delta) {
 			if (currentElement != null) {
 				for (PointerListener listener : activeListeners) {
 					listener.setCurrentState(State.HOLD);

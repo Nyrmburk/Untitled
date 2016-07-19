@@ -40,7 +40,7 @@ public class Level extends Resource {
 		renderContext = new RenderContext(camera);
 	}
 
-	public void update(int delta) {
+	public void update(float delta) {
 
 		physicsEngine.update(delta);
 

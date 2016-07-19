@@ -18,6 +18,7 @@ import java.io.IOException;
 public class LoadingActivity extends Activity {
 
 	private float percentComplete = 0;
+	private float waitTime = 0.5f;
 	String loadingMessage = "Loading... %d%%";
 	TextBox loadingText;
 
@@ -66,9 +67,9 @@ public class LoadingActivity extends Activity {
 	}
 
 	@Override
-	public void onUpdate(int delta) {
+	public void onUpdate(float delta) {
 		// TODO Auto-generated method stub
-		percentComplete += ((float) delta) / 1;
+		percentComplete += 100 * delta / waitTime;
 		if (percentComplete > 100) {
 
 			percentComplete = 100;

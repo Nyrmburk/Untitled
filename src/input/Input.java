@@ -31,7 +31,7 @@ public abstract class Input {
 		this.name = name;
 	}
 
-	public abstract void onUpdate(int delta);
+	public abstract void onUpdate(float delta);
 
 	public float getValue() {
 

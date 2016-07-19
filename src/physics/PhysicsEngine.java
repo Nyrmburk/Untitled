@@ -1,10 +1,8 @@
 package physics;
 
-import matrix.Vec2;
-
 public interface PhysicsEngine {
 
-	void update(int milliseconds);
+	void update(float delta);
 	
 	PhysicsObject createPhysicsObject(PhysicsObjectDef objectDef);
 

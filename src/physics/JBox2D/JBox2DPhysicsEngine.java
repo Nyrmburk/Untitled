@@ -18,9 +18,9 @@ public class JBox2DPhysicsEngine implements PhysicsEngine {
 	}
 
 	@Override
-	public void update(int milliseconds) {
+	public void update(float delta) {
 
-		world.step(((float) milliseconds) / 1000, velocityIterations, positionIterations);
+		world.step(delta, velocityIterations, positionIterations);
 //		System.out.println(bodies.values().iterator().next().getPosition());
 	}
 

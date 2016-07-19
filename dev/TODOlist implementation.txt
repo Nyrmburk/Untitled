@@ -1,9 +1,19 @@
-Goal for today
+Goals
 
 design ui flow
 	refer to my earlier document of goals for the ui
 	
 change draftform from being in screen coordinates to world coordinates
+	lighting affects rendering so another rendercontext has to be used
+	I could make the a new rendercontext and have it update when the activity updates
+		This is the best solution
+
+I need to make some fancy callbacks for various happenings
+	window resizing
+	window closing
+	element created / possibly added to level
+	collisions
+	GUI stuff???
 
 convert drawings to entities
 	the real hard part here is determining validity
@@ -19,3 +29,30 @@ convert drawings to entities
 					if they are all the same you know which side is which?
 						does it work for concave polygons?
 		over/under size
+		
+Create new model
+	direct buffers
+	possible interleaving
+	subupdates
+	skeletons/rigging
+	bindless/multi textures???
+	
+redesign model generator
+	reusability of buffers?
+	buffer pool?
+	face trianglulation also has decomposition
+	
+Add way to select objects and move the around and shit
+	I have to change more of the physics interface
+	Needs a way to show/highlight selected objects
+		This is a very hard problem for me right now
+		
+Add layers
+	Add filters to physics engine
+	Add user data to physics engine
+	Add player movement between layers
+	Control skeletons for animating thickness and layer
+			
+Entities now have a component interface
+	Allows the use of abstract thingies
+	I know there was a use for it, but I forgot

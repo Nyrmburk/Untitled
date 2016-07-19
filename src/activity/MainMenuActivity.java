@@ -107,7 +107,7 @@ public class MainMenuActivity extends Activity {
 
 
 	@Override
-	public void onUpdate(int delta) {
+	public void onUpdate(float delta) {
 		// TODO Auto-generated method stub
 
 	}

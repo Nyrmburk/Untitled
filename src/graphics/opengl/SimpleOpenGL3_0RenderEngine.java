@@ -41,6 +41,14 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 
 	public void init() {
 
+		Thread.setDefaultUncaughtExceptionHandler(new Thread.
+				UncaughtExceptionHandler() {
+			public void uncaughtException(Thread t, Throwable e) {
+				Display.destroy();
+				System.exit(1);
+			}
+		});
+
 		glEnableClientState(GL_NORMAL_ARRAY);
 		glEnableClientState(GL_VERTEX_ARRAY);
 
@@ -79,10 +87,9 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 	}
 
 	@Override
-	public int render(RenderContext renderContext) {
+	public void render(RenderContext renderContext) {
 
 //		System.out.println(getCurrentMatrix().toString());
-		long time = Engine.getTime();
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadMatrix(toFloatBuffer(renderContext.getCamera().getProjection().m));
@@ -151,7 +158,6 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 		// System.out.println(polys + " polygons");
 
 		GLErrorHelper.checkError();
-		return (int) (Engine.getTime() - time);
 	}
 
 	private graphics.Display convertDisplay(DisplayMode displayMode) {

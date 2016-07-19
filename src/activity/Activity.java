@@ -34,9 +34,9 @@ public abstract class Activity {
 	protected abstract void onStop();
 	protected abstract void onDestroy();
 
-	public abstract void onUpdate(int delta);
+	public abstract void onUpdate(float delta);
 
-	public static void update(int delta) {
+	public static void update(float delta) {
 
 		if (killCurrentActivity) {
 			killCurrentActivity();

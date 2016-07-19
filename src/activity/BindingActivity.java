@@ -61,7 +61,7 @@ public class BindingActivity extends Activity {
 	}
 
 	@Override
-	public void onUpdate(int delta) {
+	public void onUpdate(float delta) {
 
 	}
 }

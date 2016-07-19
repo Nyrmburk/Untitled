@@ -85,12 +85,6 @@ public class Polygon {
 
 				Vec2 insideDecomposition = vertices[jumpTable.next()];
 
-//				if (isCCW(v0, next, insideDecomposition))
-//					continue;
-//				if (isCCW(next, current, insideDecomposition))
-//					continue;
-//				if (isCCW(v1, v0, insideDecomposition))
-//					continue;
 				if (!insidePolygon(decomposedVertices, insideDecomposition))
 					continue;
 

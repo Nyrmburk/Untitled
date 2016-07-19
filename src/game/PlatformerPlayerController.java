@@ -35,7 +35,7 @@ public class PlatformerPlayerController extends PlayerController {
 		}
 
 		@Override
-		public void onHold(int delta) {
+		public void onHold(float delta) {
 
 			PhysicsObject physObj = getPawn().getPhysicsObject();
 			physObj.applyLinearImpulse(new Vec3(0, 0.04905f, 0), physObj.getPosition());
@@ -58,7 +58,7 @@ public class PlatformerPlayerController extends PlayerController {
 		}
 
 		@Override
-		public void onHold(int delta) {
+		public void onHold(float delta) {
 
 			PhysicsObject physObj = getPawn().getPhysicsObject();
 			float velChange = Math.max(-speed - physObj.getLinearVelocity().x, -acceleration);
@@ -83,7 +83,7 @@ public class PlatformerPlayerController extends PlayerController {
 		}
 
 		@Override
-		public void onHold(int delta) {
+		public void onHold(float delta) {
 
 			PhysicsObject physObj = getPawn().getPhysicsObject();
 			float velChange = Math.min(speed - physObj.getLinearVelocity().x, acceleration);

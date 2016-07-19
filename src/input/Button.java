@@ -29,7 +29,7 @@ public abstract class Button extends Input {
 	}
 
 	@Override
-	public void onUpdate(int delta) {
+	public void onUpdate(float delta) {
 
 //		System.out.println(this.getName() + " = " + getDelta());
 
@@ -42,5 +42,5 @@ public abstract class Button extends Input {
 	
 	public abstract void onRelease();
 	
-	public abstract void onHold(int delta);
+	public abstract void onHold(float delta);
 }

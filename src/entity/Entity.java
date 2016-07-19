@@ -54,7 +54,7 @@ public class Entity {
 			setPhysicsObject(physicsObjectDef);
 	}
 
-	public void update(int delta) {
+	public void update(float delta) {
 
 		if (getPhysicsObject() != null) {
 			Mat4 transform = instanceAttributes.getTransform();

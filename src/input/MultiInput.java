@@ -21,12 +21,12 @@ public abstract class MultiInput extends Input {
 	}
 
 	@Override
-	public void onUpdate(int delta) {
+	public void onUpdate(float delta) {
 
 		onUpdate(inputs, delta);
 	}
 
-	public abstract void onUpdate(Input[] inputs, int delta);
+	public abstract void onUpdate(Input[] inputs, float delta);
 
 	public class SimpleInput extends Input {
 
@@ -35,7 +35,7 @@ public abstract class MultiInput extends Input {
 		}
 
 		@Override
-		public void onUpdate(int delta) {
+		public void onUpdate(float delta) {
 		}
 	}
 }

@@ -29,7 +29,7 @@ public class InputContext {
 		return currentContext;
 	}
 
-	public void update(int delta) {
+	public void update(float delta) {
 
 		for (Input input : inputs) {
 

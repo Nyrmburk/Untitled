@@ -168,7 +168,7 @@ public class CreateActivity extends Activity {
 	}
 
 	@Override
-	public void onUpdate(int delta) {
+	public void onUpdate(float delta) {
 
 		setVelocityCamera(new Vec3(0, 4, 10), 0);
 
@@ -244,6 +244,7 @@ public class CreateActivity extends Activity {
 		ArrayList<InstanceAttributes> vertices = new ArrayList<>(draftform.getCurves().size() * 4) ;
 
 		for (Curve curve : draftform.getCurves()) {
+
 
 			draftform.Vec2[] verts = curve.linearize(curve.recommendedSubdivisions());
 

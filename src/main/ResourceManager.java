@@ -51,7 +51,7 @@ public class ResourceManager {
 		}
 	}
 
-	public static void update(int delta) {
+	public static void update(float delta) {
 
 //		updateStaleResources(delta);
 		finishAsyncLoads();

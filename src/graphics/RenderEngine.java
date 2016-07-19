@@ -9,7 +9,7 @@ public interface RenderEngine {
 
 	void start();
 
-	int render(RenderContext renderContext);
+	void render(RenderContext renderContext);
 
 	Display[] getDisplays();
 	Display getCurrentDisplay();

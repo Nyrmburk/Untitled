@@ -45,7 +45,7 @@ public abstract class InputInterface {
 
 	public abstract String getBindingName(Object binding);
 
-	public final void update(int delta) {
+	public final void update(float delta) {
 
 		updateInputs();
 
