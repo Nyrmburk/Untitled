@@ -44,6 +44,7 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.
 				UncaughtExceptionHandler() {
 			public void uncaughtException(Thread t, Throwable e) {
+				e.printStackTrace();
 				Display.destroy();
 				System.exit(1);
 			}

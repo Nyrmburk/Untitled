@@ -16,6 +16,7 @@ import javax.swing.*;
 
 import input.InputContext;
 import matrix.Vec2;
+import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 
 import activity.Activity;
@@ -37,16 +38,6 @@ public class Engine {
 	public static Level level;
 
 	public static void main(String[] args) {
-
-		Thread.setDefaultUncaughtExceptionHandler(new Thread.
-				UncaughtExceptionHandler() {
-			public void uncaughtException(Thread t, Throwable e) {
-				System.out.println(t + " throws exception: " + e);
-				Display.destroy();
-				System.out.println("like wtf");
-				System.exit(1);
-			}
-		});
 
 		start();
 	}

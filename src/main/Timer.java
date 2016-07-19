@@ -27,11 +27,19 @@ public class Timer {
 
 		int delta = (int) (System.nanoTime() - lastTick);
 
+		delta = (int) ((float) NANOS_PER_SECOND / frequency) - delta;
+		if (delta < 0)
+			delta = 0;
+
 		try {
-			Thread.sleep(delta / NANOS_PER_MILLI, delta % NANOS_PER_MILLI);
+			Thread.sleep(delta / NANOS_PER_MILLI);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+
+		long endTime = lastTick + (long) (NANOS_PER_SECOND / frequency);
+		while (System.nanoTime() <= endTime)
+			;
 	}
 
 	public static float nanosToSeconds(long nanos) {
