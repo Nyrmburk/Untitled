@@ -1,7 +1,7 @@
 package activity;
 
 import draftform.*;
-import entity.Camera;
+import graphics.Camera;
 import entity.MaterialEntity;
 import game.Material;
 import game.PlayerController;
@@ -19,7 +19,6 @@ import main.Line;
 import matrix.*;
 import matrix.Vec2;
 import physics.*;
-import physics.Polygon;
 import tools.*;
 import tools.Toolkit;
 

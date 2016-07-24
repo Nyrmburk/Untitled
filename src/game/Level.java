@@ -1,6 +1,6 @@
 package game;
 
-import entity.Camera;
+import graphics.Camera;
 import entity.Entity;
 import entity.MaterialEntity;
 import graphics.RenderContext;

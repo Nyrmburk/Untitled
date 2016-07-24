@@ -83,6 +83,17 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 	@Override
 	public void start() {
 
+		// check for graphics errors
+		GLErrorHelper.checkError();
+
+		// handle resizing the window
+		if (Display.wasResized()) {
+
+			Rectangle viewport = new Rectangle();
+			viewport.setSize(Display.getWidth(), Display.getHeight());
+			setViewport(viewport);
+		}
+
 		// Clear the screen and depth buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
@@ -93,7 +104,7 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 //		System.out.println(getCurrentMatrix().toString());
 
 		glMatrixMode(GL_PROJECTION);
-		glLoadMatrix(toFloatBuffer(renderContext.getCamera().getProjection().m));
+		glLoadMatrix(toFloatBuffer(renderContext.getCamera().getProjection(getViewport().getSize()).m));
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadMatrix(toFloatBuffer(renderContext.getCamera().getTransform().m));
@@ -202,6 +213,7 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 	public void setViewport(Rectangle viewport) {
 
 		this.viewport = viewport;
+		glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
 	}
 
 	@Override
@@ -219,7 +231,6 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 	@Override
 	public void createWindow(Rectangle viewport) {
 
-		setViewport(viewport);
 		frmMain = new JFrame();
 		display = new Canvas();
 		display.setBackground(Color.BLACK);
@@ -254,6 +265,7 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 		}
 
 		init();
+		setViewport(viewport);
 	}
 
 	private void drawString(int x, int y, GraphicsFont font, String text) {

@@ -2,12 +2,10 @@ package main;
 
 import activity.MainMenuActivity;
 import graphics.*;
-import graphics.opengl.GLErrorHelper;
 import graphics.opengl.ShaderProgram;
 import graphics.opengl.SimpleOpenGL3_0RenderEngine;
 import input.*;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -16,7 +14,6 @@ import javax.swing.*;
 
 import input.InputContext;
 import matrix.Vec2;
-import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 
 import activity.Activity;
@@ -68,24 +65,6 @@ public class Engine {
 				renderEngine.render(renderContext);
 
 			renderUI();
-
-			// check for graphics errors
-			GLErrorHelper.checkError();
-
-			// handle resizing the window
-			if (Display.wasResized()) {
-
-				Rectangle viewport = new Rectangle();
-				Settings.window = renderEngine.getWindow();
-				viewport.setSize(renderEngine.getWindow().getSize());
-				renderEngine.setViewport(viewport);
-
-				Activity activity = Activity.currentActivity();
-				if (activity != null)
-					activity.getView().revalidate();
-
-//				canvas.setBounds(new Rectangle(0, 0, renderEngine.getWidth(), renderEngine.getHeight()));
-			}
 
 			// update the window with the now rendered image
 			Display.update();

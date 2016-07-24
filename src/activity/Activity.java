@@ -3,11 +3,7 @@ package activity;
 import java.awt.*;
 import java.util.Stack;
 
-import entity.Camera;
-import graphics.InstanceAttributes;
-import graphics.ModelGroup;
-import graphics.ModelLoader;
-import graphics.RenderContext;
+import graphics.*;
 import graphics.modelconverter.GUIConverter;
 import graphics.modelconverter.ModelConverter;
 import gui.*;
@@ -114,7 +110,7 @@ public abstract class Activity {
 			Mat4 projection = Projection.ortho(
 					0, activity.getView().getWidth(),
 					activity.getView().getHeight(), 0, -1, 1);
-			activity.setRenderContext(new RenderContext(new Camera(projection)));
+			activity.setRenderContext(new RenderContext(new GUICamera()));
 		}
 
 		activity.rebuildModel();

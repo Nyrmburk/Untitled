@@ -1,6 +1,6 @@
 package matrix;
 
-import entity.Camera;
+import graphics.Camera;
 
 import java.awt.*;
 
@@ -49,7 +49,7 @@ public class Projection {
 
 	public static Vec3[] project(Camera camera, Rectangle viewport, Vec3... points) {
 
-		Mat4 A = camera.getProjection().multiply(camera.getTransform());
+		Mat4 A = camera.getProjection(viewport.getSize()).multiply(camera.getTransform());
 
 		Vec3[] projections = new Vec3[points.length];
 
@@ -72,7 +72,7 @@ public class Projection {
 	public static Ray3[] unproject(Camera camera, Rectangle viewport, Vec2... points) {
 
 		// calculate inverse matrix
-		Mat4 A = camera.getProjection().multiply(camera.getTransform()).inverse();
+		Mat4 A = camera.getProjection(viewport.getSize()).multiply(camera.getTransform()).inverse();
 		if (A == null)
 			return null;
 

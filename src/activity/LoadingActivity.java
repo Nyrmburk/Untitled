@@ -1,16 +1,16 @@
 package activity;
 
-import entity.Camera;
+import graphics.Camera;
 import entity.Entity;
 import entity.MaterialEntity;
 import game.*;
 import graphics.ModelLoader;
+import graphics.PerspectiveCamera;
 import gui.*;
 import main.Engine;
 import main.ResourceManager;
 import matrix.*;
 import physics.*;
-import physics.Polygon;
 
 import java.awt.*;
 import java.io.IOException;
@@ -78,7 +78,7 @@ public class LoadingActivity extends Activity {
 			Rectangle viewport = Engine.renderEngine.getViewport();
 			float aspect = (float) (viewport.getWidth() / viewport.getHeight());
 			Mat4 projection = Projection.perspective(60, aspect, 0.1f, 1000f);
-			Engine.level = new Level(new Camera(projection){{
+			Engine.level = new Level(new PerspectiveCamera(){{
 				Transform.setPosition(getTransform(), new Vec3(0, 0, -10));
 			}});
 			try {
