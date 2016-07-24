@@ -1,31 +1,25 @@
 package main;
 
+import activity.Activity;
 import activity.MainMenuActivity;
-import graphics.*;
+import game.Level;
+import graphics.RenderContext;
+import graphics.RenderEngine;
 import graphics.opengl.ShaderProgram;
 import graphics.opengl.SimpleOpenGL3_0RenderEngine;
 import input.*;
+import matrix.Vec2;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-import javax.swing.*;
-
-import input.InputContext;
-import matrix.Vec2;
-import org.lwjgl.opengl.Display;
-
-import activity.Activity;
-import game.Level;
-import org.lwjgl.opengl.GL11;
-
 public class Engine {
 
 	private static Timer timer = new Timer();
-
-	/** FPS cap **/
-	public static int setFPS = 70;
 
 	/** Whether or not the application is closing **/
 	public static boolean isClosing = false;
@@ -70,7 +64,7 @@ public class Engine {
 			Display.update();
 
 			// enact the fps cap
-			timer.sync(setFPS);
+			timer.sync(renderEngine.getCurrentDisplay().getRefreshRate());
 		}
 
 		close();

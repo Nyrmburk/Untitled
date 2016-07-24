@@ -25,6 +25,9 @@ public class Timer {
 
 	public void sync(float frequency) {
 
+		if (frequency == 0)
+			return;
+
 		int delta = (int) (System.nanoTime() - lastTick);
 
 		delta = (int) ((float) NANOS_PER_SECOND / frequency) - delta;
@@ -38,7 +41,7 @@ public class Timer {
 		}
 
 		long endTime = lastTick + (long) (NANOS_PER_SECOND / frequency);
-		while (System.nanoTime() <= endTime)
+		while (System.nanoTime() < endTime)
 			;
 	}
 

@@ -19,6 +19,7 @@ import main.Line;
 import matrix.*;
 import matrix.Vec2;
 import physics.*;
+import physics.Polygon;
 import tools.*;
 import tools.Toolkit;
 
@@ -214,6 +215,13 @@ public class CreateActivity extends Activity {
 
 		Vec2[] points = new Vec2[pointsList.size()];
 		pointsList.toArray(points);
+		if (!Polygon.isWindingCCW(points))
+			Polygon.reverseWinding(points);
+		if (Polygon.selfIntersects(points)) {
+
+			System.out.println("polygon is self-intersecting");
+			return;
+		}
 
 		MaterialEntity newEntity = new MaterialEntity();
 		newEntity.setLevel(Engine.level);
