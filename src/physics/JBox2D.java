@@ -4,9 +4,11 @@ import matrix.Mat4;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Rot;
+import org.jbox2d.common.Settings;
 import org.jbox2d.common.Transform;
 import org.jbox2d.common.Vec2;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -16,7 +18,10 @@ public class JBox2D {
 
 	public static Shape[] shapeFromPolygon(matrix.Vec2[] polygon) {
 
-		List<matrix.Vec2[]> polys = Polygon.approximateDecomposition(polygon);
+		List<matrix.Vec2[]> polys = new LinkedList<>();
+
+		for (matrix.Vec2[] poly : Polygon.approximateDecomposition(polygon))
+			polys.addAll(Polygon.minimize(poly, Settings.maxPolygonVertices));
 
 		Shape[] shapes = new Shape[polys.size()];
 		for (int i = 0; i < polys.size(); i++) {

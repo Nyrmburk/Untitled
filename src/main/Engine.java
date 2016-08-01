@@ -12,6 +12,7 @@ import input.*;
 import matrix.Vec2;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import physics.Polygon;
 
 import javax.swing.*;
 import java.io.File;
@@ -182,9 +183,10 @@ public class Engine {
 			new Vec2(1, 5),
 			new Vec2(1, 0),
 		};
-		physics.Polygon.isWindingCCW(winding);
-		physics.Polygon.reverseWinding(winding);
-		physics.Polygon.isWindingCCW(winding);
+		Polygon.minimize(winding, 3);
+		Polygon.isWindingCCW(winding);
+		Polygon.reverseWinding(winding);
+		Polygon.isWindingCCW(winding);
 
 		//temporary
 		Vec2[] poly = {
@@ -201,8 +203,8 @@ public class Engine {
 				new Vec2(4.3510737f, -0.64659387f),
 				new Vec2(3.8732522f, 3.5434983f),
 		};
-		physics.Polygon.convexHull(poly);
-		physics.Polygon.approximateDecomposition(poly);
+		Polygon.convexHull(poly);
+		Polygon.approximateDecomposition(poly);
 
 		//building .ini for keymap
 		//temporary

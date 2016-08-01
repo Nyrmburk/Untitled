@@ -72,7 +72,7 @@ public class LoadingActivity extends Activity {
 
 	@Override
 	public void onUpdate(float delta) {
-		// TODO Auto-generated method stub
+
 		percentComplete += 100 * delta / waitTime;
 		if (percentComplete > 100) {
 

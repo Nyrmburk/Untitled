@@ -2,6 +2,8 @@ package physics;
 
 import matrix.Vec2;
 
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 import java.util.*;
 
 /**
@@ -197,6 +199,28 @@ public class Polygon {
 			vertices[i] = vertices[vertices.length - i - 1];
 			vertices[vertices.length - i - 1] = temp;
 		}
+	}
+
+	public static List<Vec2[]> minimize(Vec2[] vertices, int maxSize) {
+
+		List<Vec2[]> minimized = new LinkedList<>();
+		JumpTable jumpTable = new JumpTable(vertices.length);
+
+		int sizeLeft = vertices.length;
+
+		while (sizeLeft > 2) {
+
+			int currentIndex = jumpTable.peek();
+			Vec2[] poly = new Vec2[Math.min(maxSize, sizeLeft)];
+			for (int j = 0; j < poly.length; j++)
+				poly[j] = vertices[jumpTable.next()];
+			minimized.add(poly);
+			jumpTable.setIndex(currentIndex);
+			jumpTable.addJump(maxSize - 2);
+			sizeLeft -= maxSize - 2;
+		}
+
+		return minimized;
 	}
 
 	private static class JumpTable {
