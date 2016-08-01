@@ -5,12 +5,13 @@ import graphics.ModelLoader;
 import matrix.Mat4;
 import matrix.Transform;
 import matrix.Vec3;
-import physics.PhysicsObject;
-import physics.PhysicsObjectDef;
 import game.Level;
+import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyDef;
+import physics.JBox2D;
 
 /**
- * The binding glue of the different observable components. It binds orientation to the physics and graphics.
+ * The binding glue of the different observable componentLists. It binds orientation to the physics and graphics.
  * @author Christopher Dombroski
  *
  */
@@ -21,8 +22,8 @@ public class Entity {
 	private ModelLoader model;
 
 	private InstanceAttributes instanceAttributes = new InstanceAttributes();
-	private PhysicsObject physicsObject;
-	private PhysicsObjectDef physicsObjectDef;
+	private Body physicsObject;
+	private BodyDef physicsObjectDef;
 	private Level level;
 
 	public Level getLevel() {
@@ -41,7 +42,7 @@ public class Entity {
 //				this.level.getRenderContext().removeInstance(model);
 
 			if (physicsObject != null)
-				this.level.physicsEngine.removePhysicsObject(physicsObject);
+				this.level.physicsEngine.destroyBody(physicsObject);
 		}
 
 		this.level = level;
@@ -60,7 +61,7 @@ public class Entity {
 			Mat4 transform = instanceAttributes.getTransform();
 
 			Vec3 pos = Transform.getPosition(transform);
-			Transform.setPosition(transform, getPhysicsObject().getPosition());
+			Transform.setPosition(transform, JBox2D.convert(getPhysicsObject().getPosition()).asVec3());
 
 			float rotation = getPhysicsObject().getAngle();
 			Transform.rotate(transform, new Vec3(0, 0, 1), rotation);
@@ -86,7 +87,7 @@ public class Entity {
 
 		// inform physics object of change
 		if (physicsObject != null) {
-			physicsObject.setPosition(Transform.getPosition(transform));
+			physicsObject.setTransform(JBox2D.convert(Transform.getPosition(transform)), physicsObject.getAngle());
 		}
 	}
 
@@ -106,17 +107,17 @@ public class Entity {
 		this.model = model;
 	}
 
-	public PhysicsObject getPhysicsObject() {
+	public Body getPhysicsObject() {
 		return physicsObject;
 	}
 
-	public PhysicsObject setPhysicsObject(PhysicsObjectDef physicsObjectDef) {
+	public Body setPhysicsObject(BodyDef physicsObjectDef) {
 
 		if (level != null) {
 			if (this.physicsObject != null)
-				level.physicsEngine.removePhysicsObject(this.physicsObject);
+				level.physicsEngine.destroyBody(this.physicsObject);
 
-			this.physicsObject = level.physicsEngine.createPhysicsObject(physicsObjectDef);
+			this.physicsObject = level.physicsEngine.createBody(physicsObjectDef);
 		}
 
 		this.physicsObjectDef = physicsObjectDef;

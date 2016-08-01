@@ -5,7 +5,9 @@ import input.Button;
 import input.Input;
 import input.InputContext;
 import matrix.Vec3;
-import physics.PhysicsObject;
+import org.jbox2d.dynamics.Body;
+import physics.JBox2D;
+import static physics.JBox2D.*;
 
 /**
  * Created by Nyrmburk on 6/16/2016.
@@ -26,8 +28,8 @@ public class PlatformerPlayerController extends PlayerController {
 		@Override
 		public void onPress() {
 
-			PhysicsObject physObj = getPawn().getPhysicsObject();
-			physObj.applyLinearImpulse(new Vec3(0, 4.905f * physObj.getMass(), 0), physObj.getPosition());
+			Body physObj = getPawn().getPhysicsObject();
+			physObj.applyLinearImpulse(convert(new Vec3(0, 4.905f * physObj.getMass(), 0)), physObj.getPosition(), true);
 		}
 
 		@Override
@@ -37,8 +39,8 @@ public class PlatformerPlayerController extends PlayerController {
 		@Override
 		public void onHold(float delta) {
 
-			PhysicsObject physObj = getPawn().getPhysicsObject();
-			physObj.applyLinearImpulse(new Vec3(0, 0.04905f, 0), physObj.getPosition());
+			Body physObj = getPawn().getPhysicsObject();
+			physObj.applyLinearImpulse(convert(new Vec3(0, 0.04905f, 0)), physObj.getPosition(), true);
 		}
 	};
 
@@ -60,10 +62,10 @@ public class PlatformerPlayerController extends PlayerController {
 		@Override
 		public void onHold(float delta) {
 
-			PhysicsObject physObj = getPawn().getPhysicsObject();
+			Body physObj = getPawn().getPhysicsObject();
 			float velChange = Math.max(-speed - physObj.getLinearVelocity().x, -acceleration);
 			float impulse = velChange * getPawn().getPhysicsObject().getMass();
-			physObj.applyLinearImpulse(new Vec3(impulse, 0, 0), physObj.getPosition());
+			physObj.applyLinearImpulse(convert(new Vec3(impulse, 0, 0)), physObj.getPosition(), true);
 		}
 	};
 
@@ -85,10 +87,10 @@ public class PlatformerPlayerController extends PlayerController {
 		@Override
 		public void onHold(float delta) {
 
-			PhysicsObject physObj = getPawn().getPhysicsObject();
+			Body physObj = getPawn().getPhysicsObject();
 			float velChange = Math.min(speed - physObj.getLinearVelocity().x, acceleration);
 			float impulse = velChange * getPawn().getPhysicsObject().getMass();
-			physObj.applyLinearImpulse(new Vec3(impulse, 0, 0), physObj.getPosition());
+			physObj.applyLinearImpulse(convert(new Vec3(impulse, 0, 0)), physObj.getPosition(), true);
 		}
 	};
 

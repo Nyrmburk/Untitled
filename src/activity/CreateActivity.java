@@ -18,6 +18,10 @@ import main.Engine;
 import main.Line;
 import matrix.*;
 import matrix.Vec2;
+import org.jbox2d.collision.shapes.*;
+import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyDef;
+import org.jbox2d.dynamics.BodyType;
 import physics.*;
 import physics.Polygon;
 import tools.*;
@@ -26,6 +30,9 @@ import tools.Toolkit;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+
+import static physics.JBox2D.convert;
+import static physics.JBox2D.shapeFromPolygon;
 
 public class CreateActivity extends Activity {
 
@@ -40,7 +47,7 @@ public class CreateActivity extends Activity {
 	@Override
 	protected void onCreate() {
 
-		toolkit.setSnapRadius(0.5f);
+		toolkit.setSnapRadius(0.15f);
 		toolkit.setSnapToPoints(true);
 
 		View view = new View(Engine.renderEngine);
@@ -124,6 +131,24 @@ public class CreateActivity extends Activity {
 		});
 		panel.addChild(vertex, 0);
 
+		Button clear = new Button();
+		clear.setText("Clear");
+		clear.addActionListener(new PointerListener() {
+			@Override
+			public void actionPerformed() {
+				if (this.getCurrentState() == State.CLICK) {
+					System.out.println("Clearing drawing");
+
+					toolkit.clearSelection();
+					toolkit.currentTool.reset();
+					draftform.getCurves().clear();
+					draftform.getVerts().clear();
+					drawDraftform();
+				}
+			}
+		});
+		panel.addChild(clear, 0);
+
 		Button commit = new Button();
 		commit.setText("Commit");
 		commit.addActionListener(new PointerListener() {
@@ -181,8 +206,8 @@ public class CreateActivity extends Activity {
 
 		for (PlayerController player : Engine.level.players) {
 
-			avgPosition = avgPosition.add(player.getPawn().getPhysicsObject().getPosition());
-			avgVelocity = avgVelocity.add(player.getPawn().getPhysicsObject().getLinearVelocity());
+			avgPosition = avgPosition.add(convert(player.getPawn().getPhysicsObject().getPosition()).asVec3());
+			avgVelocity = avgVelocity.add(convert(player.getPawn().getPhysicsObject().getLinearVelocity()).asVec3());
 		}
 
 		avgPosition.divide(Engine.level.players.size());
@@ -229,13 +254,11 @@ public class CreateActivity extends Activity {
 		material.setModelGenerator(new SimpleModelGenerator());
 		newEntity.setMaterial(material);
 		newEntity.setShape(points);
-		PhysicsObjectDef objectDef = newEntity.getLevel().physicsEngine.newPhysicsObjectDef(
-				PhysicsObject.Type.DYNAMIC);
-		PhysicsObject object = newEntity.setPhysicsObject(objectDef);
-		Body body = newEntity.getLevel().physicsEngine.newBody();
-		body.setDensity(0.1f);
-		body.setShape(Body.ShapeType.COMPLEX_POLYGON, points);
-		object.createBody(body);
+		BodyDef objectDef = new BodyDef();
+		objectDef.setType(BodyType.DYNAMIC);
+		Body object = newEntity.setPhysicsObject(objectDef);
+		for (org.jbox2d.collision.shapes.Shape shape : shapeFromPolygon(points))
+			object.createFixture(shape, 0.1f);
 
 		draftform.getCurves().clear();
 		draftform.getVerts().clear();

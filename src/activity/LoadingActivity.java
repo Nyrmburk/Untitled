@@ -1,6 +1,5 @@
 package activity;
 
-import graphics.Camera;
 import entity.Entity;
 import entity.MaterialEntity;
 import game.*;
@@ -10,7 +9,12 @@ import gui.*;
 import main.Engine;
 import main.ResourceManager;
 import matrix.*;
-import physics.*;
+import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyDef;
+import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.FixtureDef;
+import static physics.JBox2D.*;
 
 import java.awt.*;
 import java.io.IOException;
@@ -96,16 +100,19 @@ public class LoadingActivity extends Activity {
 					new Vec2(1, -1),
 					new Vec2(1, 1),
 					new Vec2(-1, 1)};
-			PhysicsObjectDef ObjectDef = entity.getLevel().physicsEngine.newPhysicsObjectDef(
-					PhysicsObject.Type.DYNAMIC);
-			Body body = entity.getLevel().physicsEngine.newBody();
-			body.setFriction(0.5f);
-			body.setRestitution(0.15f);
-			body.setDensity(1);
-			body.setShape(Body.ShapeType.COMPLEX_POLYGON, verts);
-			PhysicsObject object = entity.setPhysicsObject(ObjectDef);
-			object.createBody(body);
 			entity.setShape(verts);
+			BodyDef objectDef = new BodyDef();
+			objectDef.setType(BodyType.DYNAMIC);
+			Body body = entity.setPhysicsObject(objectDef);
+
+			for (Shape shape : shapeFromPolygon(verts)) {
+				FixtureDef fixture = new FixtureDef();
+				fixture.setFriction(0.5f);
+				fixture.setRestitution(0.15f);
+				fixture.setDensity(1);
+				fixture.setShape(shape);
+				body.createFixture(fixture);
+			}
 
 			Entity player = new Entity();
 			PlayerController controller = new PlatformerPlayerController();
@@ -117,12 +124,11 @@ public class LoadingActivity extends Activity {
 					new Vec2(0.35f, 0),
 					new Vec2(0.35f, 1.8f),
 					new Vec2(-0.35f, 1.8f)};
-			PhysicsObjectDef objectDef = player.getLevel().physicsEngine.newPhysicsObjectDef(
-					PhysicsObject.Type.DYNAMIC);
-			PhysicsObject playerObject = player.setPhysicsObject(objectDef);
-			Body playerBody = player.getLevel().physicsEngine.newBody();
-			playerBody.setShape(Body.ShapeType.COMPLEX_POLYGON, playerVertices);
-			playerObject.createBody(playerBody);
+			objectDef = new BodyDef();
+			objectDef.setType(BodyType.DYNAMIC);
+			Body playerObject = player.setPhysicsObject(objectDef);
+			for (Shape shape : shapeFromPolygon(playerVertices))
+				playerObject.createFixture(shape, 0);
 			Mat4 transform = Mat4.identity();
 			Transform.setPosition(transform, new Vec3(-3, 0, 0));
 			player.setTransform(transform);

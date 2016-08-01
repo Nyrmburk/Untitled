@@ -2,6 +2,7 @@ package main;
 
 import activity.Activity;
 import activity.MainMenuActivity;
+import entity.Entity;
 import game.Level;
 import graphics.RenderContext;
 import graphics.RenderEngine;

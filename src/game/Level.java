@@ -9,8 +9,9 @@ import matrix.Mat4;
 import matrix.Transform;
 import matrix.Vec2;
 import matrix.Vec3;
-import physics.*;
-import physics.JBox2D.JBox2DPhysicsEngine;
+import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.dynamics.*;
+import physics.JBox2D;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -22,8 +23,7 @@ import java.util.List;
 //
 public class Level extends Resource {
 	
-	public PhysicsEngine physicsEngine;
-	private Camera camera;
+	public World physicsEngine;
 	private RenderContext renderContext;
 	private List<Entity> entities = new ArrayList<Entity>();
 	public List<PlayerController> players = new ArrayList<>();
@@ -35,14 +35,13 @@ public class Level extends Resource {
 	
 	public Level(Camera camera) {
 		
-		physicsEngine = new JBox2DPhysicsEngine(new float[]{0, -9.81f});
-		this.setCamera(camera);
+		physicsEngine = new World(JBox2D.convert(new Vec2(0, -9.81f)));
 		renderContext = new RenderContext(camera);
 	}
 
 	public void update(float delta) {
 
-		physicsEngine.update(delta);
+		physicsEngine.step(delta, 8, 3);
 
 		for (Entity entity : entities) {
 
@@ -89,22 +88,14 @@ public class Level extends Resource {
 				new Vec2(100, 1)};
 		floor.setMaterial(material);
 		floor.setShape(floorVertices);
-		PhysicsObjectDef objectDef = this.physicsEngine.newPhysicsObjectDef(PhysicsObject.Type.KINEMATIC);
-		PhysicsObject object = floor.setPhysicsObject(objectDef);
-		Body body = this.physicsEngine.newBody();
-		body.setShape(Body.ShapeType.COMPLEX_POLYGON, floorVertices);
-		body.setDensity(1);
-		object.createBody(body);
+
+		BodyDef objectDef = new BodyDef();
+		objectDef.setType(BodyType.KINEMATIC);
+		Body body = floor.setPhysicsObject(objectDef);
+		for (Shape shape : JBox2D.shapeFromPolygon(floorVertices))
+			body.createFixture(shape, 1);
 		Mat4 transform = Mat4.identity();
 		Transform.setPosition(transform, new Vec3(0, -5, 0));
 		floor.setTransform(transform);
-	}
-
-	public Camera getCamera() {
-		return camera;
-	}
-
-	public void setCamera(Camera camera) {
-		this.camera = camera;
 	}
 }

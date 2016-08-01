@@ -42,10 +42,20 @@ redesign model generator
 	buffer pool?
 	face trianglulation also has decomposition
 	
-Add way to select objects and move the around and shit
+Add way to select objects and move stuff around and shit
 	I have to change more of the physics interface
 	Needs a way to show/highlight selected objects
 		This is a very hard problem for me right now
+	I think I should remove my wrapping of jbox2d
+		there is a lot of stuff to wrap
+		it will be easier to mod and read documentation for an unmodifed system
+		it's not like multiple physics sims could interact anyway
+		the only difficult part is converting vec2s from the game to the type defined by jbox2d	
+			It's not even hard just annoying
+		make helper class for jbox2d
+			conversions
+			ease of use methods for common tasks like adding shapes (especially complex ones)
+		before removal, create entity component system
 		
 Add layers
 	Add filters to physics engine
