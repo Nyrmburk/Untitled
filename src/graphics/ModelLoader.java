@@ -99,7 +99,7 @@ public class ModelLoader extends Resource {
 
 	public void generateNormals() {
 
-		normals.setSize(indices.getSize(), 3);
+		normals.setSize(vertices.getSize(), 3);
 
 		for (int i = 0; i < indices.getSize(); i++) {
 

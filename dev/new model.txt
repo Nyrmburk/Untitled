@@ -1,0 +1,24 @@
+new model
+ModelBuffer?
+
+has single bytebuffer
+models are allocated space
+getting the individual model buffers is provided by getting a flipped slice of the requested buffer
+a model could be interleaved or appened
+	I'm not sure if it should be a property of the sub-models or global or what
+	it will probably become more clear once I define how putting data works
+setting data is done by filling the requested buffer
+	I can have interleaved buffers that get/set data at a stride
+	according to the lwjgl source, it gets the direct address.
+		this means that interleaved data has to be uploaded in a single swoop
+elegant.
+
+forgetting interleaving, the use of fdsahkfjdhsa is as follows
+
+have model
+model has main buffer
+when creating model, request number of elements and number of indices and what buffers to include
+create buffer to fit
+main buffer is wrapped with logic to determine updates made to buffer
+buffer changes can be queried
+when getting the individual buffers, a view is returned of the respective buffers
