@@ -1,0 +1,9 @@
+speed todo list
+
+refine object manipulation
+	get working selection
+	clean up test code
+	add rotation from mouse scroll? 
+		create control for zoom/scroll
+design shitty ui for joints
+add joints

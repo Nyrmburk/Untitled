@@ -1,0 +1,31 @@
+I need to redefine the physics engine interface
+
+::current problems::
+no snapshots
+	I don't think this is fixable without modifying the source
+	research later
+no multithreading
+	This definitey has to be implemented at the source
+	investigate later when overhauling engine
+	nvidia has a great article on parallel tree creation
+settings need to be implemented as a tree
+	ezpz. I just need to make an interface for the various engines
+	do later because it's not important
+no way to set multiple fixtures to body definition
+	major problem that can be fixed by the architecture overhaul
+	separate fixtures from objects
+	semi-solved
+		waiting on shapes
+no user data
+	super easy
+no way to set shape types
+	need to create a shape object
+	should I have one shape interface and a bunch of subclasses?
+	should I have one monolithic object?
+	monolithic is probably better since I can't force updates for the engine anyway
+not properly set up for trans-engine use
+	this is a tricky one
+	I would have to implement it similarly to my render engine
+	it is similar to creating a user
+remove array use for Vec2 or Vec3
+No world point query

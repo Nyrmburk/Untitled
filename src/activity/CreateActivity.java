@@ -18,10 +18,14 @@ import main.Engine;
 import main.Line;
 import matrix.*;
 import matrix.Vec2;
+import org.jbox2d.callbacks.QueryCallback;
+import org.jbox2d.callbacks.RayCastCallback;
+import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.shapes.*;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.Fixture;
 import physics.*;
 import physics.Polygon;
 import tools.*;
@@ -43,6 +47,10 @@ public class CreateActivity extends Activity {
 	private InstanceAttributes draftformInstance = new InstanceAttributes();
 	private Plane drawPlane = new Plane(0, 0, 0, 0, 0, 1);
 	private ModelLoader vertexModel = createVertexModel(0.1f);
+	private Body selectBody;
+	TextBox fps;
+	TextBox position;
+	TextBox hover;
 
 	@Override
 	protected void onCreate() {
@@ -72,8 +80,48 @@ public class CreateActivity extends Activity {
 					toolkit.modify(draftformPoint);
 				if (getCurrentState() == State.RELEASE) {
 					toolkit.end();
-					System.out.println(worldPoint);
-					System.out.println("new Vec2(" + pointer.x + ", " + pointer.y + "),");
+				}
+
+				position.setText(String.format("%8.2f, %8.2f", worldPoint.x, worldPoint.y));
+
+				org.jbox2d.common.Vec2 b2Point = new org.jbox2d.common.Vec2(worldPoint.x, worldPoint.y);
+				AABB aabb = new AABB(new org.jbox2d.common.Vec2(worldPoint.x-0.1f, worldPoint.y-0.1f), new org.jbox2d.common.Vec2(worldPoint.x+0.1f, worldPoint.y+0.1f));
+				hover.setText("nothing");
+				Engine.level.physicsEngine.queryAABB(new QueryCallback() {
+					@Override
+					public boolean reportFixture(Fixture fixture) {
+						if (fixture.testPoint(b2Point)) {
+							String name = fixture.getBody().toString();
+							hover.setText(name.substring(name.indexOf('@')));
+							return true;
+						}
+						return false;
+					}
+				}, aabb);
+
+				if (getCurrentState() == State.PRESS) {
+
+					Engine.level.physicsEngine.queryAABB(new QueryCallback() {
+						@Override
+						public boolean reportFixture(Fixture fixture) {
+							if (fixture.testPoint(b2Point)) {
+								selectBody = fixture.getBody();
+								return true;
+							}
+							return false;
+						}
+					}, aabb);
+				} else if (this.getCurrentState() == State.RELEASE) {
+
+					if (selectBody != null)
+						selectBody.setLinearVelocity(new org.jbox2d.common.Vec2(0, 0));
+					selectBody = null;
+				}
+
+				if (selectBody != null) {
+					float x = (worldPoint.x - selectBody.getWorldCenter().x) * 120;
+					float y = (worldPoint.y - selectBody.getWorldCenter().y) * 120;
+					selectBody.setLinearVelocity(new org.jbox2d.common.Vec2(x, y));
 				}
 
 				if (getCurrentState() != State.MOVE) drawDraftform();
@@ -91,6 +139,18 @@ public class CreateActivity extends Activity {
 				GUIProportionLayout.Constraint.BOTTOM, 1f,
 				view, GUIProportionLayout.Constraint.BOTTOM));
 		view.addChild(panel);
+
+		fps = new TextBox();
+		fps.setText("fps");
+		panel.addChild(fps, 0);
+
+		position = new TextBox();
+		position.setText("position");
+		panel.addChild(position, 0);
+
+		hover = new TextBox();
+		hover.setText("hover");
+		panel.addChild(hover, 0);
 
 		Button select = new Button();
 		select.setText("Select");
@@ -110,6 +170,7 @@ public class CreateActivity extends Activity {
 		pen.addActionListener(new PointerListener() {
 			@Override
 			public void actionPerformed() {
+
 				if (this.getCurrentState() == State.CLICK) {
 					toolkit.setTool(new PenTool());
 					System.out.println("Pen");
@@ -162,6 +223,19 @@ public class CreateActivity extends Activity {
 			}
 		});
 		panel.addChild(commit, 0);
+
+		Button back = new Button();
+		back.setText("Back");
+		back.addActionListener(new PointerListener() {
+
+			@Override
+			public void actionPerformed() {
+				if (getCurrentState() == State.CLICK)
+					Activity.stopCurrentActivity();
+			}
+		});
+		panel.addChild(back, 0);
+
 //		panel.setVisible(false);
 
 		setView(view);
@@ -196,7 +270,7 @@ public class CreateActivity extends Activity {
 	public void onUpdate(float delta) {
 
 		setVelocityCamera(new Vec3(0, 4, 10), 0);
-
+		fps.setText(String.format("%6.2f fps", 1f / delta));
 	}
 
 	private void setVelocityCamera(Vec3 cameraOffset, float magnitude) {

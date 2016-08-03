@@ -1,6 +1,7 @@
 package activity;
 
 import gui.*;
+import gui.Button;
 import gui.Panel;
 import input.Input;
 import input.InputInterface;
@@ -29,6 +30,18 @@ public class BindingActivity extends Activity {
 				view.addChild(actionName, 0);
 			}
 		}
+
+		Button back = new Button();
+		back.setText("Back");
+		back.addActionListener(new PointerListener() {
+
+			@Override
+			public void actionPerformed() {
+				if (getCurrentState() == State.CLICK)
+					Activity.stopCurrentActivity();
+			}
+		});
+		view.addChild(back, 0);
 
 		long time = System.nanoTime();
 		setView(view);

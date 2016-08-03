@@ -22,7 +22,7 @@ import java.io.IOException;
 public class LoadingActivity extends Activity {
 
 	private float percentComplete = 0;
-	private float waitTime = 0.5f;
+	private float waitTime = 0.0f;
 	String loadingMessage = "Loading... %d%%";
 	TextBox loadingText;
 
