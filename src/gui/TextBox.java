@@ -50,7 +50,9 @@ public class TextBox extends GUIElement {
 
 	@Override
 	protected void layout() {
+
 		if (doesWordwrap()) {
+
 			lines = formatLines(getText(), getFont().getFontMetrics(), getWidth());
 		} else {
 

@@ -9,6 +9,9 @@ import main.ResourceManager;
 
 public class MainMenuActivity extends Activity {
 
+	private boolean secret;
+	float hue;
+
 	@Override
 	protected void onCreate() {
 
@@ -42,6 +45,17 @@ public class MainMenuActivity extends Activity {
 		});
 		aligner.addChild(create, 0);
 
+		Button newCreate = new Button();
+		newCreate.setText("New Create");
+		newCreate.addActionListener(new PointerListener() {
+			@Override
+			public void actionPerformed() {
+				if (this.getCurrentState() == State.CLICK)
+					createActivity(new NewCreateActivity());
+			}
+		});
+		aligner.addChild(newCreate, 0);
+
 		Button options = new Button();
 		options.setText("Options");
 		options.addActionListener(new PointerListener() {
@@ -63,12 +77,19 @@ public class MainMenuActivity extends Activity {
 			}
 		});
 		aligner.addChild(quit, 0);
+
+		Button secret = new Button();
+		secret.setText("      ");
+		secret.addActionListener(new PointerListener() {
+			@Override
+			public void actionPerformed() {
+				if (getCurrentState() == State.CLICK)
+					yaySecret();
+			}
+		});
+		view.addChild(secret);
 		
 		setView(view);
-		
-//		RenderContext context = new RenderContext();
-//		context.addInstance(model, attributes);
-//		Engine.renderEngine.setContext(context);
 	}
 
 	@Override
@@ -76,7 +97,6 @@ public class MainMenuActivity extends Activity {
 		// TODO Auto-generated method stub
 		
 	}
-
 
 	@Override
 	protected void onResume() {
@@ -108,13 +128,21 @@ public class MainMenuActivity extends Activity {
 
 	@Override
 	public void onUpdate(float delta) {
-		// TODO Auto-generated method stub
 
+		if (secret) {
+			hue += delta;
+			getView().setBackgroundColor(Color.getHSBColor(hue, 1, 1));
+		}
 	}
 	
 	private void create() {
 		
 		System.out.println("opening the 'create' activity");
 		createActivity(new CreateActivity());
+	}
+
+	private void yaySecret() {
+
+		secret = !secret;
 	}
 }

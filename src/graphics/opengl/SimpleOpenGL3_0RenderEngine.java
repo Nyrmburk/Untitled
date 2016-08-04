@@ -10,6 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -38,6 +39,8 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 	private JFrame frmMain;
 	private Canvas display;
 	private Rectangle viewport;
+
+	List<ViewportChangedListener> viewportListeners = new LinkedList<>();
 
 	public void init() {
 
@@ -213,7 +216,16 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 	public void setViewport(Rectangle viewport) {
 
 		this.viewport = viewport;
+		for (ViewportChangedListener listener : viewportListeners)
+			listener.onActionPerformed();
 		glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+	}
+
+	@Override
+	public void addViewportChangedListener(ViewportChangedListener listener) {
+
+		listener.renderEngine = this;
+		viewportListeners.add(listener);
 	}
 
 	@Override

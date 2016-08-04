@@ -42,8 +42,12 @@ public class GUIConverter implements ModelConverter<GUIElement> {
 
 	private void elementConvert(List<ModelLoader> modelList, Map<GraphicsFont, List<Text.TextInstance>> text, GUIElement element) {
 
+		if (!element.isVisible())
+			return;
+
 		boxConvert(modelList, text, element.getBox());
 
+		//TODO remove once models are more recursive
 		if (element instanceof Container) {
 
 			for (GUIElement child : ((Container) element).getChildren())

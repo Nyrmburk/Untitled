@@ -21,6 +21,8 @@ public class Panel extends Container {
 		this.setPreferredSize(new Dimension(image.getWidth(), image.getHeight()));
 		
 		this.image = image;
+
+		invalidate();
 	}
 	
 	public Texture getImage() {

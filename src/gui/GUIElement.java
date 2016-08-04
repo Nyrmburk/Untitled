@@ -2,15 +2,24 @@ package gui;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 // TODO make the validity system work better and add documentation.
 public abstract class GUIElement {
+
+	private String name;
 
 	/**
 	 * Whether or not the element has changed a state that affect size or
 	 * position.
 	 */
 	protected boolean valid = false;
+
+	/**
+	 * Whether or not the element has changed visual appearance.
+	 */
+	protected boolean dirty = true;
 
 	/**
 	 * Whether or not the element is to be drawn.
@@ -56,7 +65,7 @@ public abstract class GUIElement {
 
 	private ContextBox box;
 
-	ArrayList<ActionListener> listeners;
+	private ArrayList<ActionListener> listeners;
 
 	/**
 	 * Initialize a new GUIElement with size [0,0] and position at [0,0].
@@ -69,6 +78,16 @@ public abstract class GUIElement {
 		height = 0;
 		insets = new Insets(0, 0, 0, 0);
 		listeners = new ArrayList<>();
+	}
+
+	public void setName(String name) {
+
+		this.name = name;
+	}
+
+	public String getName() {
+
+		return name;
 	}
 
 	public void addActionListener(ActionListener actionListener) {
@@ -93,8 +112,6 @@ public abstract class GUIElement {
 	 */
 	public void revalidate() {
 
-		invalidate();
-
 		Container root = parent;
 		if (parent == null) {
 
@@ -111,12 +128,13 @@ public abstract class GUIElement {
 
 			root.validate();
 		}
+
+		redraw();
 	}
 
 	protected void validate() {
 
 		layout();
-		box = createBox();
 		valid = true;
 	}
 
@@ -132,6 +150,7 @@ public abstract class GUIElement {
 	public void invalidate() {
 
 		valid = false;
+		setDirty();
 		
 		if (parent != null) {
 
@@ -142,12 +161,35 @@ public abstract class GUIElement {
 		}
 	}
 
-	/**
-	 * Return the name of the element.
-	 */
-	public String toString() {
+	public void setDirty() {
 
-		return "[" + x + ", " + y + ", " + width + ", " + height + "]";
+		dirty = true;
+	}
+
+	protected void redraw() {
+
+		redraw(new LinkedList<>());
+	}
+
+	protected void redraw(List<GUIElement> toDraw) {
+
+		if (dirty) {
+			dirty = false;
+			box = createBox();
+			toDraw.add(this);
+		}
+
+		if (!toDraw.isEmpty()) {
+			for (ActionListener listener : listeners) {
+
+				if (listener instanceof RedrawListener) {
+
+					RedrawListener redrawListener = (RedrawListener) listener;
+					redrawListener.setElements(toDraw);
+					listener.actionPerformed();
+				}
+			}
+		}
 	}
 	
 	public GUIElement getParent() {
@@ -156,11 +198,11 @@ public abstract class GUIElement {
 	}
 
 	/**
-	 * Recursively get the topmost element that contains the mouse cursor.
-	 * 
+	 * Recursively get the topmost element that contains the point.
+	 *
 	 * @return The topmost element
 	 */
-	public GUIElement getMouseOver(Point point) {
+	public GUIElement getPointOver(Point point) {
 
 		if (!isVisible())
 			return null;
@@ -171,7 +213,7 @@ public abstract class GUIElement {
 
 			for (GUIElement element : ((Container) this).children) {
 
-				GUIElement temp = element.getMouseOver(point);
+				GUIElement temp = element.getPointOver(point);
 				if (temp != null)
 					return temp;
 			}
@@ -337,11 +379,17 @@ public abstract class GUIElement {
 
 	public void setVisible(boolean visible) {
 
+		if (this.visible != visible)
+			setDirty();
+
 		this.visible = visible;
 	}
 
 
 	public void setBackgroundColor(Color backgroundColor) {
+
+		if (this.backgroundColor != backgroundColor)
+			setDirty();
 
 		this.backgroundColor = backgroundColor;
 	}
@@ -352,6 +400,9 @@ public abstract class GUIElement {
 	}
 
 	public void setForegroundColor(Color foregroundColor) {
+
+		if (this.foregroundColor != foregroundColor)
+			setDirty();
 
 		this.foregroundColor = foregroundColor;
 	}
@@ -368,5 +419,13 @@ public abstract class GUIElement {
 		if (box == null)
 			revalidate();
 		return box;
+	}
+
+	/**
+	 * Return the name of the element.
+	 */
+	public String toString() {
+
+		return getName() != null ? getName() : super.toString();
 	}
 }

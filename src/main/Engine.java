@@ -1,6 +1,7 @@
 package main;
 
 import activity.Activity;
+import activity.GUITestActivity;
 import activity.MainMenuActivity;
 import entity.Entity;
 import game.Level;
@@ -175,6 +176,8 @@ public class Engine {
 //		}
 //		new NinePatch(image);
 
+//		Activity.createActivity(new GUITestActivity());
+
 		//testing for convex hull and decomposition
 		Vec2[] winding = {
 			new Vec2(5, 0),
@@ -281,7 +284,8 @@ public class Engine {
 		}
 
 		// It might be possible to have inputs processed on it's own thread.
-		InputContext.getCurrentContext().update(delta);
+		if (InputContext.getCurrentContext() != null)
+			InputContext.getCurrentContext().update(delta);
 
 		if (level != null)
 			level.update(delta);

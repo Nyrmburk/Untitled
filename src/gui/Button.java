@@ -30,22 +30,27 @@ public class Button extends GUIElement {
 
 			@Override
 			public void actionPerformed() {
-				switch (getCurrentState()) {
+				Color color = Color.WHITE;
+				if (parent != null)
+					color = parent.getBackgroundColor();
+				if (color == null)
+					color = Color.WHITE;
 
+				switch (getCurrentState()) {
 					case ENTER:
-						setBackgroundColor(focusColor);
+						setBackgroundColor(color.darker());
 						currentColorIdentifier = FOCUS_COLOR;
 						break;
 					case EXIT:
-						setBackgroundColor(unfocusColor);
+						setBackgroundColor(null);
 						currentColorIdentifier = UNFOCUS_COLOR;
 						break;
 					case PRESS:
-						setBackgroundColor(focusColor);
-						currentColorIdentifier = FOCUS_COLOR;
+						setBackgroundColor(color.darker().darker());
+						currentColorIdentifier = SELECTED_COLOR;
 						break;
 					case RELEASE:
-						setBackgroundColor(focusColor);
+						setBackgroundColor(color.darker());
 						currentColorIdentifier = FOCUS_COLOR;
 						break;
 				}
@@ -94,6 +99,7 @@ public class Button extends GUIElement {
 
 	public void setFont(GraphicsFont font) {
 		textBox.setFont(font);
+		invalidate();
 	}
 
 	public GraphicsFont getFont() {

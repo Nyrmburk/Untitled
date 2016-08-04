@@ -21,11 +21,18 @@ import java.io.IOException;
 
 public class LoadingActivity extends Activity {
 
+	Level level;
+	
 	private float percentComplete = 0;
 	private float waitTime = 0.0f;
 	String loadingMessage = "Loading... %d%%";
 	TextBox loadingText;
 
+	public LoadingActivity(Level level) {
+		
+		this.level = level;
+	}
+	
 	@Override
 	protected void onCreate() {
 
@@ -79,21 +86,15 @@ public class LoadingActivity extends Activity {
 			percentComplete = 100;
 			Activity.stopCurrentActivity();
 
-			Rectangle viewport = Engine.renderEngine.getViewport();
-			float aspect = (float) (viewport.getWidth() / viewport.getHeight());
-			Mat4 projection = Projection.perspective(60, aspect, 0.1f, 1000f);
-			Engine.level = new Level(new PerspectiveCamera(){{
-				Transform.setPosition(getTransform(), new Vec3(0, 0, -10));
-			}});
 			try {
-				Engine.level.load(null);
+				level.load(null);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			Material material = new Material();
 			material.setModelGenerator(new SimpleModelGenerator());
 			MaterialEntity entity = new MaterialEntity();
-			entity.setLevel(Engine.level);
+			entity.setLevel(level);
 			entity.setMaterial(material);
 			Vec2[] verts = {
 					new Vec2(-1, -1),
@@ -117,8 +118,8 @@ public class LoadingActivity extends Activity {
 			Entity player = new Entity();
 			PlayerController controller = new PlatformerPlayerController();
 			controller.setPawn(player);
-			Engine.level.players.add(controller);
-			player.setLevel(Engine.level);
+			level.players.add(controller);
+			player.setLevel(level);
 			Vec2[] playerVertices = {
 					new Vec2(-0.35f, 0),
 					new Vec2(0.35f, 0),

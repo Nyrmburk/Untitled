@@ -70,7 +70,7 @@ public abstract class PointerListener extends ActionListener {
 			pointerLocation = new Point(x, y);
 
 			Activity currentActivity = Activity.currentActivity();
-			GUIElement element = currentActivity.getView().getMouseOver(pointerLocation);
+			GUIElement element = currentActivity.getView().getPointOver(pointerLocation);
 			previousListeners.clear();
 			previousListeners.addAll(activeListeners);
 			activeListeners.clear();

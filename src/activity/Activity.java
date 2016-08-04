@@ -1,13 +1,15 @@
 package activity;
 
 import java.awt.*;
-import java.util.Stack;
+import java.util.*;
+import java.util.List;
 
 import graphics.*;
 import graphics.modelconverter.GUIConverter;
 import graphics.modelconverter.ModelConverter;
 import gui.*;
-import java.util.List;
+
+import main.Engine;
 import matrix.Mat4;
 import matrix.Projection;
 
@@ -20,8 +22,10 @@ public abstract class Activity {
 
 	private RenderContext renderContext;
 	private ModelConverter<GUIElement> guiConverter = new GUIConverter();
+	private Map<GUIElement, List<ModelLoader>> modelMap = new TreeMap<>();
 	private InstanceAttributes guiModelAttributes = new InstanceAttributes();
 	private ModelGroup guiModels = new ModelGroup();
+
 
 	protected abstract void onCreate();
 	protected abstract void onStart();
@@ -51,14 +55,44 @@ public abstract class Activity {
 			// something odd is going on. somehow the view is updating without being invalid
 			// I'll look into it later but in the meantime I have to disable this check.
 //			if (rebuild)
-				currentActivity.rebuildModel();
+//				currentActivity.rebuildModel();
 		}
 	}
 
 	public void setView(View view) {
 
 		this.view = view;
-		view.revalidate();
+		view.addActionListener(new RedrawListener() {
+			@Override
+			public void actionPerformed() {
+
+				rebuildModel();
+
+				//TODO make the below code the actual code.
+				// It mostly works but the problem is with order.
+				// Once an element is updated, it is pushed to the top.
+
+//				for (GUIElement element : guiElements) {
+//
+//					List<ModelLoader> models = modelMap.get(element);
+//
+//					if (models != null) {
+//						for (ModelLoader model : models)
+//							renderContext.getModelGroup().removeInstance(model, guiModelAttributes);
+//					}
+//
+//					models = guiConverter.convert(element);
+//
+//					modelMap.put(element, models);
+//
+//					for (ModelLoader model : models)
+//						renderContext.getModelGroup().addInstance(model, guiModelAttributes);
+//				}
+
+
+			}
+		});
+//		view.revalidate();
 	}
 
 	public View getView() {
@@ -113,7 +147,7 @@ public abstract class Activity {
 			activity.setRenderContext(new RenderContext(new GUICamera()));
 		}
 
-		activity.rebuildModel();
+//		activity.rebuildModel();
 	}
 
 	public static void stopCurrentActivity() {
@@ -162,7 +196,8 @@ public abstract class Activity {
 
 	public void setSize(Dimension size) {
 
-		this.view.setBounds(0, 0, size.width, size.height);
+		view.setPreferredSize(size);
+		view.invalidate();
 	}
 
 	public ModelConverter<GUIElement> getGUIConverter() {
@@ -176,14 +211,13 @@ public abstract class Activity {
 	private void rebuildModel() {
 
 		// get the new model converter
-		ModelConverter<GUIElement> converter = getGUIConverter();
 
 		// clear the old models
 		getRenderContext().getModelGroup().removeModelGroup(guiModels);
 		guiModels.clear();
 
 		// get the fresh models
-		List<ModelLoader> models = converter.convert(getView());
+		List<ModelLoader> models = guiConverter.convert(getView());
 
 		// convert models into instances
 		for (ModelLoader model : models)
@@ -191,5 +225,14 @@ public abstract class Activity {
 
 		// add the new models to the RenderContext.
 		getRenderContext().getModelGroup().addModelGroup(guiModels);
+
+	}
+		{
+		Engine.renderEngine.addViewportChangedListener(new RenderEngine.ViewportChangedListener() {
+			@Override
+			public void onActionPerformed() {
+				setSize(renderEngine.getViewport().getSize());
+			}
+		});
 	}
 }

@@ -11,7 +11,7 @@ import java.util.List;
  * <p>
  * So, here is how it is going to work:
  * There are connectors. There are two different types (unless I can figure out how to conjoin them). Type one is fixed
- * distance and type 2 is percentage based. The connectors manipulate the edges of boxes in relation to other edges.
+ * distance and type 2 is percentage based. The connectors manipulate the edges of guiElements in relation to other edges.
  * Movement of one box affects the other. That is a tricky one; which box gets moved when laying out? The moved one
  * (im not totally sure) will be invalid? idk. Maybe hold the previous values so that when the layout is calculated the
  * ones to move will be equal? That might lead to some infinite loops. idk. Sleep on it.

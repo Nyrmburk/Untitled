@@ -1,15 +1,12 @@
 package activity;
 
 import draftform.*;
-import graphics.Camera;
+import game.Level;
+import graphics.*;
 import entity.MaterialEntity;
 import game.Material;
 import game.PlayerController;
 import game.SimpleModelGenerator;
-import graphics.InstanceAttributes;
-import graphics.ModelGroup;
-import graphics.ModelLoader;
-import graphics.RenderContext;
 import graphics.modelconverter.LineConverter;
 import gui.*;
 import gui.Button;
@@ -93,9 +90,9 @@ public class CreateActivity extends Activity {
 						if (fixture.testPoint(b2Point)) {
 							String name = fixture.getBody().toString();
 							hover.setText(name.substring(name.indexOf('@')));
-							return true;
+							return false;
 						}
-						return false;
+						return true;
 					}
 				}, aabb);
 
@@ -106,9 +103,9 @@ public class CreateActivity extends Activity {
 						public boolean reportFixture(Fixture fixture) {
 							if (fixture.testPoint(b2Point)) {
 								selectBody = fixture.getBody();
-								return true;
+								return false;
 							}
-							return false;
+							return true;
 						}
 					}, aabb);
 				} else if (this.getCurrentState() == State.RELEASE) {
@@ -240,7 +237,12 @@ public class CreateActivity extends Activity {
 
 		setView(view);
 
-		LoadingActivity loading = new LoadingActivity();
+		Camera cam = new PerspectiveCamera();
+		Transform.setPosition(cam.getTransform(), new Vec3(0, 0, -10));
+		Level level = new Level(cam);
+		Engine.level = level;
+
+		LoadingActivity loading = new LoadingActivity(level);
 		createActivity(loading);
 	}
 

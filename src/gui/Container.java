@@ -68,6 +68,15 @@ public abstract class Container extends GUIElement {
 		layoutManager.layout();
 	}
 
+	@Override
+	protected void redraw(List<GUIElement> toDraw) {
+
+		for (GUIElement child : children)
+				child.redraw(toDraw);
+
+		super.redraw(toDraw);
+	}
+
 	public void setlayout(GUILayoutManager manager) {
 
 		this.layoutManager = manager;
