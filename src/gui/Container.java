@@ -1,5 +1,7 @@
 package gui;
 
+import gui.layout.GUIFlowLayout;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;

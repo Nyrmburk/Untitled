@@ -176,8 +176,6 @@ public class Engine {
 //		}
 //		new NinePatch(image);
 
-//		Activity.createActivity(new GUITestActivity());
-
 		//testing for convex hull and decomposition
 		Vec2[] winding = {
 			new Vec2(5, 0),
@@ -232,6 +230,7 @@ public class Engine {
 		Binding.load(new File("res\\input\\ui.ini"));
 
 		//start the main menu activity
+//		Activity.createActivity(new GUITestActivity());
 		Activity.createActivity(new MainMenuActivity());
 	}
 

@@ -1,4 +1,8 @@
-package gui;
+package gui.layout;
+
+import gui.Container;
+import gui.GUIElement;
+import gui.GUILayoutManager;
 
 import java.awt.*;
 
@@ -18,6 +22,8 @@ public class GUIGridLayout extends GUILayoutManager {
 
     @Override
     public void layout() {
+
+        Container parent = getParent();
 
         int maxPrefWidth = 0;
         int maxPrefHeight = 0;
@@ -51,6 +57,6 @@ public class GUIGridLayout extends GUILayoutManager {
     @Override
     public Dimension getPreferredSize() {
         //make prefsize a multiple of rows/cols and prefsize of children
-        return parent.getSize();
+        return getParent().getSize();
     }
 }

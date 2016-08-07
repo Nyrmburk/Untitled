@@ -11,19 +11,19 @@ import graphics.modelconverter.LineConverter;
 import gui.*;
 import gui.Button;
 import gui.Panel;
+import gui.event.PointerListener;
+import gui.layout.GUIBoxLayout;
+import gui.layout.GUIProportionLayout;
 import main.Engine;
 import main.Line;
 import matrix.*;
 import matrix.Vec2;
 import org.jbox2d.callbacks.QueryCallback;
-import org.jbox2d.callbacks.RayCastCallback;
 import org.jbox2d.collision.AABB;
-import org.jbox2d.collision.shapes.*;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
-import physics.*;
 import physics.Polygon;
 import tools.*;
 import tools.Toolkit;
@@ -57,9 +57,9 @@ public class CreateActivity extends Activity {
 
 		View view = new View(Engine.renderEngine);
 		view.setlayout(new GUIProportionLayout());
-		view.addActionListener(new PointerListener() {
+		view.addPointerListener(new PointerListener() {
 			@Override
-			public void actionPerformed() {
+			public void actionPerformed(PointerEvent e) {
 
 				Point pointer = getPointerLocation();
 
@@ -71,11 +71,11 @@ public class CreateActivity extends Activity {
 				Vec3 worldPoint = ray.point(drawPlane.intersect(ray));
 				draftform.Vec2 draftformPoint = new draftform.Vec2(worldPoint.x, worldPoint.y);
 
-				if (getCurrentState() == State.PRESS)
+				if (e.state == State.PRESS)
 					toolkit.start(draftformPoint);
-				if (getCurrentState() == State.DRAG)
+				if (e.state == State.DRAG)
 					toolkit.modify(draftformPoint);
-				if (getCurrentState() == State.RELEASE) {
+				if (e.state == State.RELEASE) {
 					toolkit.end();
 				}
 
@@ -96,7 +96,7 @@ public class CreateActivity extends Activity {
 					}
 				}, aabb);
 
-				if (getCurrentState() == State.PRESS) {
+				if (e.state == State.PRESS) {
 
 					Engine.level.physicsEngine.queryAABB(new QueryCallback() {
 						@Override
@@ -108,7 +108,7 @@ public class CreateActivity extends Activity {
 							return true;
 						}
 					}, aabb);
-				} else if (this.getCurrentState() == State.RELEASE) {
+				} else if (e.state == State.RELEASE) {
 
 					if (selectBody != null)
 						selectBody.setLinearVelocity(new org.jbox2d.common.Vec2(0, 0));
@@ -121,7 +121,7 @@ public class CreateActivity extends Activity {
 					selectBody.setLinearVelocity(new org.jbox2d.common.Vec2(x, y));
 				}
 
-				if (getCurrentState() != State.MOVE) drawDraftform();
+				if (e.state != State.MOVE) drawDraftform();
 			}
 		});
 
@@ -151,10 +151,10 @@ public class CreateActivity extends Activity {
 
 		Button select = new Button();
 		select.setText("Select");
-		select.addActionListener(new PointerListener() {
+		select.addPointerListener(new PointerListener() {
 			@Override
-			public void actionPerformed() {
-				if (this.getCurrentState() == State.CLICK) {
+			public void actionPerformed(PointerEvent e) {
+				if (e.state == State.CLICK) {
 					toolkit.setTool(new SelectTool());
 					System.out.println("Select");
 				}
@@ -164,11 +164,11 @@ public class CreateActivity extends Activity {
 
 		Button pen = new Button();
 		pen.setText("Pen");
-		pen.addActionListener(new PointerListener() {
+		pen.addPointerListener(new PointerListener() {
 			@Override
-			public void actionPerformed() {
+			public void actionPerformed(PointerEvent e) {
 
-				if (this.getCurrentState() == State.CLICK) {
+				if (e.state == State.CLICK) {
 					toolkit.setTool(new PenTool());
 					System.out.println("Pen");
 				}
@@ -178,10 +178,10 @@ public class CreateActivity extends Activity {
 
 		Button vertex = new Button();
 		vertex.setText("Vertex");
-		vertex.addActionListener(new PointerListener() {
+		vertex.addPointerListener(new PointerListener() {
 			@Override
-			public void actionPerformed() {
-				if (this.getCurrentState() == State.CLICK) {
+			public void actionPerformed(PointerEvent e) {
+				if (e.state == State.CLICK) {
 					toolkit.setTool(new VertexTool());
 					System.out.println("Vertex");
 				}
@@ -191,10 +191,10 @@ public class CreateActivity extends Activity {
 
 		Button clear = new Button();
 		clear.setText("Clear");
-		clear.addActionListener(new PointerListener() {
+		clear.addPointerListener(new PointerListener() {
 			@Override
-			public void actionPerformed() {
-				if (this.getCurrentState() == State.CLICK) {
+			public void actionPerformed(PointerEvent e) {
+				if (e.state == State.CLICK) {
 					System.out.println("Clearing drawing");
 
 					toolkit.clearSelection();
@@ -209,10 +209,10 @@ public class CreateActivity extends Activity {
 
 		Button commit = new Button();
 		commit.setText("Commit");
-		commit.addActionListener(new PointerListener() {
+		commit.addPointerListener(new PointerListener() {
 			@Override
-			public void actionPerformed() {
-				if (this.getCurrentState() == State.CLICK) {
+			public void actionPerformed(PointerEvent e) {
+				if (e.state == State.CLICK) {
 					System.out.println("Committing drawn shape to world");
 
 					commitDraftform();
@@ -223,11 +223,11 @@ public class CreateActivity extends Activity {
 
 		Button back = new Button();
 		back.setText("Back");
-		back.addActionListener(new PointerListener() {
+		back.addPointerListener(new PointerListener() {
 
 			@Override
-			public void actionPerformed() {
-				if (getCurrentState() == State.CLICK)
+			public void actionPerformed(PointerEvent e) {
+				if (e.state == State.CLICK)
 					Activity.stopCurrentActivity();
 			}
 		});

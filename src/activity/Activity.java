@@ -9,6 +9,8 @@ import graphics.modelconverter.GUIConverter;
 import graphics.modelconverter.ModelConverter;
 import gui.*;
 
+import gui.event.Event;
+import gui.event.RedrawListener;
 import main.Engine;
 import matrix.Mat4;
 import matrix.Projection;
@@ -62,9 +64,9 @@ public abstract class Activity {
 	public void setView(View view) {
 
 		this.view = view;
-		view.addActionListener(new RedrawListener() {
+		view.addRedrawListener(new RedrawListener() {
 			@Override
-			public void actionPerformed() {
+			public void actionPerformed(Event event) {
 
 				rebuildModel();
 

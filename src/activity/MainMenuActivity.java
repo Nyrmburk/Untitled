@@ -2,8 +2,11 @@ package activity;
 
 import java.awt.Color;
 
+import activity.create.NewCreateActivity;
 import graphics.Texture;
 import gui.*;
+import gui.event.PointerListener;
+import gui.layout.GUIBoxLayout;
 import main.Engine;
 import main.ResourceManager;
 
@@ -36,10 +39,10 @@ public class MainMenuActivity extends Activity {
 
 		Button create = new Button();
 		create.setText("Create");
-		create.addActionListener(new PointerListener() {
+		create.addPointerListener(new PointerListener() {
 			@Override
-			public void actionPerformed() {
-				if (this.getCurrentState() == State.CLICK)
+			public void actionPerformed(PointerEvent e) {
+				if (e.state == State.CLICK)
 					create();
 			}
 		});
@@ -47,10 +50,10 @@ public class MainMenuActivity extends Activity {
 
 		Button newCreate = new Button();
 		newCreate.setText("New Create");
-		newCreate.addActionListener(new PointerListener() {
+		newCreate.addPointerListener(new PointerListener() {
 			@Override
-			public void actionPerformed() {
-				if (this.getCurrentState() == State.CLICK)
+			public void actionPerformed(PointerEvent e) {
+				if (e.state == State.CLICK)
 					createActivity(new NewCreateActivity());
 			}
 		});
@@ -58,10 +61,10 @@ public class MainMenuActivity extends Activity {
 
 		Button options = new Button();
 		options.setText("Options");
-		options.addActionListener(new PointerListener() {
+		options.addPointerListener(new PointerListener() {
 			@Override
-			public void actionPerformed() {
-				if (this.getCurrentState() == State.CLICK)
+			public void actionPerformed(PointerEvent e) {
+				if (e.state == State.CLICK)
 					createActivity(new BindingActivity());
 			}
 		});
@@ -69,10 +72,10 @@ public class MainMenuActivity extends Activity {
 
 		Button quit = new Button();
 		quit.setText("Quit");
-		quit.addActionListener(new PointerListener() {
+		quit.addPointerListener(new PointerListener() {
 			@Override
-			public void actionPerformed() {
-				if (this.getCurrentState() == State.CLICK)
+			public void actionPerformed(PointerEvent e) {
+				if (e.state == State.CLICK)
 					Engine.close();
 			}
 		});
@@ -80,10 +83,10 @@ public class MainMenuActivity extends Activity {
 
 		Button secret = new Button();
 		secret.setText("      ");
-		secret.addActionListener(new PointerListener() {
+		secret.addPointerListener(new PointerListener() {
 			@Override
-			public void actionPerformed() {
-				if (getCurrentState() == State.CLICK)
+			public void actionPerformed(PointerEvent e) {
+				if (e.state == State.CLICK)
 					yaySecret();
 			}
 		});

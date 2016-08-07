@@ -1,5 +1,8 @@
 package gui;
 
+import gui.event.PointerListener;
+import gui.event.RedrawListener;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -65,7 +68,8 @@ public abstract class GUIElement {
 
 	private ContextBox box;
 
-	private ArrayList<ActionListener> listeners;
+	private ArrayList<PointerListener> pointerListeners;
+	private ArrayList<RedrawListener> redrawListeners;
 
 	/**
 	 * Initialize a new GUIElement with size [0,0] and position at [0,0].
@@ -77,7 +81,8 @@ public abstract class GUIElement {
 		width = 0;
 		height = 0;
 		insets = new Insets(0, 0, 0, 0);
-		listeners = new ArrayList<>();
+		pointerListeners = new ArrayList<>();
+		redrawListeners = new ArrayList<>();
 	}
 
 	public void setName(String name) {
@@ -90,10 +95,21 @@ public abstract class GUIElement {
 		return name;
 	}
 
-	public void addActionListener(ActionListener actionListener) {
+	public void addPointerListener(PointerListener pointerListener) {
 
-		actionListener.setParent(this);
-		this.listeners.add(actionListener);
+		pointerListener.setParent(this);
+		pointerListeners.add(pointerListener);
+	}
+
+	public List<PointerListener> getPointerListeners() {
+
+		return pointerListeners;
+	}
+
+	public void addRedrawListener(RedrawListener redrawListener) {
+
+		redrawListener.setParent(this);
+		redrawListeners.add(redrawListener);
 	}
 
 	/**
@@ -180,14 +196,11 @@ public abstract class GUIElement {
 		}
 
 		if (!toDraw.isEmpty()) {
-			for (ActionListener listener : listeners) {
 
-				if (listener instanceof RedrawListener) {
+			for (RedrawListener listener : redrawListeners) {
 
-					RedrawListener redrawListener = (RedrawListener) listener;
-					redrawListener.setElements(toDraw);
-					listener.actionPerformed();
-				}
+				listener.setElements(toDraw);
+				listener.actionPerformed(null);
 			}
 		}
 	}

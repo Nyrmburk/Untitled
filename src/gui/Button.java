@@ -4,6 +4,7 @@ import java.awt.Color;
 
 import graphics.GraphicsFont;
 import graphics.Texture;
+import gui.event.PointerListener;
 
 public class Button extends GUIElement {
 
@@ -26,17 +27,17 @@ public class Button extends GUIElement {
 	private Texture texture;
 
 	{
-		addActionListener(new PointerListener() {
+		addPointerListener(new PointerListener() {
 
 			@Override
-			public void actionPerformed() {
+			public void actionPerformed(PointerEvent e) {
 				Color color = Color.WHITE;
 				if (parent != null)
 					color = parent.getBackgroundColor();
 				if (color == null)
 					color = Color.WHITE;
 
-				switch (getCurrentState()) {
+				switch (e.state) {
 					case ENTER:
 						setBackgroundColor(color.darker());
 						currentColorIdentifier = FOCUS_COLOR;

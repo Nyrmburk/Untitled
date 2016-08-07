@@ -1,4 +1,7 @@
-package gui;
+package gui.layout;
+
+import gui.GUIElement;
+import gui.GUILayoutManager;
 
 import java.awt.*;
 
@@ -20,6 +23,6 @@ public class GUIFlowLayout extends GUILayoutManager {
 
 	@Override
 	public Dimension getPreferredSize() {
-		return parent.getSize();
+		return getParent().getSize();
 	}
 }

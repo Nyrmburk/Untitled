@@ -1,7 +1,11 @@
 package activity;
 
 import gui.*;
+import gui.Button;
 import gui.Panel;
+import gui.event.*;
+import gui.event.Event;
+import gui.layout.GUIBoxLayout;
 import main.Engine;
 
 import java.awt.*;
@@ -20,10 +24,10 @@ public class GUITestActivity extends Activity {
 		view.setBackgroundColor(new Color(220, 220, 220, 200));
 		view.setlayout(new GUIBoxLayout());
 
-		view.addActionListener(new RedrawListener() {
+		view.addRedrawListener(new RedrawListener() {
 			@Override
-			public void actionPerformed() {
-				System.out.println(guiElements);
+			public void actionPerformed(Event event) {
+//				System.out.println(guiElements);
 			}
 		});
 
@@ -42,6 +46,17 @@ public class GUITestActivity extends Activity {
 		strobe.setName("strobe");
 		strobe.setText("strobe");
 		panel.addChild(strobe);
+
+		Button button = new Button();
+		button.setName("Button");
+		button.setText("Button");
+		button.addPointerListener(new PointerListener() {
+			@Override
+			public void actionPerformed(PointerEvent event) {
+				System.out.println(event.state);
+			}
+		});
+		view.addChild(button);
 
 		setView(view);
 	}

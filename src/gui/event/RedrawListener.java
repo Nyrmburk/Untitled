@@ -1,4 +1,7 @@
-package gui;
+package gui.event;
+
+import gui.ActionListener;
+import gui.GUIElement;
 
 import java.util.List;
 

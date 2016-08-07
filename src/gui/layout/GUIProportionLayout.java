@@ -1,4 +1,7 @@
-package gui;
+package gui.layout;
+
+import gui.*;
+import gui.Container;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -38,7 +41,8 @@ public class GUIProportionLayout extends GUILayoutManager {
 	@Override
 	public void layout() {
 
-		for (GUIElement child : parent.children) {
+		Container parent = getParent();
+		for (GUIElement child : parent.getChildren()) {
 
 			List<Anchor> anchorList = constraints.get(child);
 			if (anchorList == null)
@@ -111,7 +115,7 @@ public class GUIProportionLayout extends GUILayoutManager {
 
 	@Override
 	public Dimension getPreferredSize() {
-		return parent.getSize();
+		return getParent().getSize();
 	}
 
 	public static class Anchor {

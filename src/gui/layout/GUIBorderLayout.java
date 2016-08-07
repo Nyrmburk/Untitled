@@ -1,4 +1,7 @@
-package gui;
+package gui.layout;
+
+import gui.*;
+import gui.Container;
 
 import java.awt.*;
 
@@ -8,15 +11,17 @@ public class GUIBorderLayout extends GUILayoutManager {
 		TOP, BOTTOM, LEFT, RIGHT, CENTER
 	}
 
-	GUIElement top = new Panel();
-	GUIElement bottom = new Panel();
-	GUIElement left = new Panel();
-	GUIElement right = new Panel();
-	GUIElement center = new Panel();
+	GUIElement top = new gui.Panel();
+	GUIElement bottom = new gui.Panel();
+	GUIElement left = new gui.Panel();
+	GUIElement right = new gui.Panel();
+	GUIElement center = new gui.Panel();
 
 	@Override
 	public void layout() {
-		
+
+		Container parent = getParent();
+
 		int widthLeft = parent.getWidth() - (left.getWidth() + right.getWidth());
 		int heightLeft = parent.getHeight() - (top.getHeight() + bottom.getHeight());
 
@@ -59,6 +64,6 @@ public class GUIBorderLayout extends GUILayoutManager {
 
 	@Override
 	public Dimension getPreferredSize() {
-		return parent.getSize();
+		return getParent().getSize();
 	}
 }

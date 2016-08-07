@@ -2,7 +2,8 @@ package activity;
 
 import gui.*;
 import gui.Button;
-import gui.Panel;
+import gui.event.PointerListener;
+import gui.layout.GUIBoxLayout;
 import input.Input;
 import input.InputInterface;
 import main.Engine;
@@ -33,11 +34,11 @@ public class BindingActivity extends Activity {
 
 		Button back = new Button();
 		back.setText("Back");
-		back.addActionListener(new PointerListener() {
+		back.addPointerListener(new PointerListener() {
 
 			@Override
-			public void actionPerformed() {
-				if (getCurrentState() == State.CLICK)
+			public void actionPerformed(PointerEvent e) {
+				if (e.state == State.CLICK)
 					Activity.stopCurrentActivity();
 			}
 		});

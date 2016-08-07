@@ -1,5 +1,7 @@
-package activity;
+package activity.create;
 
+import activity.Activity;
+import activity.LoadingActivity;
 import game.Level;
 import game.PlayerController;
 import graphics.Camera;
@@ -7,6 +9,9 @@ import graphics.PerspectiveCamera;
 import gui.*;
 import gui.Button;
 import gui.Panel;
+import gui.event.PointerListener;
+import gui.layout.GUIBoxLayout;
+import gui.layout.GUIProportionLayout;
 import main.Engine;
 import matrix.Mat4;
 import matrix.Transform;
@@ -39,19 +44,10 @@ public class NewCreateActivity extends Activity {
 	private View view;
 	private Panel menuBar = new Panel();
 
-	private Button btnInfo = new Button();
-	private Panel pnlInfo = new Panel();
-
-	private Button btnDraw = new Button();
-	private Panel pnlDraw = new Panel();
-	private Button btnDrawSelect = new Button();
-	private Button btnDrawPen = new Button();
-	private Button btnDrawClear = new Button();
-	private Button btnDrawCommit = new Button();
-
 	private Button btnBack = new Button();
 
-	private List<Panel> tabs = new LinkedList<>();
+	private List<Tab> tabs = new LinkedList<>();
+	private Tab currentTab = null;
 
 	@Override
 	protected void onCreate() {
@@ -94,6 +90,9 @@ public class NewCreateActivity extends Activity {
 	public void onUpdate(float delta) {
 
 		updateFollowCam(new Vec3(0, 4, 10));
+
+		if (currentTab != null)
+			currentTab.update(delta);
 	}
 
 	private void createLevel() {
@@ -121,21 +120,36 @@ public class NewCreateActivity extends Activity {
 				view, GUIProportionLayout.Constraint.BOTTOM));
 		view.addChild(menuBar);
 
-		createInfoTab();
-		createDrawTab();
+		addTab(new InfoTab());
+		addTab(new DrawTab());
 
 		btnBack.setText("Back");
-		btnBack.addActionListener(new PointerListener() {
+		btnBack.addPointerListener(new PointerListener() {
 			@Override
-			public void actionPerformed() {
-				if (getCurrentState() == State.CLICK)
+			public void actionPerformed(PointerEvent e) {
+				if (e.state == State.CLICK)
 					Activity.stopCurrentActivity();
 			}
 		});
 		menuBar.addChild(btnBack, 0);
 	}
 
-	private void createTab(Panel tab) {
+	public void addTab(Tab tab) {
+
+		Button btn = new Button();
+		btn.setText(tab.getHandle());
+		btn.addPointerListener(new PointerListener() {
+			@Override
+			public void actionPerformed(PointerEvent e) {
+				if (e.state == State.CLICK) {
+					activateTab(tab);
+				}
+			}
+		});
+		menuBar.addChild(btn, 0);
+
+		tab.setBackgroundColor(Color.LIGHT_GRAY);
+		tab.setVisible(false);
 
 		view.getLayout().setConstraint(tab, new GUIProportionLayout.Anchor(
 				view, GUIProportionLayout.Constraint.BOTTOM,
@@ -158,104 +172,16 @@ public class NewCreateActivity extends Activity {
 		tabs.add(tab);
 	}
 
-	private void activateTab(Panel tab) {
+	private void activateTab(Tab tab) {
 
-		boolean visibility = !tab.isVisible();
+		boolean visible = !tab.isVisible();
 
 		for (Panel panel : tabs)
 			panel.setVisible(false);
 
-		tab.setVisible(visibility);
-	}
+		tab.setVisible(visible);
 
-	private void createInfoTab() {
-
-		btnInfo.setText("Info");
-		btnInfo.addActionListener(new PointerListener() {
-			@Override
-			public void actionPerformed() {
-				if (getCurrentState() == State.CLICK) {
-					activateTab(pnlInfo);
-				}
-			}
-		});
-		menuBar.addChild(btnInfo, 0);
-
-		pnlInfo.setBackgroundColor(Color.LIGHT_GRAY);
-		pnlInfo.setlayout(new GUIBoxLayout());
-		pnlInfo.setVisible(false);
-		createTab(pnlInfo);
-	}
-
-	private void createDrawTab() {
-
-		btnDraw.setText("Draw");
-		btnDraw.addActionListener(new PointerListener() {
-			@Override
-			public void actionPerformed() {
-				if (getCurrentState() == State.CLICK) {
-					activateTab(pnlDraw);
-				}
-			}
-		});
-		menuBar.addChild(btnDraw, 0);
-
-		pnlDraw.setBackgroundColor(Color.LIGHT_GRAY);
-		pnlDraw.setlayout(new GUIBoxLayout());
-		pnlDraw.setVisible(false);
-		createTab(pnlDraw);
-
-		btnDrawSelect.setText("Select");
-		btnDrawSelect.addActionListener(new PointerListener() {
-			@Override
-			public void actionPerformed() {
-				drawSelect();
-			}
-		});
-		pnlDraw.addChild(btnDrawSelect, 0);
-
-		btnDrawPen.setText("Pen");
-		btnDrawSelect.addActionListener(new PointerListener() {
-			@Override
-			public void actionPerformed() {
-				drawPen();
-			}
-		});
-		pnlDraw.addChild(btnDrawPen, 0);
-
-		btnDrawClear.setText("Clear");
-		btnDrawSelect.addActionListener(new PointerListener() {
-			@Override
-			public void actionPerformed() {
-				drawClear();
-			}
-		});
-		pnlDraw.addChild(btnDrawClear, 0);
-
-		btnDrawCommit.setText("Commit");
-		btnDrawSelect.addActionListener(new PointerListener() {
-			@Override
-			public void actionPerformed() {
-				drawCommit();
-			}
-		});
-		pnlDraw.addChild(btnDrawCommit, 0);
-	}
-
-	private void drawSelect() {
-
-	}
-
-	private void drawPen() {
-
-	}
-
-	private void drawClear() {
-
-	}
-
-	private void drawCommit() {
-
+		currentTab = visible ? tab : null;
 	}
 
 	private void updateFollowCam(Vec3 cameraOffset) {

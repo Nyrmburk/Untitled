@@ -1,7 +1,10 @@
-package gui;
+package gui.event;
 
 import activity.Activity;
+import gui.ActionListener;
+import gui.GUIElement;
 import input.*;
+import input.Button;
 import input.InputContext;
 
 import java.awt.*;
@@ -23,13 +26,11 @@ import java.util.LinkedList;
  * refactor Component so that it no longer accepts ActionListener
  * refactor Component so that it no longer delegates ActionEvents
  */
-public abstract class PointerListener extends ActionListener {
+public abstract class PointerListener extends ActionListener<PointerListener.PointerEvent> {
 
-	private static List<PointerListener> pointerListeners = new LinkedList<>();
-	private static LinkedList<PointerListener> activeListeners = new LinkedList<>();
-	private static LinkedList<PointerListener> previousListeners = new LinkedList<>();
-	private static LinkedList<PointerListener> dragListeners = new LinkedList<>();
-
+	private static List<PointerListener> activeListeners = new LinkedList<>();
+	private static List<PointerListener> previousListeners = new LinkedList<>();
+	private static List<PointerListener> dragListeners = new LinkedList<>();
 
 	private static final String ACTIVITY_INPUT = "pointer_input";
 
@@ -40,8 +41,6 @@ public abstract class PointerListener extends ActionListener {
 
 	private static Point previousPointerLocation;
 	private static Point pointerLocation;
-
-	private State currentState;
 
 	public enum State {
 		ENTER,
@@ -70,34 +69,28 @@ public abstract class PointerListener extends ActionListener {
 			pointerLocation = new Point(x, y);
 
 			Activity currentActivity = Activity.currentActivity();
-			GUIElement element = currentActivity.getView().getPointOver(pointerLocation);
-			previousListeners.clear();
-			previousListeners.addAll(activeListeners);
-			activeListeners.clear();
+			currentElement = currentActivity.getView().getPointOver(pointerLocation);
 
-			for (PointerListener listener : pointerListeners) {
-				if (listener.getParent() == element) {
-					activeListeners.add(listener);
-				}
-			}
-
-			if (previousElement != null && previousElement != element) {
+			if (previousElement != null && previousElement != currentElement) {
 				for (PointerListener listener : previousListeners) {
-					listener.setCurrentState(State.EXIT);
-					listener.actionPerformed();
+					listener.actionPerformed(new PointerEvent(previousElement, pointerLocation, State.EXIT));
 				}
 				previousElement = null;
 				currentElement = null;
 			}
 
+			previousListeners.clear();
+			previousListeners.addAll(activeListeners);
+			activeListeners.clear();
+			if (currentElement != null)
+				activeListeners.addAll(currentElement.getPointerListeners());
+
 			if (!activeListeners.isEmpty()) {
-				currentElement = element;
 
 				if (previousElement != currentElement) {
 
 					for (PointerListener listener : activeListeners) {
-						listener.setCurrentState(State.ENTER);
-						listener.actionPerformed();
+						listener.actionPerformed(newEvent(State.ENTER));
 					}
 					previousElement = currentElement;
 				}
@@ -105,15 +98,13 @@ public abstract class PointerListener extends ActionListener {
 				if (!previousPointerLocation.equals(pointerLocation)) {
 
 					for (PointerListener listener : activeListeners) {
-						listener.setCurrentState(State.MOVE);
-						listener.actionPerformed();
+						listener.actionPerformed(newEvent(State.MOVE));
 					}
 
 					if (dragElement != null) {
 
 						for (PointerListener listener : dragListeners) {
-							listener.setCurrentState(State.DRAG);
-							listener.actionPerformed();
+							listener.actionPerformed(newEvent(State.DRAG));
 						}
 					}
 				}
@@ -121,7 +112,7 @@ public abstract class PointerListener extends ActionListener {
 		}
 	};
 
-	private static input.Button pointerButton = new input.Button("primary") {
+	private static Button pointerButton = new Button("primary") {
 
 		private GUIElement pressElement;
 
@@ -135,11 +126,10 @@ public abstract class PointerListener extends ActionListener {
 			if (currentElement != null) {
 
 				dragElement = currentElement;
-				dragListeners.addAll(activeListeners);
+				dragListeners = activeListeners;
 
 				for (PointerListener listener : activeListeners) {
-					listener.setCurrentState(State.PRESS);
-					listener.actionPerformed();
+					listener.actionPerformed(newEvent(State.PRESS));
 				}
 			}
 			pressElement = currentElement;
@@ -150,14 +140,13 @@ public abstract class PointerListener extends ActionListener {
 
 			if (currentElement != null) {
 				for (PointerListener listener : activeListeners) {
-					listener.setCurrentState(State.RELEASE);
-					listener.actionPerformed();
+					listener.actionPerformed(newEvent(State.RELEASE));
 				}
 			}
+
 			if (pressElement == currentElement) {
 				for (PointerListener listener : activeListeners) {
-					listener.setCurrentState(State.CLICK);
-					listener.actionPerformed();
+					listener.actionPerformed(newEvent(State.CLICK));
 				}
 			}
 
@@ -169,13 +158,11 @@ public abstract class PointerListener extends ActionListener {
 		public void onHold(float delta) {
 			if (currentElement != null) {
 				for (PointerListener listener : activeListeners) {
-					listener.setCurrentState(State.HOLD);
-					listener.actionPerformed();
+					listener.actionPerformed(newEvent(State.HOLD));
 				}
 			}
 		}
 	};
-
 
 	static {
 		InputContext inputContext = new InputContext();
@@ -183,10 +170,6 @@ public abstract class PointerListener extends ActionListener {
 		inputContext.inputs.add(pointerInput);
 		inputContext.inputs.add(pointerButton);
 		System.out.println("Initialized");
-	}
-
-	{
-		pointerListeners.add(this);
 	}
 
 	@Override
@@ -198,11 +181,20 @@ public abstract class PointerListener extends ActionListener {
 		return pointerLocation;
 	}
 
-	public State getCurrentState() {
-		return currentState;
+	private static PointerEvent newEvent(State state) {
+
+		return new PointerEvent(currentElement, pointerLocation, state);
 	}
 
-	private void setCurrentState(State currentState) {
-		this.currentState = currentState;
+	protected static class PointerEvent extends Event {
+
+		public Point pointer;
+		public State state;
+
+		public PointerEvent(GUIElement source, Point pointer, State state) {
+			super(source);
+			this.pointer = pointer;
+			this.state = state;
+		}
 	}
 }

@@ -1,4 +1,8 @@
-package gui;
+package gui.layout;
+
+import gui.Container;
+import gui.GUIElement;
+import gui.GUILayoutManager;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -15,11 +19,12 @@ public class GUIBoxLayout extends GUILayoutManager {
 	
 	@Override
 	public void layout() {
-		
+
+		Container parent = getParent();
 		int childY = parent.getY() + parent.getInsets().top;
 		int maxX = 0;
 
-		for (GUIElement child : parent.children) {
+		for (GUIElement child : parent.getChildren()) {
 			
 			int childX = parent.getX() + parent.getInsets().left;
 			
@@ -55,7 +60,7 @@ public class GUIBoxLayout extends GUILayoutManager {
 
 		Dimension size = prefSize;
 		if (size == null)
-			size = parent.getSize();
+			size = getParent().getSize();
 		return size;
 	}
 }
