@@ -36,12 +36,12 @@ public class PerspectiveCamera extends Camera {
 
 	public static float fovFromDistance(float height, float distance) {
 
-		return (float) Math.toDegrees(2 * (float) Math.atan(height / (2 * distance)));
+		return (float) Math.toDegrees(2 * Math.atan(height / (2 * distance)));
 	}
 
 	public static float distanceFromFov(float height, float fov) {
 
-		return height / 2 * (float) Math.tan((float) Math.toRadians(fov / 2));
+		return height / 2 * (float) Math.tan(Math.toRadians(fov / 2));
 	}
 
 	public void setFov(float fov) {

@@ -1,6 +1,8 @@
 package activity.create;
 
 import gui.Panel;
+import gui.View;
+import gui.event.PointerListener;
 
 /**
  * Created by Nyrmburk on 8/6/2016.
@@ -8,6 +10,7 @@ import gui.Panel;
 public abstract class Tab extends Panel {
 
 	private String handle;
+	protected View view;
 
 	public Tab(String handle) {
 
@@ -19,5 +22,11 @@ public abstract class Tab extends Panel {
 		return handle;
 	}
 
+	public void setView(View view) {
+		this.view = view;
+	}
+
 	public abstract void update(float delta);
+
+	public abstract void pointerEvent(PointerListener.PointerEvent event);
 }

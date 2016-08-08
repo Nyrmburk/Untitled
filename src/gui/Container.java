@@ -99,4 +99,24 @@ public abstract class Container extends GUIElement {
 			size = layoutManager.getPreferredSize();
 		return size;
 	}
+
+	/**
+	 * Recursively get the topmost element that contains the point.
+	 *
+	 * @return The topmost element
+	 */
+	public GUIElement getPointOver(Point point) {
+
+		if (super.getPointOver(point) == null)
+			return null;
+
+		for (GUIElement element : getChildren()) {
+
+			GUIElement temp = element.getPointOver(point);
+			if (temp != null)
+				return temp;
+		}
+
+		return this;
+	}
 }

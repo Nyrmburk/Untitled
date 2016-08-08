@@ -16,11 +16,8 @@ public class Projection {
 		Mat4 projection = new Mat4();
 		float[] m = projection.m;
 
-		//change to radians and divide by 2
-		// fieldOfView / 2 * PI / 180
-		// fieldOfView *= 1 / 2 * PI / 180
-		fieldOfViewY *= 0.0087266462599716f;
-		float f = (1 / (float) Math.tan(fieldOfViewY) * fieldOfViewY);
+		fieldOfViewY /= 2;
+		float f = (1f / ((float) Math.tan(fieldOfViewY) * fieldOfViewY));
 		float deltaZ = far - near;
 
 		m[0] = f / aspect;
@@ -37,9 +34,9 @@ public class Projection {
 		Mat4 projection = Mat4.identity();
 		float[] m = projection.m;
 
-		m[0] = 2 / (right - left);
-		m[5] = 2 / (top - bottom);
-		m[10] = -2 / (far - near);
+		m[0] = 2f / (right - left);
+		m[5] = 2f / (top - bottom);
+		m[10] = -2f / (far - near);
 		m[12] = -(right + left) / (right - left);
 		m[13] = -(top + bottom) / (top - bottom);
 		m[14] = -(far + near) / (far - near);

@@ -38,6 +38,10 @@ public class GUIBorderLayout extends GUILayoutManager {
 
 		center.setBounds(parent.getX() + left.getWidth(),
 				parent.getY() + top.getHeight(), widthLeft, heightLeft);
+
+//		parent.setBounds(left.getX(), top.getY(),
+//				left.getWidth() + center.getWidth() + right.getWidth(),
+//				top.getHeight() + center.getHeight() + bottom.getHeight());
 	}
 
 	@Override

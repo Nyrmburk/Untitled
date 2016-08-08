@@ -2,8 +2,11 @@ package activity;
 
 import gui.*;
 import gui.Button;
+import gui.Panel;
 import gui.event.PointerListener;
+import gui.layout.GUIBorderLayout;
 import gui.layout.GUIBoxLayout;
+import input.Binding;
 import input.Input;
 import input.InputInterface;
 import main.Engine;
@@ -23,13 +26,23 @@ public class BindingActivity extends Activity {
 		view.setlayout(new GUIBoxLayout());
 		view.setBackgroundColor(Color.WHITE);
 
-		for (InputInterface inputInterface : InputInterface.getInterfaces()) {
-			for (Map.Entry<Object, Input> entry : inputInterface.inputs.entrySet()) {
+		Panel bindings = new Panel();
+		bindings.setlayout(new GUIBoxLayout());
+		view.addChild(bindings);
 
-				TextBox actionName = new TextBox();
-				actionName.setText(entry.getValue().getName() + " = " + inputInterface.getBindingName(entry.getKey()));
-				view.addChild(actionName, 0);
-			}
+		for (Map.Entry<String, Object> entry : Binding.getBindings().entrySet()) {
+
+				Button binding = new Button();
+				binding.setText(entry.getKey() + ": " + entry.getValue());
+				binding.addPointerListener(new PointerListener() {
+					@Override
+					public void actionPerformed(PointerEvent event) {
+						if (event.state == State.CLICK) {
+							System.out.println("clicked");
+						}
+					}
+				});
+				bindings.addChild(binding, 0);
 		}
 
 		Button back = new Button();

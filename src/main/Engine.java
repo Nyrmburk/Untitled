@@ -215,12 +215,14 @@ public class Engine {
 		map.put("left", "LWJGLKeyInput:A");
 		map.put("right", "LWJGLKeyInput:D");
 		map.put("up", "LWJGLKeyInput:W");
-		map.put("crouch", "LWJGLKeyInput:S");
-
+		map.put("down", "LWJGLKeyInput:S");
+		map.put("crouch", "LWJGLKeyInput:SHIFT");
+		map.put("zoom", "LWJGLMouseInput:X_SCROLL");
 		INIWriter.write(map, new File("res\\input\\player.ini"));
 
 		map.clear();
 		map.put("primary", "LWJGLMouseInput:BUTTON_0");
+		map.put("secondary", "LWJGLMouseInput:BUTTON_1");
 		map.put("x_axis", "LWJGLMouseInput:X_COORD");
 		map.put("y_axis", "LWJGLMouseInput:Y_COORD");
 		INIWriter.write(map, new File("res\\input\\ui.ini"));

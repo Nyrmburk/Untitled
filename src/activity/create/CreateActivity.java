@@ -12,6 +12,9 @@ import gui.Panel;
 import gui.event.PointerListener;
 import gui.layout.GUIBoxLayout;
 import gui.layout.GUIProportionLayout;
+import input.Binding;
+import input.Input;
+import input.InputContext;
 import main.Engine;
 import matrix.Mat4;
 import matrix.Transform;
@@ -37,7 +40,7 @@ import static physics.JBox2D.convert;
  *
  * Created by Nyrmburk on 8/2/2016.
  */
-public class NewCreateActivity extends Activity {
+public class CreateActivity extends Activity {
 
 	private Level level;
 
@@ -57,6 +60,8 @@ public class NewCreateActivity extends Activity {
 		createActivity(new LoadingActivity(level));
 
 		initUI();
+
+		initControls(view);
 
 		setView(view);
 	}
@@ -89,7 +94,11 @@ public class NewCreateActivity extends Activity {
 	@Override
 	public void onUpdate(float delta) {
 
-		updateFollowCam(new Vec3(0, 4, 10));
+		Vec3 vec = Transform.getPosition(level.getRenderContext().getCamera().getTransform());
+		vec.x = 0;
+		vec.y = 4;
+		vec.z = -vec.z;
+		updateFollowCam(vec);
 
 		if (currentTab != null)
 			currentTab.update(delta);
@@ -134,6 +143,34 @@ public class NewCreateActivity extends Activity {
 		menuBar.addChild(btnBack, 0);
 	}
 
+	private void initControls(View view) {
+
+		view.addPointerListener(new PointerListener() {
+			@Override
+			public void actionPerformed(PointerEvent event) {
+
+				if (currentTab != null)
+					currentTab.pointerEvent(event);
+			}
+		});
+
+		Binding.delegate(new Input("zoom") {
+			{
+				InputContext.getCurrentContext().inputs.add(this);
+			}
+			@Override
+			public void onUpdate(float delta) {
+				if (getValue() != 0) {
+
+					PerspectiveCamera cam = ((PerspectiveCamera) level.getRenderContext().getCamera());
+					Vec3 pos = Transform.getPosition(cam.getTransform());
+					pos.z += getValue() / 120f;
+					Transform.setPosition(cam.getTransform(), pos);
+				}
+			}
+		});
+	}
+
 	public void addTab(Tab tab) {
 
 		Button btn = new Button();
@@ -168,6 +205,8 @@ public class NewCreateActivity extends Activity {
 				GUIProportionLayout.Constraint.RIGHT, 0.2f,
 				view, GUIProportionLayout.Constraint.RIGHT));
 		view.addChild(tab);
+
+		tab.setView(view);
 
 		tabs.add(tab);
 	}

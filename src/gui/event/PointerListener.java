@@ -175,7 +175,7 @@ public abstract class PointerListener extends ActionListener<PointerListener.Poi
 		return new PointerEvent(currentElement, pointerLocation, state);
 	}
 
-	protected static class PointerEvent extends Event {
+	public static class PointerEvent extends Event {
 
 		public Point pointer;
 		public State state;

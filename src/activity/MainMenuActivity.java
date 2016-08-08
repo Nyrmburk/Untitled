@@ -2,7 +2,7 @@ package activity;
 
 import java.awt.Color;
 
-import activity.create.NewCreateActivity;
+import activity.create.CreateActivity;
 import graphics.Texture;
 import gui.*;
 import gui.event.PointerListener;
@@ -43,21 +43,10 @@ public class MainMenuActivity extends Activity {
 			@Override
 			public void actionPerformed(PointerEvent e) {
 				if (e.state == State.CLICK)
-					create();
+					createActivity(new CreateActivity());
 			}
 		});
 		aligner.addChild(create, 0);
-
-		Button newCreate = new Button();
-		newCreate.setText("New Create");
-		newCreate.addPointerListener(new PointerListener() {
-			@Override
-			public void actionPerformed(PointerEvent e) {
-				if (e.state == State.CLICK)
-					createActivity(new NewCreateActivity());
-			}
-		});
-		aligner.addChild(newCreate, 0);
 
 		Button options = new Button();
 		options.setText("Options");
@@ -137,15 +126,12 @@ public class MainMenuActivity extends Activity {
 			getView().setBackgroundColor(Color.getHSBColor(hue, 1, 1));
 		}
 	}
-	
-	private void create() {
-		
-		System.out.println("opening the 'create' activity");
-		createActivity(new CreateActivity());
-	}
 
 	private void yaySecret() {
 
 		secret = !secret;
+
+		if (!secret)
+			getView().setBackgroundColor(Color.WHITE);
 	}
 }

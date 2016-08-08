@@ -222,16 +222,6 @@ public abstract class GUIElement {
 		if (!this.containsPoint(point))
 			return null;
 
-		if (this instanceof Container) {
-
-			for (GUIElement element : ((Container) this).children) {
-
-				GUIElement temp = element.getPointOver(point);
-				if (temp != null)
-					return temp;
-			}
-		}
-
 		return this;
 	}
 
