@@ -28,10 +28,6 @@ import java.util.LinkedList;
  */
 public abstract class PointerListener extends ActionListener<PointerListener.PointerEvent> {
 
-	private static List<PointerListener> activeListeners = new LinkedList<>();
-	private static List<PointerListener> previousListeners = new LinkedList<>();
-	private static List<PointerListener> dragListeners = new LinkedList<>();
-
 	private static final String ACTIVITY_INPUT = "pointer_input";
 
 	private static GUIElement previousElement;
@@ -72,24 +68,18 @@ public abstract class PointerListener extends ActionListener<PointerListener.Poi
 			currentElement = currentActivity.getView().getPointOver(pointerLocation);
 
 			if (previousElement != null && previousElement != currentElement) {
-				for (PointerListener listener : previousListeners) {
+				for (PointerListener listener : previousElement.getPointerListeners()) {
 					listener.actionPerformed(new PointerEvent(previousElement, pointerLocation, State.EXIT));
 				}
 				previousElement = null;
 				currentElement = null;
 			}
 
-			previousListeners.clear();
-			previousListeners.addAll(activeListeners);
-			activeListeners.clear();
-			if (currentElement != null)
-				activeListeners.addAll(currentElement.getPointerListeners());
-
-			if (!activeListeners.isEmpty()) {
+			if (currentElement != null) {
 
 				if (previousElement != currentElement) {
 
-					for (PointerListener listener : activeListeners) {
+					for (PointerListener listener : currentElement.getPointerListeners()) {
 						listener.actionPerformed(newEvent(State.ENTER));
 					}
 					previousElement = currentElement;
@@ -97,13 +87,13 @@ public abstract class PointerListener extends ActionListener<PointerListener.Poi
 
 				if (!previousPointerLocation.equals(pointerLocation)) {
 
-					for (PointerListener listener : activeListeners) {
+					for (PointerListener listener : currentElement.getPointerListeners()) {
 						listener.actionPerformed(newEvent(State.MOVE));
 					}
 
 					if (dragElement != null) {
 
-						for (PointerListener listener : dragListeners) {
+						for (PointerListener listener : dragElement.getPointerListeners()) {
 							listener.actionPerformed(newEvent(State.DRAG));
 						}
 					}
@@ -126,9 +116,8 @@ public abstract class PointerListener extends ActionListener<PointerListener.Poi
 			if (currentElement != null) {
 
 				dragElement = currentElement;
-				dragListeners = activeListeners;
 
-				for (PointerListener listener : activeListeners) {
+				for (PointerListener listener : currentElement.getPointerListeners()) {
 					listener.actionPerformed(newEvent(State.PRESS));
 				}
 			}
@@ -139,25 +128,25 @@ public abstract class PointerListener extends ActionListener<PointerListener.Poi
 		public void onRelease() {
 
 			if (currentElement != null) {
-				for (PointerListener listener : activeListeners) {
+
+				for (PointerListener listener : currentElement.getPointerListeners()) {
 					listener.actionPerformed(newEvent(State.RELEASE));
 				}
-			}
 
-			if (pressElement == currentElement) {
-				for (PointerListener listener : activeListeners) {
-					listener.actionPerformed(newEvent(State.CLICK));
+				if (pressElement == currentElement) {
+					for (PointerListener listener : currentElement.getPointerListeners()) {
+						listener.actionPerformed(newEvent(State.CLICK));
+					}
 				}
 			}
 
 			dragElement = null;
-			dragListeners.clear();
 		}
 
 		@Override
 		public void onHold(float delta) {
 			if (currentElement != null) {
-				for (PointerListener listener : activeListeners) {
+				for (PointerListener listener : currentElement.getPointerListeners()) {
 					listener.actionPerformed(newEvent(State.HOLD));
 				}
 			}
