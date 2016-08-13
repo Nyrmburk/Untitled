@@ -36,7 +36,7 @@ public class GUIAppearance {
 	public static class DefaultAppearance extends GUIAppearance {
 
 		{
-			font = new GraphicsFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
+			font = new GraphicsFont(new Font(Font.SANS_SERIF, Font.PLAIN, 20));
 			fontColor = Color.BLACK;
 		}
 	}

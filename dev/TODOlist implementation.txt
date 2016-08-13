@@ -1,7 +1,4 @@
 Goals
-
-design ui flow
-	refer to my earlier document of goals for the ui
 	
 change draftform from being in screen coordinates to world coordinates
 	lighting affects rendering so another rendercontext has to be used
@@ -45,24 +42,12 @@ redesign model generator
 Add way to select objects and move stuff around and shit
 	I have to change more of the physics interface
 	Needs a way to show/highlight selected objects
-		This is a very hard problem for me right now
-	I think I should remove my wrapping of jbox2d
-		there is a lot of stuff to wrap
-		it will be easier to mod and read documentation for an unmodifed system
-		it's not like multiple physics sims could interact anyway
-		the only difficult part is converting vec2s from the game to the type defined by jbox2d	
-			It's not even hard just annoying
-		make helper class for jbox2d
-			conversions
-			ease of use methods for common tasks like adding shapes (especially complex ones)
-		before removal, create entity component system
 		
 Add layers
-	Add filters to physics engine
 	Add user data to physics engine
 	Add player movement between layers
+		Create animation callback thingy?
+			Animations would be functions of time
+			Input delta time -> get value between 0 and 1
+			Use value to update some animation
 	Control skeletons for animating thickness and layer
-			
-Entities now have a component interface
-	Allows the use of abstract thingies
-	I know there was a use for it, but I forgot

@@ -196,7 +196,6 @@ public class DrawTab extends Tab {
 		switch (state) {
 			case PRESS:
 				toolkit.start(draftformPoint);
-				System.out.println(toolkit.currentTool);
 				break;
 			case DRAG:
 				toolkit.modify(draftformPoint);

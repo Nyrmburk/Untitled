@@ -131,6 +131,8 @@ public class CreateActivity extends Activity {
 
 		addTab(new InfoTab());
 		addTab(new DrawTab());
+		addTab(new PhysicsTab());
+		addTab(new StyleTab());
 
 		btnBack.setText("Back");
 		btnBack.addPointerListener(new PointerListener() {
