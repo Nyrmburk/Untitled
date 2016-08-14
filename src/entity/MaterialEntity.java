@@ -10,6 +10,7 @@ import physics.Polygon;
 public class MaterialEntity extends Entity {
 
 	private Material material;
+	private Vec2[] vertices;
 
 	public Material getMaterial() {
 
@@ -23,6 +24,18 @@ public class MaterialEntity extends Entity {
 
 	public void setShape(Vec2[] vertices) {
 
-		setModel(material.getModel(vertices));
+		this.vertices = vertices;
+		genModel();
+	}
+
+	private void genModel() {
+		if (material != null && vertices != null)
+			setModel(material.getModel(vertices));
+	}
+
+	@Override
+	public void setLayer(int layer, int thickness) {
+		super.setLayer(layer, thickness);
+		genModel();
 	}
 }

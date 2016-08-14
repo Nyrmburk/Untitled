@@ -26,6 +26,9 @@ public class Entity {
 	private BodyDef physicsObjectDef;
 	private Level level;
 
+	private int layer;
+	private int thickness;
+
 	public Level getLevel() {
 
 		return level;
@@ -61,7 +64,8 @@ public class Entity {
 			Mat4 transform = instanceAttributes.getTransform();
 
 			Vec3 pos = Transform.getPosition(transform);
-			Transform.setPosition(transform, JBox2D.convert(getPhysicsObject().getPosition()).asVec3());
+			Transform.setPosition(transform, JBox2D.convert(
+					getPhysicsObject().getPosition()).asVec3(-layer));
 
 			float rotation = getPhysicsObject().getAngle();
 			Transform.rotate(transform, new Vec3(0, 0, 1), rotation);
@@ -87,7 +91,8 @@ public class Entity {
 
 		// inform physics object of change
 		if (physicsObject != null) {
-			physicsObject.setTransform(JBox2D.convert(Transform.getPosition(transform)), physicsObject.getAngle());
+			physicsObject.setTransform(JBox2D.convert(
+					Transform.getPosition(transform)), physicsObject.getAngle());
 		}
 	}
 
@@ -98,9 +103,8 @@ public class Entity {
 	public void setModel(ModelLoader model) {
 
 		if (level != null) {
-			// FIXME: 5/9/2016 
-//			if (this.model != null)
-//				level.getRenderContext().removeInstance(this.model);
+			if (this.model != null)
+				level.getRenderContext().getModelGroup().removeInstance(this.model);
 			level.getRenderContext().getModelGroup().addInstance(model, instanceAttributes);
 		}
 
@@ -123,5 +127,34 @@ public class Entity {
 		this.physicsObjectDef = physicsObjectDef;
 
 		return physicsObject;
+	}
+
+	public int getLayer() {
+		return layer;
+	}
+
+	public int getThickness() {
+		return thickness;
+	}
+
+	public void setLayer(int layer, int thickness) {
+
+		if (thickness < 1)
+			thickness = 1;
+		if (thickness > level.getLayerCount())
+			thickness = level.getLayerCount();
+
+		if (layer < 0)
+			layer = 0;
+
+		if (layer >= level.getLayerCount())
+			layer = level.getLayerCount() - thickness;
+
+		if (layer + thickness > level.getLayerCount())
+			thickness = level.getLayerCount() - layer;
+
+		this.layer = layer;
+		this.thickness = thickness;
+
 	}
 }

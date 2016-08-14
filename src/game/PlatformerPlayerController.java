@@ -1,5 +1,6 @@
 package game;
 
+import entity.Entity;
 import input.Binding;
 import input.Button;
 import input.Input;
@@ -94,9 +95,55 @@ public class PlatformerPlayerController extends PlayerController {
 		}
 	};
 
+	private Input upLayer = new Button("up") {
+
+		{
+			Binding.delegate(this);
+			InputContext.getCurrentContext().inputs.add(this);
+		}
+
+		@Override
+		public void onPress() {
+			Entity e = getPawn();
+			e.setLayer(e.getLayer() + 1, e.getThickness());
+		}
+
+		@Override
+		public void onRelease() {
+		}
+
+		@Override
+		public void onHold(float delta) {
+		}
+	};
+
+	private Input downLayer = new Button("down") {
+
+		{
+			Binding.delegate(this);
+			InputContext.getCurrentContext().inputs.add(this);
+		}
+
+		@Override
+		public void onPress() {
+			Entity e = getPawn();
+			e.setLayer(e.getLayer() - 1, e.getThickness());
+		}
+
+		@Override
+		public void onRelease() {
+		}
+
+		@Override
+		public void onHold(float delta) {
+		}
+	};
+
 	{
 		inputs.add(jump);
 		inputs.add(left);
 		inputs.add(right);
+		inputs.add(upLayer);
+		inputs.add(downLayer);
 	}
 }

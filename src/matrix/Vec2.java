@@ -118,7 +118,7 @@ public class Vec2 {
 		y = vec.y;
 	}
 
-	public Vec3 asVec3(int z) {
+	public Vec3 asVec3(float z) {
 
 		return new Vec3(x, y, z);
 	}

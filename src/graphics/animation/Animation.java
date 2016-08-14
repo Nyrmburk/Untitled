@@ -21,10 +21,10 @@ public abstract class Animation {
 		animationFrame.animate(map(elapsed / duration));
 	}
 
-	public abstract float map(float progress);
+	public abstract float map(float percent);
 
 	public interface AnimationFrame {
 
-		void animate(float progress);
+		void animate(float sample);
 	}
 }

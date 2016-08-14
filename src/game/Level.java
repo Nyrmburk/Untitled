@@ -28,6 +28,8 @@ public class Level extends Resource {
 	private List<Entity> entities = new ArrayList<Entity>();
 	public List<PlayerController> players = new ArrayList<>();
 
+	private int layerCount;
+
 	//players?
 	//checkpoints?
 	//physicsEngine?
@@ -37,6 +39,7 @@ public class Level extends Resource {
 		
 		physicsEngine = new World(JBox2D.convert(new Vec2(0, -9.81f)));
 		renderContext = new RenderContext(camera);
+		layerCount = 7;
 	}
 
 	public void update(float delta) {
@@ -64,6 +67,11 @@ public class Level extends Resource {
 		return renderContext;
 	}
 
+	public int getLayerCount() {
+
+		return layerCount;
+	}
+
 	@Override
 	public String getName() {
 		return null;
@@ -87,6 +95,7 @@ public class Level extends Resource {
 				new Vec2(100, -1),
 				new Vec2(100, 1)};
 		floor.setMaterial(material);
+		floor.setLayer(0, getLayerCount());
 		floor.setShape(floorVertices);
 
 		BodyDef objectDef = new BodyDef();
