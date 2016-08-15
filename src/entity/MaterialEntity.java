@@ -28,9 +28,14 @@ public class MaterialEntity extends Entity {
 		genModel();
 	}
 
+	public Vec2[] getShape() {
+
+		return vertices;
+	}
+
 	private void genModel() {
 		if (material != null && vertices != null)
-			setModel(material.getModel(vertices));
+			setModel(material.getModel(this));
 	}
 
 	@Override

@@ -95,8 +95,10 @@ public class PlatformerPlayerController extends PlayerController {
 		}
 	};
 
+	private float layerChangeHoldTime = 0.25f;
 	private Input upLayer = new Button("up") {
 
+		private float timeHeld;
 		{
 			Binding.delegate(this);
 			InputContext.getCurrentContext().inputs.add(this);
@@ -110,15 +112,23 @@ public class PlatformerPlayerController extends PlayerController {
 
 		@Override
 		public void onRelease() {
+			timeHeld = 0;
 		}
 
 		@Override
 		public void onHold(float delta) {
+			timeHeld += delta;
+
+			if (timeHeld >= layerChangeHoldTime) {
+				timeHeld -= layerChangeHoldTime;
+				onPress();
+			}
 		}
 	};
 
 	private Input downLayer = new Button("down") {
 
+		private float timeHeld;
 		{
 			Binding.delegate(this);
 			InputContext.getCurrentContext().inputs.add(this);
@@ -132,10 +142,17 @@ public class PlatformerPlayerController extends PlayerController {
 
 		@Override
 		public void onRelease() {
+			timeHeld = 0;
 		}
 
 		@Override
 		public void onHold(float delta) {
+			timeHeld += delta;
+
+			if (timeHeld >= layerChangeHoldTime) {
+				timeHeld -= layerChangeHoldTime;
+				onPress();
+			}
 		}
 	};
 

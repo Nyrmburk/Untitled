@@ -1,5 +1,6 @@
 package game;
 
+import entity.MaterialEntity;
 import graphics.ModelLoader;
 import physics.Polygon;
 import matrix.Vec2;
@@ -12,8 +13,9 @@ import java.util.List;
 public class SimpleModelGenerator implements MaterialModelGenerator {
 
 	@Override
-	public ModelLoader generate(Vec2[] vertices) {
+	public ModelLoader generate(MaterialEntity entity) {
 
+		Vec2[] vertices = entity.getShape();
 		ModelLoader model = new ModelLoader();
 
 		//front of model
@@ -22,7 +24,7 @@ public class SimpleModelGenerator implements MaterialModelGenerator {
 
 		//back of model
 		for (Vec2 point : vertices)
-			model.vertices.put(point.x, point.y, -0.5f);
+			model.vertices.put(point.x, point.y, -entity.getThickness() + 0.5f);
 
 		//front face
 		int[] indices;

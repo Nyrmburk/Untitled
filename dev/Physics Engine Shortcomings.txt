@@ -28,4 +28,5 @@ not properly set up for trans-engine use
 	I would have to implement it similarly to my render engine
 	it is similar to creating a user
 remove array use for Vec2 or Vec3
-No world point query
+no world point query
+no fixture added callback

@@ -1,5 +1,6 @@
 package game;
 
+import entity.MaterialEntity;
 import graphics.ModelLoader;
 import graphics.Texture;
 import matrix.Vec2;
@@ -29,9 +30,9 @@ public class Material {
 		this.modelGenerator = modelGenerator;
 	}
 
-	public ModelLoader getModel(Vec2[] vertices) {
+	public ModelLoader getModel(MaterialEntity entity) {
 
-		ModelLoader model = getModelGenerator().generate(vertices);
+		ModelLoader model = getModelGenerator().generate(entity);
 //		model.setTexture(getTexture());
 		return model;
 	}

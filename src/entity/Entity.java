@@ -8,6 +8,8 @@ import matrix.Vec3;
 import game.Level;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
+import org.jbox2d.dynamics.Filter;
+import org.jbox2d.dynamics.Fixture;
 import physics.JBox2D;
 
 /**
@@ -26,8 +28,8 @@ public class Entity {
 	private BodyDef physicsObjectDef;
 	private Level level;
 
-	private int layer;
-	private int thickness;
+	private int layer = 0;
+	private int thickness = 1;
 
 	public Level getLevel() {
 
@@ -126,6 +128,8 @@ public class Entity {
 
 		this.physicsObjectDef = physicsObjectDef;
 
+		setFilter();
+
 		return physicsObject;
 	}
 
@@ -155,6 +159,29 @@ public class Entity {
 
 		this.layer = layer;
 		this.thickness = thickness;
+		setFilter();
+	}
 
+	private void setFilter() {
+
+		if (physicsObject == null)
+			return;
+
+		Filter filter = new Filter();
+
+		// This here bit twiddling first fills lowest bits with 1s for each layer of thickness.
+		// (1 << getThickness()) - 1 ...
+		// After that it shifts it over to the layer it starts on.
+		// (...) << getLayer()
+		filter.categoryBits = ((1 << getThickness()) - 1) << getLayer();
+		filter.maskBits = filter.categoryBits;
+
+		Fixture fixture = physicsObject.getFixtureList();
+
+		while (fixture != null) {
+
+			fixture.setFilterData(filter);
+			fixture = fixture.getNext();
+		}
 	}
 }
