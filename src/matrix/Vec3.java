@@ -95,7 +95,7 @@ public class Vec3 {
 
 	public void translate(Vec3 delta) {
 
-		setPosition(this.add(delta));
+		set(this.add(delta));
 	}
 
 	//TODO needs axis
@@ -109,7 +109,7 @@ public class Vec3 {
 //		float x = (float) Math.cos(angle) * length + center.getX();
 //		float y = (float) Math.sin(angle) * length + center.getY();
 //
-//		setPosition(new Vec3(x, y, z));
+//		set(new Vec3(x, y, z));
 //	}
 
 	public void scale(Vec3 center, float amount) {
@@ -117,7 +117,7 @@ public class Vec3 {
 		Vec3 delta = this.subtract(center).normalized();
 		delta.multiply(amount);
 
-		setPosition(delta.add(center));
+		set(delta.add(center));
 	}
 
 	public float distance(Vec3 vec) {
@@ -130,10 +130,21 @@ public class Vec3 {
 		return (float) Math.sqrt(x * x + y * y + z * z);
 	}
 
-	public void setPosition(Vec3 vec) {
+	public void set(Vec3 vec) {
 
 		x = vec.x;
 		y = vec.y;
+		z = vec.z;
+	}
+
+	public Vec4 asVec4(float w) {
+
+		return new Vec4(x, y, z, w);
+	}
+
+	public Vec4 asVec4() {
+
+		return asVec4(0);
 	}
 
 	@Override

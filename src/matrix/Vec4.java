@@ -89,10 +89,12 @@ public class Vec4 {
 		return (float) Math.sqrt(x * x + y * y + z * z + w * w);
 	}
 
-	public void setPosition(Vec4 vec) {
+	public void set(Vec4 vec) {
 
 		x = vec.x;
 		y = vec.y;
+		z = vec.z;
+		w = vec.w;
 	}
 
 	@Override

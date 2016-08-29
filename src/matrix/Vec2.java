@@ -78,7 +78,7 @@ public class Vec2 {
 
 	public void translate(Vec2 delta) {
 
-		setPosition(this.add(delta));
+		set(this.add(delta));
 	}
 
 	public void rotate(Vec2 center, float radians) {
@@ -91,7 +91,7 @@ public class Vec2 {
 		float x = (float) Math.cos(angle) * distance + center.x;
 		float y = (float) Math.sin(angle) * distance + center.x;
 
-		setPosition(new Vec2(x, y));
+		set(new Vec2(x, y));
 	}
 
 	public void scale(Vec2 center, float amount) {
@@ -99,7 +99,7 @@ public class Vec2 {
 		Vec2 delta = this.subtract(center).normalized();
 		delta.multiply(amount);
 
-		setPosition(delta.add(center));
+		set(delta.add(center));
 	}
 
 	public float distance(Vec2 vec) {
@@ -112,7 +112,7 @@ public class Vec2 {
 		return (float) Math.sqrt(x * x + y * y);
 	}
 
-	public void setPosition(Vec2 vec) {
+	public void set(Vec2 vec) {
 
 		x = vec.x;
 		y = vec.y;

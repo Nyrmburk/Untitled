@@ -159,4 +159,8 @@ public class Mat3 {
 				0, 1, 0,
 				0, 0, 1);
 	}
+
+	public void set(Mat3 mat) {
+		System.arraycopy(mat.m, 0, m, 0, TOTAL_SIZE);
+	}
 }

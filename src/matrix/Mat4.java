@@ -286,6 +286,10 @@ public class Mat4 {
 				0, 0, 0, 1);
 	}
 
+	public void set(Mat4 mat) {
+		System.arraycopy(mat.m, 0, m, 0, TOTAL_SIZE);
+	}
+
 	public String toString() {
 
 		StringBuilder sb = new StringBuilder();

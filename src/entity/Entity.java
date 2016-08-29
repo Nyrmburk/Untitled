@@ -106,7 +106,7 @@ public class Entity {
 
 		if (level != null) {
 			if (this.model != null)
-				level.getRenderContext().getModelGroup().removeInstance(this.model);
+				level.getRenderContext().getModelGroup().removeInstance(this.model, instanceAttributes);
 			level.getRenderContext().getModelGroup().addInstance(model, instanceAttributes);
 		}
 

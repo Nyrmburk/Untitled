@@ -1,0 +1,39 @@
+::widgets::
+
+contents
+	inputs and outputs
+	need way to render
+	need access to constraint variables
+	need way to select
+
+behavior
+	widgets come in different formats for different purposes. Some have no input and only serve to provide the initial data. Others merely transform the inputs. Some reduce multiple inputs into a single output. At the end, there are the widgets that use their inputs to directly manipulate the world.
+	In order to do anything, widgets must have their inputs and outputs connected and propogate their outputs forward. It is almost like an ann. This is basically a depth first graph traversal.
+	One thing I have to identify is the mechanism for linking widgets together. Is it by object? Is it by index? Who knows?
+	Another thing I have to define is what the range of the outputs is going to be. I could make everything normalized between 0 and 1. I could have it be any range and the widget has to define what it does for an unlimited range of values.
+
+variations
+	constraints
+		motor/axle
+		piston
+		rope/chain
+		support
+		others
+
+	control systems / sensors
+		plug into constraints
+		controls
+			switch
+			button
+			grab switch
+			direct controller
+		sensors
+			proximity
+			raycast
+			force
+		other
+			pid
+			ann
+			timer
+			sequencer
+			filters?

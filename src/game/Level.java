@@ -39,7 +39,7 @@ public class Level extends Resource {
 		
 		physicsEngine = new World(JBox2D.convert(new Vec2(0, -9.81f)));
 		renderContext = new RenderContext(camera);
-		layerCount = 3;
+		layerCount = 3;//max 31
 	}
 
 	public void update(float delta) {
