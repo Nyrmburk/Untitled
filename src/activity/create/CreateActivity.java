@@ -96,7 +96,7 @@ public class CreateActivity extends Activity {
 
 		Vec3 vec = Transform.getPosition(level.getRenderContext().getCamera().getTransform());
 		vec.x = 0;
-		vec.y = 4;
+		vec.y = 2.5f;
 		vec.z = -vec.z;
 		updateFollowCam(vec);
 

@@ -4,9 +4,11 @@ import entity.Entity;
 import entity.MaterialEntity;
 import game.*;
 import graphics.ModelLoader;
+import graphics.Texture;
 import gui.*;
 import gui.layout.GUIBoxLayout;
 import main.Engine;
+import main.Resource;
 import main.ResourceManager;
 import matrix.*;
 import org.jbox2d.collision.shapes.Shape;
@@ -114,6 +116,7 @@ public class LoadingActivity extends Activity {
 				fixture.setShape(shape);
 				body.createFixture(fixture);
 			}
+			entity.setLayer(1, 1);
 
 			Entity player = new Entity();
 			PlayerController controller = new PlatformerPlayerController();
@@ -139,6 +142,35 @@ public class LoadingActivity extends Activity {
 					"Player.obj",
 					loadedResource -> player.setModel((ModelLoader) loadedResource),
 					ModelLoader.class);
+
+			Entity button = new Entity();
+			button.setLevel(level);
+			Vec2[] buttonVertices = {
+					new Vec2(-0.5f, 0),
+					new Vec2(0.5f, 0),
+					new Vec2(0.5f, 0.175f),
+					new Vec2(-0.5f, 0.175f)};
+			objectDef = new BodyDef();
+			objectDef.setType(BodyType.DYNAMIC);
+			Body buttonObject = button.setPhysicsObject(objectDef);
+			for (Shape shape : shapeFromPolygon(buttonVertices))
+				buttonObject.createFixture(shape, 0).setFriction(20);
+			transform = Mat4.identity();
+			Transform.setPosition(transform, new Vec3(3, 0, 0));
+			button.setTransform(transform);
+
+			ResourceManager.getResource(
+					"button.obj",
+					model -> button.setModel((ModelLoader) model),
+					ModelLoader.class);
+
+			ResourceManager.getResource(
+					"button.png",
+					image -> {
+						button.getModel().texture = (Texture) image;
+						button.getModel().setUserData(null);
+					},
+					Texture.class);
 		}
 		loadingText.setText(String.format(loadingMessage, (int) percentComplete));
 	}

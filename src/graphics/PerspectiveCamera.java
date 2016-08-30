@@ -21,7 +21,7 @@ public class PerspectiveCamera extends Camera {
 
 	public PerspectiveCamera() {
 
-		this(90, 0.1f, 1000f);
+		this(75, 0.1f, 1000f);
 	}
 
 	public float viewHeight(float distance, Dimension viewport) {

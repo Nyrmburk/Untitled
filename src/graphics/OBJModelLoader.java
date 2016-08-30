@@ -19,12 +19,16 @@ public class OBJModelLoader {
 	private List<Vec3> vertices = new ArrayList<>();
 	private List<Vec3> normals = new ArrayList<>();
 	private List<Vec2> textureCoords = new ArrayList<>();
-	private List<Integer> indices = new ArrayList<>();
+	private List<Integer> vertexIndices = new ArrayList<>();
+	private List<Integer> normalIndices = new ArrayList<>();
+	private List<Integer> textureIndices = new ArrayList<>();
 
 	public Model load(Path path) throws IOException {
 
 		// read file line by line
 		BufferedReader read = null;
+
+		Model model = null;
 
 		try {
 			String currentLine;
@@ -37,26 +41,20 @@ public class OBJModelLoader {
 				parseLine(currentLine);
 			}
 
-			Model model = new Model(indices.size());
+			model = new Model(vertexIndices.size());
 
-			for (Vec3 vertex : vertices) {
-				model.vertices.put(vertex.x);
-				model.vertices.put(vertex.y);
-				model.vertices.put(vertex.z);
+			for (int i = 0; i < vertexIndices.size(); i++) {
+				model.setVertex(i, vertices.get(vertexIndices.get(i)));
 			}
 
-			for (Vec3 normal : normals) {
-				model.normals.put(normal.x);
-				model.normals.put(normal.y);
-				model.normals.put(normal.z);
-			}
+			for (int i = 0; i < normals.size(); i++)
+				model.setNormal(i, normals.get(normalIndices.get(i)));
 
-			for (Vec2 texCoord : textureCoords) {
-				model.texCoords.put(texCoord.x);
-				model.texCoords.put(texCoord.y);
-			}
+			for (int i = 0; i < textureCoords.size(); i++)
+				model.setTexCoord(i, textureCoords.get(textureIndices.get(i)));
 
-			model.generateNormals();
+			if (normals.isEmpty())
+				model.generateNormals();
 
 			model.rewindBuffers();
 
@@ -66,8 +64,6 @@ public class OBJModelLoader {
 			if (read != null)
 				read.close();
 		}
-
-		Model model = new Model(0);
 
 		return model;
 	}
@@ -145,7 +141,7 @@ public class OBJModelLoader {
 
 		Vec3 vec = new Vec3();
 
-		vec.x = Float.parseFloat(data[0 + offset]);
+		vec.x = Float.parseFloat(data[    offset]);
 		vec.y = Float.parseFloat(data[1 + offset]);
 		vec.z = Float.parseFloat(data[2 + offset]);
 
@@ -156,7 +152,7 @@ public class OBJModelLoader {
 
 		Vec2 vec = new Vec2();
 
-		vec.x = Float.parseFloat(data[0 + offset]);
+		vec.x = Float.parseFloat(data[    offset]);
 		vec.y = Float.parseFloat(data[1 + offset]);
 
 		dest.add(vec);
@@ -168,7 +164,7 @@ public class OBJModelLoader {
 
 		for (int[] triangle : triangles)
 			for (int index : triangle)
-				this.indices.add(index);
+				this.vertexIndices.add(index);
 	}
 
 	private static int[][] triangulate(int[] sides) {

@@ -18,6 +18,7 @@ import javax.swing.JFrame;
 
 import graphics.*;
 import graphics.ModelGroup.InstancedModel;
+import main.ResourceUser;
 import matrix.Mat4;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
@@ -380,7 +381,7 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 		new Thread(new ScreenshotRunnable(array.slice())).start();
 	}
 
-	private static class OpenGLModelData {
+	private static class OpenGLModelData implements ResourceUser {
 
 		int VAOID;
 		int VBOID;
@@ -472,18 +473,18 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 
 			if (model.getUserData() instanceof OpenGLModelData) {
 
-				data =  (OpenGLModelData) model.getUserData();
+				data = (OpenGLModelData) model.getUserData();
 			} else {
 
 				data = new OpenGLModelData(model);
 				model.setUserData(data);
-				model.setReleaseListener(data::release);
 			}
 
 			return data;
 		}
 
-		void release() {
+		@Override
+		public void onRelease() {
 
 			glDeleteBuffers(VBOID);
 			glDeleteBuffers(NBOID);
@@ -492,9 +493,14 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 			glDeleteBuffers(VBOIID);
 			glDeleteVertexArrays(VAOID);
 		}
+
+		@Override
+		public void onModify() {
+
+		}
 	}
 
-	private static class OpenGLTextureData {
+	private static class OpenGLTextureData implements ResourceUser {
 
 		private int id = 0;
 
@@ -518,11 +524,6 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 			glBindTexture(GL_TEXTURE_2D, id);
 		}
 
-		void release() {
-
-			glDeleteTextures(id);
-		}
-
 		private static OpenGLTextureData getOpenGLTextureData(Texture texture) {
 
 			OpenGLTextureData data;
@@ -534,10 +535,19 @@ public class SimpleOpenGL3_0RenderEngine implements RenderEngine {
 
 				data = new OpenGLTextureData(texture);
 				texture.setUserData(data);
-				texture.setReleaseListener(data::release);//fancy lambda expression
 			}
 
 			return data;
+		}
+
+		@Override
+		public void onRelease() {
+			glDeleteTextures(id);
+		}
+
+		@Override
+		public void onModify() {
+
 		}
 	}
 

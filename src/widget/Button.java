@@ -1,5 +1,6 @@
 package widget;
 
+import entity.Entity;
 import graphics.InstanceAttributes;
 import graphics.ModelLoader;
 import main.Resource;
@@ -14,6 +15,8 @@ public class Button extends Widget {
 
 	private static ModelLoader model;
 	InstanceAttributes instance = new InstanceAttributes();
+
+	Entity button;
 
 	static {
 		ResourceManager.getResource("button", new ResourceManager.AsyncLoad() {
@@ -47,12 +50,12 @@ public class Button extends Widget {
 
 	@Override
 	public String getInputName(int index) {
-		return null;
+		return "";
 	}
 
 	@Override
 	public String getOutputName(int index) {
-		return null;
+		return "button";
 	}
 
 	@Override

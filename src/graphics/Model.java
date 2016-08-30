@@ -8,7 +8,6 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.nio.file.Path;
 
 /**
@@ -20,31 +19,21 @@ public class Model extends Resource {
 	private static final int NORMAL_STRIDE = 3;
 	private static final int TEXTURE_STRIDE = 2;
 
-	public int elementCount;
 	private int elementCapacity;
-	public FloatBuffer vertices;
-	public FloatBuffer normals;
-	public FloatBuffer texCoords;
-	public IntBuffer indices;
+	private FloatBuffer vertices;
+	private FloatBuffer normals;
+	private FloatBuffer texCoords;
 
 	public Texture texture;
 
 	private String name;
 
-	public Model(int capacity, int count) {
-
-		this.elementCount = count;
+	public Model(int capacity) {
 		this.setElementCapacity(capacity);
-
-		vertices = ByteBuffer.allocateDirect(capacity * VERTEX_STRIDE * Float.BYTES).asFloatBuffer();
-		normals = ByteBuffer.allocateDirect(capacity * NORMAL_STRIDE * Float.BYTES).asFloatBuffer();
-		texCoords = ByteBuffer.allocateDirect(capacity * TEXTURE_STRIDE * Float.BYTES).asFloatBuffer();
-		indices = ByteBuffer.allocateDirect(capacity * Integer.BYTES).asIntBuffer();
 	}
 
-	public Model(int size) {
-
-		this(size, size);
+	public Model() {
+		this(10);
 	}
 
 	public void rewindBuffers() {
@@ -52,49 +41,26 @@ public class Model extends Resource {
 		vertices.rewind();
 		normals.rewind();
 		texCoords.rewind();
-		indices.rewind();
-	}
-
-	// not usable until a modification listener is added
-
-	// gets the max index and shortens the other buffers to that length
-	// also shortens indices to count instead of capacity
-	public void trim() {
-
-		for (int i = 0; i < elementCount; i++) {
-
-		}
 	}
 
 	public static Model concatenate(Model... models) {
 
 		int newSize = 0;
-		for (Model model : models) newSize += model.elementCount;
+		for (Model model : models) newSize += model.elementCapacity;
 
 		Model newModel = new Model(newSize);
 
-		int maxIndex = 0;
-		int indexOffset = 0;
 		for (Model model : models) {
 
 			model.rewindBuffers();
-			for (int i = 0; i < model.elementCount; i++) {
-
-				// put new index
-				int index = model.indices.get();
-				maxIndex = Math.max(maxIndex, index);
-				newModel.indices.put(index + indexOffset);
-			}
 
 			// copy over other data
-			for (int i = 0; i < model.elementCount * VERTEX_STRIDE; i++)
+			for (int i = 0; i < model.elementCapacity * VERTEX_STRIDE; i++)
 				newModel.vertices.put(model.vertices.get());
-			for (int i = 0; i < model.elementCount * NORMAL_STRIDE; i++)
+			for (int i = 0; i < model.elementCapacity * NORMAL_STRIDE; i++)
 				newModel.normals.put(model.normals.get());
-			for (int i = 0; i < model.elementCount * TEXTURE_STRIDE; i++)
+			for (int i = 0; i < model.elementCapacity * TEXTURE_STRIDE; i++)
 				newModel.texCoords.put(model.texCoords.get());
-
-			indexOffset += maxIndex;
 		}
 
 		return newModel;
@@ -104,77 +70,67 @@ public class Model extends Resource {
 		return elementCapacity;
 	}
 
-	// not usable until a modification listener is added
 	private void setElementCapacity(int elementCapacity) {
 		this.elementCapacity = elementCapacity;
 
-		Model replacement = new Model(elementCapacity);
-		int copySize = Math.min(this.elementCapacity, elementCapacity);
+		vertices = resize(vertices, elementCapacity * VERTEX_STRIDE);
+		normals = resize(normals, elementCapacity * NORMAL_STRIDE);
+		texCoords = resize(texCoords, elementCapacity * TEXTURE_STRIDE);
 
-		rewindBuffers();
-		for (int i = 0; i < copySize; i++)
-			replacement.indices.put(indices.get());
+		onModify();
+	}
 
-		for (int i = 0; i < copySize * VERTEX_STRIDE; i++) {
+	private FloatBuffer resize(FloatBuffer source, int size) {
 
-			replacement.vertices.put(vertices.get());
-			replacement.normals.put(normals.get());
-			replacement.texCoords.put(texCoords.get());
-		}
+		FloatBuffer resized = ByteBuffer.allocateDirect(size * Float.BYTES).asFloatBuffer();
+
+		if (source == null)
+			return resized;
+
+		source.rewind();
+		source.limit(Math.min(source.limit(), size));
+		resized.put(source);
+
+		return resized;
 	}
 
 	public void generateNormals() {
 
-		Vec3[] SurfaceNormals = new Vec3[elementCount];
+		for (int i = 0; i < elementCapacity; i += 3) {
 
-		for (int i = 0; i < elementCount; i++) {
+			Vec3 a = getVertex(i    );
+			Vec3 b = getVertex(i + 1);
+			Vec3 c = getVertex(i + 2);
 
-			//triangle
-			int[] tri = getTriangleIndices(i);
+			Vec3 p = b.subtract(a);
+			Vec3 q = c.subtract(a);
 
-			Vec3 a = getVertex(tri[0]);
-			Vec3 b = getVertex(tri[1]);
-			Vec3 c = getVertex(tri[2]);
+			Vec3 normal = p.cross(q).normalized();
 
-			b = b.subtract(a);
-			c = c.subtract(a);
+			float angleA = p.angle(q);
 
-			Vec3 normal = b.cross(c).normalized();
-			SurfaceNormals[i] = normal;
+			p = c.subtract(b);
+			q = a.subtract(b);
 
-			float angleA = b.angle(c);
+			float angleB = p.angle(q);
 
-			b = getVertex(tri[1]);
-			c = getVertex(tri[2]);
+			p = a.subtract(c);
+			q = b.subtract(c);
 
-			c = c.subtract(b);
-			a = a.subtract(b);
+			float angleC = p.angle(q);
 
-			float angleB = c.angle(a);
-
-			c = getVertex(tri[2]);
-			a = getVertex(tri[0]);
-
-			a = a.subtract(c);
-			b = b.subtract(c);
-
-			float angleC = a.angle(b);// (float) (Math.PI - (angleA +
-			// angleB));
-
-			setNormal(tri[0], getNormal(tri[0]).add(normal.multiply(angleA)));
-			setNormal(tri[1], getNormal(tri[1]).add(normal.multiply(angleB)));
-			setNormal(tri[2], getNormal(tri[2]).add(normal.multiply(angleC)));
+			setNormal(i    , getNormal(i    ).add(normal.multiply(angleA)));
+			setNormal(i + 1, getNormal(i + 1).add(normal.multiply(angleB)));
+			setNormal(i + 2, getNormal(i + 2).add(normal.multiply(angleC)));
 		}
 
-		for (int i = 0; i < elementCount; i++) {
-
+		for (int i = 0; i < elementCapacity; i++)
 			setNormal(i, getNormal(i).normalized());
-		}
 	}
-
 
 	public Vec3 getVertex(int index) {
 
+		index *= VERTEX_STRIDE;
 		return new Vec3(
 				vertices.get(index),
 				vertices.get(index+1),
@@ -183,6 +139,7 @@ public class Model extends Resource {
 
 	public Vec3 getNormal(int index) {
 
+		index *= NORMAL_STRIDE;
 		return new Vec3(
 				normals.get(index),
 				normals.get(index+1),
@@ -191,38 +148,40 @@ public class Model extends Resource {
 
 	public Vec2 getTexCoord(int index) {
 
+		index *= TEXTURE_STRIDE;
 		return new Vec2(
 				texCoords.get(index),
 				texCoords.get(index+1));
 	}
 
-	public void setVertex(int index, Vec3 vector) {
+	public void setVertex(int index, Vec3 vec) {
 
-		vertices.put(index);
-		vertices.put(index+1);
-		vertices.put(index+2);
+		if (index > elementCapacity)
+			resize(vertices, Math.max(elementCapacity * 2, index));
+		set3(vertices, index, vec);
 	}
 
-	public void setNormal(int index, Vec3 vector) {
+	public void setNormal(int index, Vec3 vec) {
 
-		normals.put(index);
-		normals.put(index+1);
-		normals.put(index+2);
+		if (index > elementCapacity)
+			resize(normals, Math.max(elementCapacity * 2, index));
+		set3(normals, index, vec);
 	}
 
 	public void setTexCoord(int index, Vec2 vector) {
 
-		texCoords.put(index);
-		texCoords.put(index+1);
+		if (index > elementCapacity)
+			resize(texCoords, Math.max(elementCapacity * 2, index));
+		texCoords.put(index, vector.x);
+		texCoords.put(index+1, vector.y);
 	}
 
-	public int[] getTriangleIndices(int index) {
+	private static void set3(FloatBuffer buffer, int index, Vec3 vec) {
 
-		index *= 3; //vertices in a triangle
-		return new int[]{
-				indices.get(index),
-				indices.get(index+1),
-				indices.get(index+2)};
+		index *= 3;
+		buffer.put(index, vec.x);
+		buffer.put(index+1, vec.y);
+		buffer.put(index+2, vec.z);
 	}
 
 	@Override
@@ -231,7 +190,6 @@ public class Model extends Resource {
 	}
 
 	public void setName(String name) {
-
 		this.name = name;
 	}
 
@@ -247,11 +205,9 @@ public class Model extends Resource {
 		OBJModelLoader loader = new OBJModelLoader();
 		Model temp = loader.load(path);
 
-		elementCount = temp.elementCount;
 		elementCapacity = temp.elementCapacity;
 		vertices = temp.vertices;
 		normals = temp.normals;
 		texCoords = temp.texCoords;
-		indices = temp.indices;
 	}
 }

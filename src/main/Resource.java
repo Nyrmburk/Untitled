@@ -13,65 +13,46 @@ import java.nio.file.Path;
 public abstract class Resource {
 
 	private int references = 0;
-	private RegisterListener registerListener;
-	private ReleaseListener releaseListener;
-	private Object userData;
+	private boolean modified = false;
+	private ResourceUser userData;
 
 	public abstract String getName();
 
-	public Object getUserData() {
+	public ResourceUser getUserData() {
 
+		if (modified && userData != null) {
+			userData.onModify();
+			modified = false;
+		}
 		return userData;
 	}
 
-	public void setUserData(Object userData) {
+	public void setUserData(ResourceUser userData) {
 
+		if (this.userData != null)
+			this.userData.onRelease();
 		this.userData = userData;
 	}
 
 	public final void register() {
-
 		references++;
-
-		if (registerListener != null)
-			registerListener.onRegister();
 	}
 
 	public final void release() {
 
 		references--;
-		if (references <= 0 && releaseListener != null)
-			releaseListener.onRelease();
+		if (references <= 0 && userData != null)
+			userData.onRelease();
+	}
+
+	protected final void onModify() {
+		modified = true;
 	}
 
 	public final int getReferenceCount() {
-
 		return references;
 	}
 
 	public abstract void save(Path path) throws IOException;
 	public abstract void load(Path path) throws IOException;
-
-	public void setRegisterListener(RegisterListener listener) {
-
-		this.registerListener = listener;
-	}
-
-	public void setReleaseListener(ReleaseListener listener) {
-
-		this.releaseListener = listener;
-	}
-
-	public interface RegisterListener {
-
-		/**
-		 * onRegister is called by the main thread (useful for graphics)
-		 */
-		void onRegister();
-	}
-
-	public interface ReleaseListener {
-
-		void onRelease();
-	}
 }
