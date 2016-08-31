@@ -1,8 +1,5 @@
 package widget;
 
-import entity.Entity;
-import matrix.Vec2;
-
 import java.util.List;
 
 /**
@@ -13,8 +10,8 @@ public class Inverter extends SimpleWidget {
 	public static final int NORMAL = 0;
 	public static final int INVERTED = 0;
 
-	public Inverter(Entity attachedEntity, Vec2 offset) {
-		super(1, 1, attachedEntity, offset);
+	public Inverter() {
+		super(1, 1);
 	}
 
 	@Override

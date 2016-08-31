@@ -12,28 +12,21 @@ import matrix.Vec3;
 import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.dynamics.*;
 import physics.JBox2D;
+import widget.Widget;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-//The game has a physicsEngine instance?
-//players list?
-//
 public class Level extends Resource {
 	
 	public World physicsEngine;
 	private RenderContext renderContext;
-	private List<Entity> entities = new ArrayList<Entity>();
+	private List<Entity> entities = new ArrayList<>();
 	public List<PlayerController> players = new ArrayList<>();
 
 	private int layerCount;
-
-	//players?
-	//checkpoints?
-	//physicsEngine?
-	//
 	
 	public Level(Camera camera) {
 		
@@ -46,29 +39,23 @@ public class Level extends Resource {
 
 		physicsEngine.step(delta, 8, 3);
 
-		for (Entity entity : entities) {
-
+		for (Entity entity : entities)
 			entity.update(delta);
-		}
 	}
 
 	public void addEntity(Entity entity) {
-
 		this.entities.add(entity);
 	}
 
 	public void removeEntity(Entity entity) {
-
 		this.entities.remove(entity);
 	}
 
 	public RenderContext getRenderContext() {
-
 		return renderContext;
 	}
 
 	public int getLayerCount() {
-
 		return layerCount;
 	}
 

@@ -153,8 +153,13 @@ public class LoadingActivity extends Activity {
 			objectDef = new BodyDef();
 			objectDef.setType(BodyType.DYNAMIC);
 			Body buttonObject = button.setPhysicsObject(objectDef);
-			for (Shape shape : shapeFromPolygon(buttonVertices))
-				buttonObject.createFixture(shape, 0).setFriction(20);
+			for (Shape shape : shapeFromPolygon(buttonVertices)) {
+				FixtureDef fixture = new FixtureDef();
+				fixture.setFriction(10f);
+				fixture.setDensity(1);
+				fixture.setShape(shape);
+				buttonObject.createFixture(fixture);
+			}
 			transform = Mat4.identity();
 			Transform.setPosition(transform, new Vec3(3, 0, 0));
 			button.setTransform(transform);

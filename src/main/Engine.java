@@ -279,10 +279,8 @@ public class Engine {
 	 */
 	private static void update(float delta) {
 
-		for(InputInterface input : InputInterface.getInterfaces()) {
-
+		for(InputInterface input : InputInterface.getInterfaces())
 			input.update(delta);
-		}
 
 		// It might be possible to have inputs processed on it's own thread.
 		if (InputContext.getCurrentContext() != null)

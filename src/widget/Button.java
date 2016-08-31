@@ -13,18 +13,10 @@ import java.util.List;
  */
 public class Button extends Widget {
 
-	private static ModelLoader model;
-	InstanceAttributes instance = new InstanceAttributes();
-
-	Entity button;
-
-	static {
-		ResourceManager.getResource("button", new ResourceManager.AsyncLoad() {
-			@Override
-			public void onLoad(Resource loadedResource) {
-				model = (ModelLoader) loadedResource;
-			}
-		}, ModelLoader.class);
+	{
+		ResourceManager.getResource("button",
+				loadedResource -> setModel((ModelLoader) loadedResource),
+				ModelLoader.class);
 	}
 
 	public Button() {
@@ -56,15 +48,5 @@ public class Button extends Widget {
 	@Override
 	public String getOutputName(int index) {
 		return "button";
-	}
-
-	@Override
-	public ModelLoader getModel() {
-		return model;
-	}
-
-	@Override
-	public InstanceAttributes getInstance() {
-		return instance;
 	}
 }

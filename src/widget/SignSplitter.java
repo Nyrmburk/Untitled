@@ -1,7 +1,5 @@
 package widget;
 
-import entity.Entity;
-import matrix.Vec2;
 
 import java.util.List;
 
@@ -14,8 +12,8 @@ public class SignSplitter extends SimpleWidget {
 	public static final int POSITIVE_SIGN = 0;
 	public static final int NEGATIVE_SIGN = 1;
 
-	public SignSplitter(Entity attachedEntity, Vec2 offset) {
-		super(1, 2, attachedEntity, offset);
+	public SignSplitter() {
+		super(1, 2);
 	}
 
 	@Override

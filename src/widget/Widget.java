@@ -1,5 +1,6 @@
 package widget;
 
+import entity.Entity;
 import graphics.InstanceAttributes;
 import graphics.ModelLoader;
 
@@ -9,7 +10,7 @@ import java.util.List;
 /**
  * Created by Nyrmburk on 8/18/2016.
  */
-public abstract class Widget {
+public abstract class Widget extends Entity {
 
 	int received = 0;
 	int connectedInputs = 0;
@@ -22,14 +23,10 @@ public abstract class Widget {
 		setSize(inputs, outputs);
 	}
 
-	public abstract void update(float delta);
 	public abstract void fire(List<Synapse> inputs, List<Synapse> outputs);
 
 	public abstract String getInputName(int index);
 	public abstract String getOutputName(int index);
-
-	public abstract ModelLoader getModel();
-	public abstract InstanceAttributes getInstance();
 
 	public boolean connect(int inputIndex, Synapse synapse) {
 
@@ -76,7 +73,7 @@ public abstract class Widget {
 		}
 
 		// grow
-		while (++i > 0)
+		for (i = 0; i < inputs; i++)
 			this.inputs.add(null);
 
 		// outputs
@@ -86,7 +83,7 @@ public abstract class Widget {
 			this.outputs.remove(i);
 
 		// grow
-		while (++i > 0)
+		for (i = 0; i < outputs; i++)
 			this.outputs.add(new Synapse(this));
 	}
 

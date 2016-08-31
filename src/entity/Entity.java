@@ -98,6 +98,10 @@ public class Entity {
 		}
 	}
 
+	public InstanceAttributes getInstanceAttributes() {
+		return instanceAttributes;
+	}
+
 	public ModelLoader getModel() {
 		return model;
 	}
@@ -127,6 +131,8 @@ public class Entity {
 		}
 
 		this.physicsObjectDef = physicsObjectDef;
+
+		physicsObject.setUserData(this);
 
 		setFilter();
 

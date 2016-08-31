@@ -1,8 +1,5 @@
 package widget;
 
-import entity.Entity;
-import matrix.Vec2;
-
 import java.util.List;
 
 /**
@@ -14,8 +11,8 @@ public class SignMerger extends SimpleWidget {
 	public static final int NEGATIVE_SIGN = 1;
 	public static final int BOTH_SIGN = 0;
 
-	public SignMerger(Entity attachedEntity, Vec2 offset) {
-		super(2, 1, attachedEntity, offset);
+	public SignMerger() {
+		super(2, 1);
 	}
 
 	@Override
