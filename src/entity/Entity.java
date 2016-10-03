@@ -11,13 +11,15 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.Filter;
 import org.jbox2d.dynamics.Fixture;
 import physics.JBox2D;
+import tool.Selectable;
+import tool.Selection;
 
 /**
  * The binding glue of the different observable componentLists. It binds orientation to the physics and graphics.
  * @author Christopher Dombroski
  *
  */
-public class Entity {
+public class Entity implements Selectable {
 
 	private boolean isActive = true;
 

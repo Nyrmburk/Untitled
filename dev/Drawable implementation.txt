@@ -1,0 +1,36 @@
+The ultimate rendering system
+
+base object is the drawable
+there are primitive and complex drawables
+primitives include:
+	bitmaps
+	meshes
+	text
+	lines
+	points
+complex drawables include:
+	particle effects
+	stream graphs
+	voronoi
+	bar charts
+	guis
+	procedural generators
+	anything that can be displayed...
+
+complex drawables are combinations of primitives
+when a render engine attempts to render a drawable it calls drawable.draw(renderEngine);
+drawable.draw(renderEngine) takes the render engine context and calls the render engine's methods for the primitives
+a complex drawable merely propagates all its subdrawables with the render engine context
+
+an interesting idea is to have all the variables defining the system as final objects
+because they are final, they must be mutable through methods
+on creation of the mutable object, a reference to the host object is given
+on the set() method of the mutable object, the return type is the host object
+this allows for a cool cascade of parameters to be set
+because the mutable objects are not methods to change the data, they can be passed directly to other functions
+this means that it is easy to create arbitrary functions for certain data
+the main purpose is for animation, although I imagine it would be rather flexible for other things as well
+in order to animate, a function that accepts one of the mutable objects can store it and mutate it through time
+the mutable objects can also let the host know that the data has changed
+this allows for the draw method to generate it's data only when it is out of date and needed
+this super flexible drawable system broguht to you by christopher dombroski

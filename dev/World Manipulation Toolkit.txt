@@ -1,0 +1,177 @@
+world manipulation toolkit
+
+goals:
+	context-aware
+	extensible
+	easy
+
+inputs:
+	mouse actions
+	keyboard
+	physics engine
+	world point
+	
+outputs:
+	world manipulation varying on tool
+	
+implementation thoughts:
+in order to be context-aware, the tool must change it's functionality depending on the data given
+in order to be extensible, not only is something added to the world, but the tool itself must be changed
+this is not so good
+a workaround that is fully extensible, modular, and context-aware, the object in the world must give the directions to the tool
+in order to give directions to the tool, the tool itself must be fully defined and have meaningful data
+some meaningful data is world location and mouse actions
+
+I think that world objects need to implement an interface that allows them to change themselves based on the tool
+the problem with this is that it only works for a certain tool
+
+maybe there is two classes of tools, the multitool, and unique tools
+
+then comes along the idea of selection
+selection is usually a feature of the multitool
+selecting objects generally allows for attributes to be changed in bulk
+
+I think I am looking at this whole tool thing too hard
+I need to remove some constraints and make the whole thing a little more abstract
+
+selection is good
+selection means I can have tools that works independent of a gui
+building tools that work in both a gui, cli, and api is the only logical approach
+
+I'm lost; let's talk about real world tools
+there is a toolbox with your tools in it
+you pick up and manipulate both the tool and object in your hands most of the time
+picking something up means you can move it and manipulate it's features; same with tools
+when you pick up a tool, its purpose is already defined and only works on things it was designed for
+usually you work on something in your hands or workspace
+it is up to the user to identify the different types of objects and what they can work on; or is it the tool?
+at the very least, the tool is given a view of the world
+
+my mind has cleared a little bit
+The way I see it there is a multipurpose tool; the hands.
+there is a tool that I am using when I am not using my hands
+the tool is given a view of the world and uses that view to manipulate things by itself
+the tool is controlled by the hand
+the tool can only operate on things in the workspace?
+	maybe that is only true for a single kind of object?
+	maybe the tool subscribes to the selection selectively?
+only the hands are context aware because the hands trigger functions of the object it is manipulating?
+	select mode when nothing is selected?
+	default mode of object is movement?
+	if overriden manipulation, new functionality is found?
+	
+ok, to define the multitool interface:
+	onSelect()
+	onDeselect()
+	onSelectionChanged()
+	onPress()
+	onMove()
+	onDrag()
+	onRelease()
+that should be it. it is basically the mouse commands with selection callbacks
+
+in order to get a general idea for how I want it to work, I am going to write some fake dummy code that I think should work
+
+new sketcher()
+	.point(xyz)
+	.point(xyz)
+	.point(xyz)
+	.commit(world);
+
+or maybe:
+
+world.add(new sketcher()
+	.point(xyz)
+	.point(xyz)
+	.point(xyz)
+	.commit());
+	
+selection tool?
+
+select
+	.add(anEntity)
+	.add(anEntity)
+	.press(xyz)
+	.drag(xyz)
+	.release(xyz);
+// I'm not sure if I like the press/drag/release routine
+// It should be converged into one method with a wrapper for the gui
+// only problem is that it makes the selection more complicated in the way that
+//		the selection is necessary for the initial function to work.
+
+some tools I want to have:
+	sketch
+	translate/rotate/scale
+	select
+	glue
+	place object/sensor (single point)
+	place constraint (single and double point depending on constraint)
+	connect wires
+	
+sketch:
+	the sketch gets built as the points are placed
+	I need to decide on one of 3 drawing types
+		for now, go with the one that is finished
+		
+translate/rotate/scale
+	this only happens when there are objects selected
+	
+select
+	this only happens when no objects are selected
+	
+glue
+	in lbp, glueing is done by holding a button whenthe selected object is colliding with another
+	in lbp2, there is the above, and a smart glue tool that allows for glueing based on touching objects defined by 2 points
+
+place
+	there is a library that defines what is to be placed and then on clicking, it appends it to the object that is intersecting the point
+	
+placing constraints
+	same as above but with 2 points (sometimes)
+
+connecting wires
+	a little bit different
+	only able to be done if there is a selected widget handle?
+	widget handles remove selves from selection if selection contains non-widget handle
+	on second click, if the point is also a widget handle, it connects them
+	the tricky part that is mostly solved is getting the extra functionality to be extensible
+	if I go non-extensible, I can get away with a simpler design (I think)
+	
+as far as implementation:
+	there is a widget
+	widgets are entities
+	widgets have handles for all their inputs
+	a model generator creates the widget models and places the handles
+	the widgets and handles become world objects
+	some object needs to define the toolmanipulatable interface or something idk
+	
+	there is a tool
+	there is a hand?
+	the hand holds the tool and maniputlates its methods
+	the tool has methods for click, press, drag, etc
+	the inputs are the selection?
+	how to change that into cli though?
+	cli gives all arguments to specific method
+	example cli given below
+	
+///////////	
+select a b c
+tool move?
+tool xyz?
+move xyz?
+// is the move relative or absolute?
+move -r xyz?
+move -a xyz?
+// idk
+// the "move" syntax is more deliberate and easy to remember
+// the "tool" syntax can change the tool in one go, but requires an extra step and is harder to remember
+// I like the "move syntax"
+// I think there will be no issues with the cli because I can bind extra functionality into the commands
+
+the js script syntax is way more difficult
+if I do it right, the js syntax IS the cli...
+this means that all I wrote above is worthless
+how to define a proper api...
+I could wrap functionality around the tool for either the js commands or the tool objects
+I think wrapping for the tool api is easiest which means I need to work on a programmatic api
+
