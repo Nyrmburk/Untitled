@@ -58,7 +58,7 @@ public class Binding {
 			bindings.put(entry.getKey(), binding);
 		}
 
-//		System.out.println(bindings);
+		System.out.println(bindings);
 	}
 
 	public static void save() {

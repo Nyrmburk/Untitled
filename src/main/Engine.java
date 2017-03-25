@@ -1,9 +1,7 @@
 package main;
 
 import activity.Activity;
-import activity.GUITestActivity;
-import activity.MainMenuActivity;
-import entity.Entity;
+import activity.SpaceGameActivity;
 import game.Level;
 import graphics.RenderContext;
 import graphics.RenderEngine;
@@ -209,23 +207,23 @@ public class Engine {
 
 		//building .ini for keymap
 		//temporary
-		HashMap<String, String> map = new HashMap<>();
-
-		map.put("jump", "LWJGLKeyInput:SPACE");
-		map.put("left", "LWJGLKeyInput:A");
-		map.put("right", "LWJGLKeyInput:D");
-		map.put("up", "LWJGLKeyInput:W");
-		map.put("down", "LWJGLKeyInput:S");
-		map.put("crouch", "LWJGLKeyInput:SHIFT");
-		map.put("zoom", "LWJGLMouseInput:X_SCROLL");
-		INIWriter.write(map, new File("res\\input\\player.ini"));
-
-		map.clear();
-		map.put("primary", "LWJGLMouseInput:BUTTON_0");
-		map.put("secondary", "LWJGLMouseInput:BUTTON_1");
-		map.put("x_axis", "LWJGLMouseInput:X_COORD");
-		map.put("y_axis", "LWJGLMouseInput:Y_COORD");
-		INIWriter.write(map, new File("res\\input\\ui.ini"));
+//		HashMap<String, String> map = new HashMap<>();
+//
+//		map.put("jump", "LWJGLKeyInput:SPACE");
+//		map.put("left", "LWJGLKeyInput:A");
+//		map.put("right", "LWJGLKeyInput:D");
+//		map.put("up", "LWJGLKeyInput:W");
+//		map.put("down", "LWJGLKeyInput:S");
+//		map.put("crouch", "LWJGLKeyInput:SHIFT");
+//		map.put("zoom", "LWJGLMouseInput:X_SCROLL");
+//		INIWriter.write(map, new File("res\\input\\player.ini"));
+//
+//		map.clear();
+//		map.put("primary", "LWJGLMouseInput:BUTTON_0");
+//		map.put("secondary", "LWJGLMouseInput:BUTTON_1");
+//		map.put("x_axis", "LWJGLMouseInput:X_COORD");
+//		map.put("y_axis", "LWJGLMouseInput:Y_COORD");
+//		INIWriter.write(map, new File("res\\input\\ui.ini"));
 
 		LWJGLKeyInput input = new LWJGLKeyInput();
 		Binding.load(new File("res\\input\\player.ini"));
@@ -233,7 +231,8 @@ public class Engine {
 
 		//start the main menu activity
 //		Activity.createActivity(new GUITestActivity());
-		Activity.createActivity(new MainMenuActivity());
+//		Activity.createActivity(new MainMenuActivity());
+		Activity.createActivity(new SpaceGameActivity());
 	}
 
 	public static void renderUI() {
