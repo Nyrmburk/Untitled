@@ -14,11 +14,15 @@ import main.ResourceManager;
 import matrix.Mat4;
 import matrix.Transform;
 import matrix.Vec3;
+import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.FixtureDef;
 
 import static physics.JBox2D.convert;
+import static physics.JBox2D.shapeFromPolygon;
 
 /**
  * Created by Bubba on 3/24/2017.
@@ -61,7 +65,25 @@ public class SpaceGameActivity extends Activity {
         level.players.add(controller);
         BodyDef objectDef = new BodyDef();
         objectDef.setType(BodyType.DYNAMIC);
-        ship.setPhysicsObject(objectDef);
+        Body shipBody = ship.setPhysicsObject(objectDef);
+        shipBody.setLinearDamping(0.5f);
+        shipBody.setAngularDamping(0.5f);
+
+        matrix.Vec2[] verts = {
+                new matrix.Vec2(-1.4f, -0.7f),
+                new matrix.Vec2(1.4f, -0.7f),
+                new matrix.Vec2(0, 1.7f)
+        };
+
+        for (Shape shape : shapeFromPolygon(verts)) {
+            FixtureDef fixture = new FixtureDef();
+            fixture.setFriction(0.5f);
+            fixture.setRestitution(0.15f);
+            fixture.setDensity(1);
+            fixture.setShape(shape);
+            shipBody.createFixture(fixture);
+        }
+
         ResourceManager.getResource("delta.obj", new ResourceManager.AsyncLoad() {
             @Override
             public void onLoad(Resource loadedResource) {

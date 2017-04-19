@@ -15,8 +15,8 @@ public class Binding {
 	// TODO refactor that const into here
 	private static final File path = new File("res\\input");
 
-	private static Map<String, Object> bindings = new HashMap<String, Object>();
-	private static Map<String, InputInterface> interfaces = new HashMap<String, InputInterface>();
+	private static Map<String, Object> bindings = new HashMap<>();
+	private static Map<String, InputInterface> interfaces = new HashMap<>();
 
 	public static void delegate(Input input) {
 

@@ -14,7 +14,7 @@ public class LWJGLKeyInput extends KeyboardInterface {
 			Input input = inputs.get(Keyboard.getEventKey());
 
 			if (input != null)
-				input.setValue(Keyboard.getEventKeyState() ? input.getRange() : -input.getRange());
+				input.setValue(Keyboard.getEventKeyState() ? input.getRange() : 0);
 		}
 	}
 
